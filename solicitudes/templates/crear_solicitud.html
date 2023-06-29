@@ -1,3 +1,14 @@
 {% extends 'base.html' %}
 
- 
+{% block content %}
+
+<h1>Crear solicitud</h1>
+
+{{error}}
+
+<form action="/solicitudes/crear/" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button>Guardar</button>
+</form>
+{% endblock %}
