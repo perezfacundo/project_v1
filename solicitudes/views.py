@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from .forms import SolicitudForm
-from .models import Estado
+from .models import Estado, Solicitud
 from datetime import datetime
 
 # Create your views here.
@@ -42,27 +42,17 @@ def solicitudes(request):
     return render(request, 'solicitudes.html')
 
 
-def solicitudes_crear(request):
+def crear_solicitud(request):
     if request.method == 'GET':
         return render(request, 'crear_solicitud.html', {
             'form': SolicitudForm
         })
     else:
         try:
-            fecha = ""
             form = SolicitudForm(request.POST)
-            print(form)
-            nuevaSolicitud = form.save(commit=False)
-            print("error2")
-            nuevaSolicitud.user = request.user
-            print(nuevaSolicitud.estado)
-            estado = Estado.objects.get(pk=1)
-            nuevaSolicitud.estado = estado.pk  # error
-            print("error4")
-            nuevaSolicitud.fechaTrabajo = fecha + " 00:00:00"
-            print("error5")
-            print(nuevaSolicitud)
-
+            new_sol = form.save(commit=False)
+            new_sol.user = request.user
+            new_sol.save()
             return redirect('solicitudes')
         except:
             return render(request, 'crear_solicitud.html', {
@@ -91,6 +81,5 @@ def signin(request):
                 'error': "El usuario o la contraseña son incorrectos"
             })
         else:
-            print(request.POST)
             login(request, user)
             return redirect('solicitudes')
