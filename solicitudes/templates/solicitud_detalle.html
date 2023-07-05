@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>{{solicitud.desde}} → {{solicitud.hasta}}, el {{solicitud.fechaTrabajo}}</h3>
+
+{{error}}
+
+<form method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button>
+        Actualizar
+    </button>
+</form>
+
+
+{% endblock %}
+
+<!-- <h3>{{solicitud.desde}} → {{solicitud.hasta}}, el {{solicitud.fechaTrabajo}}</h3>
+<p>Solicitado el: {{solicitud.fechaSolicitud}}</p>
+<p>Detalles: {{solicitud.detalles}}</p>
+<p>Cliente: {{solicitud.user.username}}</p>
+<P>Estado: {{solicitud.estados}}</P> -->
