@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -6,6 +6,7 @@ from django.db import IntegrityError
 from .forms import SolicitudForm
 from .models import Estado, Solicitud
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -38,10 +39,20 @@ def signup(request):
         })
 
 
+@login_required
 def solicitudes(request):
-    return render(request, 'solicitudes.html')
+    solicitudes = Solicitud.objects.all()
+
+    for solicitud in solicitudes:
+        solicitud.fechaTrabajo = solicitud.fechaTrabajo.strftime("%d/%m/%Y")
+        solicitud.fechaSolicitud = solicitud.fechaSolicitud.strftime(
+            "%d/%m/%Y")
+    return render(request, 'solicitudes.html', {
+        'solicitudes': solicitudes
+    })
 
 
+@login_required
 def crear_solicitud(request):
     if request.method == 'GET':
         return render(request, 'crear_solicitud.html', {
@@ -51,6 +62,7 @@ def crear_solicitud(request):
         try:
             form = SolicitudForm(request.POST)
             new_sol = form.save(commit=False)
+            new_sol.fechaTrabajo = request.POST['fechaTrabajo']
             new_sol.user = request.user
             new_sol.save()
             return redirect('solicitudes')
@@ -61,6 +73,32 @@ def crear_solicitud(request):
             })
 
 
+@login_required
+def solicitud_detalle(request, solicitud_id):
+    if request.method == 'GET':
+        solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
+        solicitud.estados = solicitud.estados[int(solicitud.estado)][1]
+
+        form = SolicitudForm(instance=solicitud)
+        return render(request, 'solicitud_detalle.html', {
+            'solicitud': solicitud,
+            'form': form
+        })
+    else:
+        try:
+            solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
+            form = SolicitudForm(request.POST, instance=solicitud)
+            form.save()
+            return redirect('solicitudes')
+        except ValueError:
+            return render(request, 'solicitud_detalle.html', {
+                'solicitud': solicitud,
+                'form': form,
+                'error': 'Error al actualizar la solicitud'
+            })
+
+
+@login_required
 def signout(request):
     logout(request)
     return redirect('home')

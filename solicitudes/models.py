@@ -27,7 +27,6 @@ class Solicitud(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        # return f"{self.desde} -> {self.hasta} el {self.fechaTrabajo.day}/{self.fechaTrabajo.month}/{self.fechaTrabajo.year}. {self.estado.descripcion}"
-
         resultado = "{0} → {1}, el {2}. {3}"
-        return resultado.format(self.desde, self.hasta, self.fechaTrabajo.strftime("%A %d/%m/%Y"), self.estado)
+
+        return resultado.format(self.desde, self.hasta, self.fechaTrabajo.strftime("%A %d/%m/%Y"), self.estados[int(self.estado)][1])

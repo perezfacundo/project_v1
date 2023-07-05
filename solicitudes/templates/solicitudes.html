@@ -2,4 +2,13 @@
 
 {% block content %}
 
+<h1>Solicitudes</h1>
+{% for solicitud in solicitudes %}
+<li>
+    <a href="{% url 'solicitud_detalle' solicitud.id %}">
+        <h3>{{solicitud.desde}} → {{solicitud.hasta}}, el {{solicitud.fechaTrabajo}}</h3>
+    </a>
+</li>
+{% endfor %}
+
 {% endblock %}
