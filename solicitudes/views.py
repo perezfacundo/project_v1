@@ -112,7 +112,6 @@ def signin(request):
     else:
         user = authenticate(
             request, username=request.POST['username'], password=request.POST['password'])
-        print(request.POST)
         if user is None:
             return render(request, 'signin.html', {
                 'form': AuthenticationForm,

@@ -2,13 +2,12 @@
 
 {% block content %}
 
-<h3>{{solicitud.desde}} → {{solicitud.hasta}}, el {{solicitud.fechaTrabajo}}</h3>
-
-{{error}}
-
 <form method="POST">
+    <h3>{{solicitud.desde}} → {{solicitud.hasta}}, el {{solicitud.fechaTrabajo}}</h3>
+
+    {{error}}
     {% csrf_token %}
-    {{form.as_p}}
+    {{form}}
     <button>
         Actualizar
     </button>
