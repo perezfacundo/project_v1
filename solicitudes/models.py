@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator
+import datetime
+from django.utils import timezone
 # Create your models here.
 
 
@@ -13,8 +16,8 @@ class Estado(models.Model):
 class Solicitud(models.Model):
     desde = models.CharField(max_length=50)
     hasta = models.CharField(max_length=50)
-    fechaSolicitud = models.DateTimeField(auto_now_add=True)
-    fechaTrabajo = models.DateTimeField()
+    fechaSolicitud = models.DateField(blank=False, default=datetime.date(1, 1, 1))
+    fechaTrabajo = models.DateField(blank=False, default=datetime.date(1, 1, 1))
     detalles = models.TextField(max_length=200, null=True)
     estados = [
         ('1', 'A presupuestar'),
