@@ -14,22 +14,24 @@ class Estado(models.Model):
 
 
 class Solicitud(models.Model):
-    desde = models.CharField(max_length=50)
-    hasta = models.CharField(max_length=50)
-    fechaSolicitud = models.DateField(blank=False, default=datetime.date(1, 1, 1))
-    fechaTrabajo = models.DateField(blank=False, default=datetime.date(1, 1, 1))
-    detalles = models.TextField(max_length=200, null=True)
-    estados = [
+    ESTADO_CHOICES = (
         ('1', 'A presupuestar'),
         ('2', 'Confirmado'),
         ('3', 'En camino'),
         ('4', 'Entregado'),
-        ('5', 'Cobrado'),
-    ]
-    estado = models.CharField(max_length=1, choices=estados, default=1)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+        ('6', 'Cobrado'),
+        ('7', 'Cancelado'),
+    )
+
+    nombre = models.CharField(max_length=100)
+    dni = models.CharField(max_length=20, blank=False, default="")
+    telefono = models.CharField(max_length=20, blank=False, default="")
+    inicio = models.CharField(max_length=100, blank=False, default="")
+    fin = models.CharField(max_length=100, blank=False, default="")
+    correo = models.CharField(max_length=100, blank=False, default="")
+    fecha_entrada = models.DateField(blank=False, default=datetime.date(1, 1, 1))
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='ESPERA')
 
     def __str__(self):
-        resultado = "{0} → {1}, el {2}. {3}"
+        return f"{self.nombre} - DNI: {self.dni}, Estado: {self.estado}"
 
-        return resultado.format(self.desde, self.hasta, self.fechaTrabajo.strftime("%A %d/%m/%Y"), self.estados[int(self.estado)][1])
