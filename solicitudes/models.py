@@ -35,3 +35,13 @@ class Solicitud(models.Model):
     def __str__(self):
         return f"{self.nombre} - DNI: {self.dni}, Estado: {self.estado}"
 
+
+    class Transporte(models.Model):
+    solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=100)
+    patente = models.CharField(max_length=100)
+    # Otros campos del modelo Transporte
+
+    def __str__(self):
+        return f"Transporte para {self.solicitud} - tipo: {self.tipo} - patente: {self.patente}"
+
