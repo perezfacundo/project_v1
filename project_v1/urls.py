@@ -20,11 +20,13 @@ from solicitudes import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    path('signup/', views.signup, name='signup'),
+
     path('solicitudes/', views.solicitudes, name='solicitudes'),
     path('solicitudes/crear/', views.crear_solicitud, name='crear_solicitud'),
-    path('solicitudes/<int:solicitud_id>/',
-         views.solicitud_detalle, name='solicitud_detalle'),
+    path('solicitudes/<int:solicitud_id>/', views.solicitud_detalle, name='solicitud_detalle'),
+    path('solicitudes/<int:solicitud_id>/eliminar/', views.solicitud_eliminar, name='solicitud_eliminar'),
+
+    path('signup/', views.signup, name='signup'),
     path('logout/', views.signout, name='logout'),
     path('signin/', views.signin, name='signin'),
 ]

@@ -2,17 +2,48 @@
 
 {% block content %}
 
-<form method="POST">
-    <h3>{{solicitud.desde}} → {{solicitud.hasta}}, el {{solicitud.fechaTrabajo}}</h3>
+<div class="container">
+    <div class="row">
+        <section class="col-md-6 offset-md-3 mt-5">
+            <form action="{% url 'solicitud_detalle' solicitud.id %}" method="POST" class="card card-body">
+                <h3>Detalles de la solicitud</h3>
+            
+                {{error}}
+                {% csrf_token %}
 
-    {{error}}
-    {% csrf_token %}
-    {{form}}
-    <button>
-        Actualizar
-    </button>
-</form>
+                <div class="mb-3">
+                    <label for="id">ID</label>
+                    <input type="text" name="id" id="id" class="form-control" value="{{solicitud.id}}" disabled readonly>
+                </div>
 
+                <div class="mb-3">
+                    <label for="desde">Desde</label>
+                    <input type="text" name="desde" id="desde" class="form-control" value="{{solicitud.desde}}">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="hasta">Hasta</label>
+                <input type="text" name="hasta" id="hasta" class="form-control" value="{{solicitud.hasta}}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="fechaTrabajo">Fecha trabajo</label>
+                    <!-- <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}"> -->
+                    <input type="text" name="fechaTrabajo" id="fechaTrabajo" value="{{solicitud.fechaTrabajo}}" class="from-control">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="detalles">Detalles</label>
+                    <textarea name="detalles" id="detalles" cols="30" rows="5" class="form-control">{{solicitud.detalles}}</textarea>
+                </div>
+
+                <button class="btn btn-primary">
+                    Actualizar
+                </button>
+            </form>
+        </section>
+    </div>
+</div>
 
 {% endblock %}
 

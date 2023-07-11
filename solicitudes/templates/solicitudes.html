@@ -2,13 +2,50 @@
 
 {% block content %}
 
-<h1>Solicitudes</h1>
-{% for solicitud in solicitudes %}
-<li>
-    <a href="{% url 'solicitud_detalle' solicitud.id %}">
-        <h3>{{solicitud.desde}} → {{solicitud.hasta}}, el {{solicitud.fechaTrabajo}}</h3>
-    </a>
-</li>
-{% endfor %}
+<div class="container">
+    <div class="row">
+        <section class="col-md-10 offset-md-1 mt-5">
+            <h1>Solicitudes</h1>
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col"># ID</th>
+                        <th scope="col">Desde</th>
+                        <th scope="col">Hasta</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for solicitud in solicitudes %}
+                    <tr>
+                        <th scope="row">{{solicitud.id}}</th>
+                        <th>{{solicitud.desde}}</th>
+                        <th>{{solicitud.hasta}}</th>
+                        <th>{{solicitud.fechaTrabajo}}</th>
+                        <th>
+                            <div class="container text-center">
+                                <div class="row row-cols-auto">
+                                    <div class="col">
+                                        <form action="{% url 'solicitud_detalle' solicitud.id %}" method="GET">
+                                            {% csrf_token %}<button class="btn btn-secondary">Detalles</button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="{% url 'solicitud_eliminar' solicitud.id %}" method="POST">
+                                            {% csrf_token %}<button class="btn btn-danger">Eliminar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
 
 {% endblock %}

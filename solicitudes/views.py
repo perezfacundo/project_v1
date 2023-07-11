@@ -78,7 +78,8 @@ def solicitud_detalle(request, solicitud_id):
     if request.method == 'GET':
         solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
         solicitud.estados = solicitud.estados[int(solicitud.estado)][1]
-
+        fecha = solicitud.fechaTrabajo
+        solicitud.fechaTrabajo = fecha.strftime('%d/%m/%Y')
         form = SolicitudForm(instance=solicitud)
         return render(request, 'solicitud_detalle.html', {
             'solicitud': solicitud,
@@ -91,11 +92,21 @@ def solicitud_detalle(request, solicitud_id):
             form.save()
             return redirect('solicitudes')
         except ValueError:
+            fecha = solicitud.fechaTrabajo
+            solicitud.fechaTrabajo = fecha.strftime('%d/%m/%Y')
             return render(request, 'solicitud_detalle.html', {
                 'solicitud': solicitud,
                 'form': form,
                 'error': 'Error al actualizar la solicitud'
             })
+
+
+@login_required
+def solicitud_eliminar(request, solicitud_id):
+    solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
+    if request.method == 'POST':
+        solicitud.delete()
+    return redirect('solicitudes')
 
 
 @login_required
