@@ -8,28 +8,29 @@
         <section class="col-md-6 offset-md-3 mt-5">
             <form method="POST" class="card card-body">
                 <h3>Crear solicitud</h3>
-            
+                
                 {{error}}
+
                 {% csrf_token %}
 
                 <div class="mb-3">
                     <label for="desde">Desde</label>
-                    <input type="text" name="desde" id="desde" class="form-control" value="{{solicitud.desde}}">
+                    <input type="text" name="desde" id="desde" class="form-control">
                 </div>
                 
                 <div class="mb-3">
                     <label for="hasta">Hasta</label>
-                <input type="text" name="hasta" id="hasta" class="form-control" value="{{solicitud.hasta}}">
+                <input type="text" name="hasta" id="hasta" class="form-control">
                 </div>
 
                 <div class="mb-3">
                     <label for="desde">Desde</label>
-                    <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}">
+                    <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control">
                 </div>
                 
                 <div class="mb-3">
                     <label for="detalles">Detalles</label>
-                    <textarea name="detalles" id="detalles" cols="30" rows="5" class="form-control" value="{{solicitud.detalles}}"></textarea>
+                    <textarea name="detalles" id="detalles" cols="30" rows="5" class="form-control"></textarea>
                 </div>
 
                 <button type="submit" class="btn btn-primary">
@@ -39,27 +40,5 @@
         </section>
     </div>
 </div>
-
-
-<!-- <div class="container">
-    <div class="row">
-        <div class="col-md-4 offset-md-4 mt-5">
-            <form action="/solicitudes/crear/" method="post" class="card card-body">
-                <h1>Crear solicitud</h1>
-
-                {{error}}
-
-                {% csrf_token %}
-
-                {{form}}
-
-                <!-- Formulario a mano -->
-
-
-                <!-- <button class="btn btn-primary mt-4">Guardar</button>
-            </form>
-        </div>
-    </div>
-</div> -->
 
 {% endblock %}

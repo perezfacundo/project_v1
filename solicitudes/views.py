@@ -78,8 +78,8 @@ def solicitud_detalle(request, solicitud_id):
     if request.method == 'GET':
         solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
         solicitud.estados = solicitud.estados[int(solicitud.estado)][1]
-        fecha = solicitud.fechaTrabajo
-        solicitud.fechaTrabajo = fecha.strftime('%d/%m/%Y')
+        fechaTrabajo = solicitud.fechaTrabajo
+        solicitud.fechaTrabajo = fechaTrabajo.strftime('%d/%m/%Y')
         form = SolicitudForm(instance=solicitud)
         return render(request, 'solicitud_detalle.html', {
             'solicitud': solicitud,
@@ -88,6 +88,8 @@ def solicitud_detalle(request, solicitud_id):
     else:
         try:
             solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
+            #fechaT = request.POST['fechaTrabajo']
+            # request.POST['fechaTrabajo'] = datetime.strptime(fechaT, 'Y%/%m/%d')
             form = SolicitudForm(request.POST, instance=solicitud)
             form.save()
             return redirect('solicitudes')
