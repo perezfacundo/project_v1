@@ -61,8 +61,8 @@ def crear_solicitud(request):
     else:
         try:
             form = SolicitudForm(request.POST)
+            print(request.POST)
             new_sol = form.save(commit=False)
-            new_sol.fechaTrabajo = request.POST['fechaTrabajo']
             new_sol.user = request.user
             new_sol.save()
             return redirect('solicitudes')
@@ -88,14 +88,16 @@ def solicitud_detalle(request, solicitud_id):
     else:
         try:
             solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
-            #fechaT = request.POST['fechaTrabajo']
-            # request.POST['fechaTrabajo'] = datetime.strptime(fechaT, 'Y%/%m/%d')
+            print(solicitud)
             form = SolicitudForm(request.POST, instance=solicitud)
+            print(form)
             form.save()
             return redirect('solicitudes')
-        except ValueError:
-            fecha = solicitud.fechaTrabajo
-            solicitud.fechaTrabajo = fecha.strftime('%d/%m/%Y')
+        except:
+            solicitud.estados = solicitud.estados[int(solicitud.estado)][1]
+            fechaTrabajo = solicitud.fechaTrabajo
+            solicitud.fechaTrabajo = fechaTrabajo.strftime('%d/%m/%Y')
+            form = SolicitudForm(instance=solicitud)
             return render(request, 'solicitud_detalle.html', {
                 'solicitud': solicitud,
                 'form': form,

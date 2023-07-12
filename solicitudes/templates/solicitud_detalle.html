@@ -29,12 +29,17 @@
                 <div class="mb-3">
                     <label for="fechaTrabajo">Fecha trabajo</label>
                     <!-- <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}"> -->
-                    <input type="text" name="fechaTrabajo" id="fechaTrabajo" value="{{solicitud.fechaTrabajo}}" class="from-control">
+                    <input type="text" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}">
                 </div>
                 
                 <div class="mb-3">
                     <label for="detalles">Detalles</label>
-                    <textarea name="detalles" id="detalles" cols="30" rows="5" class="form-control">{{solicitud.detalles}}</textarea>
+                    <textarea name="detalles" id="detalles" cols="30" rows="3" class="form-control">{{solicitud.detalles}}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="estado">Estado</label>
+                    <input name="estado" id="estado" cols="30" rows="5" class="form-control" value="{{solicitud.estados}}" disabled>
                 </div>
 
                 <button class="btn btn-primary">
