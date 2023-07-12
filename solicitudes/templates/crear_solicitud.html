@@ -14,18 +14,20 @@
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <label for="desde">Desde</label>
-                    <input type="text" name="desde" id="desde" class="form-control">
-                </div>
-                
-                <div class="mb-3">
-                    <label for="hasta">Hasta</label>
-                <input type="text" name="hasta" id="hasta" class="form-control">
+                    <label for="fechaTrabajo">Fecha del trabajo</label>
+                    <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control">
                 </div>
 
-                <div class="mb-3">
-                    <label for="desde">Desde</label>
-                    <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="desde">Desde</label>
+                        <input type="text" name="desde" id="desde" class="form-control">
+                    </div>
+                    
+                    <div class="col">
+                        <label for="hasta">Hasta</label>
+                    <input type="text" name="hasta" id="hasta" class="form-control">
+                    </div>
                 </div>
                 
                 <div class="mb-3">

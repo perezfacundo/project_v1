@@ -11,25 +11,28 @@
                 {{error}}
                 {% csrf_token %}
 
-                <div class="mb-3">
-                    <label for="id">ID</label>
-                    <input type="text" name="id" id="id" class="form-control" value="{{solicitud.id}}" disabled readonly>
+                <div class="row">
+                    <div class="col">
+                        <label for="id">ID</label>
+                        <input type="text" name="id" id="id" class="form-control" value="{{solicitud.id}}" disabled readonly>
+                    </div>
+                    <div class="col">
+                        <label for="fechaTrabajo">Fecha trabajo</label>
+                        <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}">
+                        <!-- <input type="text" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}"> -->
+                    </div>
                 </div>
 
-                <div class="mb-3">
-                    <label for="desde">Desde</label>
-                    <input type="text" name="desde" id="desde" class="form-control" value="{{solicitud.desde}}">
-                </div>
-                
-                <div class="mb-3">
-                    <label for="hasta">Hasta</label>
-                <input type="text" name="hasta" id="hasta" class="form-control" value="{{solicitud.hasta}}">
-                </div>
-
-                <div class="mb-3">
-                    <label for="fechaTrabajo">Fecha trabajo</label>
-                    <!-- <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}"> -->
-                    <input type="text" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="desde">Desde</label>
+                        <input type="text" name="desde" id="desde" class="form-control" value="{{solicitud.desde}}">
+                    </div>
+                    
+                    <div class="col">
+                        <label for="hasta">Hasta</label>
+                    <input type="text" name="hasta" id="hasta" class="form-control" value="{{solicitud.hasta}}">
+                    </div>
                 </div>
                 
                 <div class="mb-3">
@@ -42,6 +45,14 @@
                     <input name="estado" id="estado" cols="30" rows="5" class="form-control" value="{{solicitud.estados}}" disabled>
                 </div>
 
+                <!-- <label for="estado">Estado</label>
+                <select class="form-select" name="estado" id="estado">
+                    <option selected value="{{solicitud.estados}}"></option>
+                    <option value=""></option>
+                    <option value=""></option>
+                    <option value=""></option>
+                </select> -->
+                
                 <button class="btn btn-primary">
                     Actualizar
                 </button>
