@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from .forms import SolicitudForm
-from .models import Estado, Solicitud
+# from .models import Estado, Solicitud
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
