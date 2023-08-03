@@ -3,9 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
+from .models import EstadosCliente, Cliente, EstadosEmpleadoCalle, EmpleadoCalle, EstadosEmpleadoAdmnistrativo, EmpleadoAdministrativo, tipoUsuario, EstadosSolicitud, Solicitud, EstadosTransporte, Transporte, SolicitudesEmpleados, SolicitudesTransportes
 from .forms import SolicitudForm
-# from .models import Estado, Solicitud
-from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -21,18 +20,47 @@ def signup(request):
             'form': UserCreationForm
         })
     else:
+        print(request.POST)
         if request.POST['password1'] == request.POST['password2']:
-            try:
-                user = User.objects.create_user(
-                    username=request.POST['username'], password=request.POST['password1'])
-                user.save()
-                login(request, user)
-                return redirect('solicitudes')
-            except IntegrityError:
-                return render(request, 'signup.html', {
+            # try:
+                if Cliente.objects.filter(username=request.POST['username']):
+                    return render(request, 'signup.html', {
                     'form': UserCreationForm,
-                    'error': "El nombre de usuario ya existe"
+                    'error': "El nombre de usuario ya pertenece a una cuenta existente"
                 })
+                if Cliente.objects.filter(email=request.POST['email']):
+                    return render(request, 'signup.html', {
+                    'form': UserCreationForm,
+                    'error': "El correo electrónico ya pertenece a una cuenta existente"
+                })
+                if Cliente.objects.filter(dni=request.POST['dni']):
+                    return render(request, 'signup.html', {
+                    'form': UserCreationForm,
+                    'error': "El dni ya pertenece a una cuenta existente"
+                })
+                
+                id_estado_cliente = request.POST.get('idEstadoCliente', None)
+                
+
+                cliente = Cliente.objects.create_user(
+                    first_name=request.POST['first_name'],
+                    last_name=request.POST['last_name'],
+                    username=request.POST['username'], 
+                    password=request.POST['password1'], 
+                    email=request.POST['email'], 
+                    dni=request.POST['dni'],
+                    telefono=request.POST['telefono'],
+                    idEstadoCliente=EstadosCliente.objects.get(id=id_estado_cliente),
+                    puntos=0
+                    )
+                cliente.save()
+                login(request, cliente)
+                return redirect('solicitudes')
+            # except IntegrityError:
+            #     return render(request, 'signup.html', {
+            #         'form': UserCreationForm,
+            #         'error': "Ha ocurrido un error al guardar el usuario"
+            #     })
         return render(request, 'signup.html', {
             'form': UserCreationForm,
             'error': "Las claves no coinciden"

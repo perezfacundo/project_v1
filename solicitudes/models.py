@@ -8,17 +8,17 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 # ACTORES DE LOS CASOS DE USO ====================
 class Usuario(AbstractUser):
     # id int [primary key]
-    # password varchar
+    # password varchar !
     # last_login datetime
     # is_superuser boolean
-    # username varchar
-    # first_name varchar
-    # last_name varchar
-    # email varchar
+    # username varchar !
+    # first_name varchar !
+    # last_name varchar !
+    # email varchar !
     # is_staff boolean //0 = no es empleado
-    # is_active boolean
+    # is_active boolean 
     # date_joined datetime
-    dni = models.CharField(max_length=8)
+    dni = models.CharField(max_length=8, unique=True)
     telefono = models.CharField(max_length=10)
     
 class EstadosCliente(models.Model):
@@ -43,6 +43,9 @@ class EmpleadoAdministrativo(Usuario):
     ausencias = models.IntegerField()
     idEstadoEmpleadoAdministrativo = models.ForeignKey(EstadosEmpleadoAdmnistrativo, on_delete=models.CASCADE)
 
+class tipoUsuario(models.Model):
+    descripcion = models.CharField(max_length=30)
+    
 #==================================================
 
 class EstadosSolicitud(models.Model):
