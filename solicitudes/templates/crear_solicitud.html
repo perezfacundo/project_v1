@@ -2,6 +2,74 @@
 
 {% block content %}
 
+<main class="container mt-5">
+    <div class="container text-center">
+      <h3>Formulario de solicitud</h3>
+      <p>El siguiente es un formulario el cual debe completar para que se pueda presupuestar su solicitud</p>
+    </div>
+    <div class="row vh-100 d-flex justify-content-center align-items-center">
+      <div class="col-md-7 mt-3">
+        <form action="/signup/" method="post" class=" card-body">
+          <!-- <h4 class="mb-3"></h4> -->
+          {{error}}
+          {% csrf_token %}
+  
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="detalles">Detalles</label>
+              <input type="text" name="first_name" class="form-control">
+            </div>
+    
+            <div class="col-sm-6">
+              <label for="last_name">Apellido</label>
+              <input type="text" name="last_name" class="form-control">
+            </div>
+    
+            <div class="input-group">
+              <span class="input-group-text" id="basic-addon1">@</span>
+              <input type="text" name="username" class="form-control" placeholder="juanperez">
+            </div>
+    
+            <div class="col-12">
+              <label for="email">Correo electrónico</label>
+              <input type="email" name="email" class="form-control" placeholder="juan@ejemplo.com">
+            </div>
+    
+            <div class="col-sm-6">
+              <label for="dni">DNI</label>
+              <input type="text" name="dni" class="form-control" placeholder="Sin espacios, guiones ni puntos">
+            </div>
+    
+            <div class="col-sm-6">
+              <label for="telefono">Telefono</label>
+              <input type="text" name="telefono" class="form-control" placeholder="Sin espacios, guiones ni puntos">
+            </div>
+    
+            <div class="mb-2">
+              <label for="password1">Contraseña:</label>
+              <input type="password" name="password1" id="password1" class="form-control"
+                placeholder="Escriba su contraseña">
+            </div>
+    
+            <div class="mb-2">
+              <label for="password2">Confirme su contraseña:</label>
+              <input type="password" name="password2" id="password2" class="form-control"
+                placeholder="Confirme su contraseña">
+            </div>
+  
+            <input type="hidden" name="idEstadoCliente" value="1">
+          </div>
+  
+          <hr>
+  
+          <button class="w-100 btn btn-primary btn-lg">
+            Registrarse
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
 
 <div class="container">
     <div class="row">
@@ -12,6 +80,9 @@
                 {{error}}
 
                 {% csrf_token %}
+
+
+
 
                 <div class="mb-3">
                     <label for="fechaTrabajo">Fecha del trabajo</label>

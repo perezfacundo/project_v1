@@ -6,6 +6,13 @@ from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # ACTORES DE LOS CASOS DE USO ====================
+
+class tipo_usuario(models.Model):
+    descripcion = models.CharField(max_length=30)
+
+    def __str__(self):
+        return f"{self.descripcion}"
+
 class Usuario(AbstractUser):
     # id int [primary key]
     # password varchar !
@@ -20,13 +27,24 @@ class Usuario(AbstractUser):
     # date_joined datetime
     dni = models.CharField(max_length=8, unique=True)
     telefono = models.CharField(max_length=10)
-    
+    idTipoUsuario = models.ForeignKey(tipo_usuario, on_delete=models.CASCADE, default=1)
+
+    def __str__(self):
+        return f"0{self.id} - {self.last_name} {self.first_name}"
+
 class EstadosCliente(models.Model):
     descripcion = models.CharField(max_length=20)
     
+    def __str__(self):
+        return f"{self.descripcion}"
+
 class Cliente(Usuario):
     puntos = models.IntegerField()
     idEstadoCliente = models.ForeignKey(EstadosCliente, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
+
+    def __str__(self):
+        return f"{self.last_name} {self.first_name} "
 
 class EstadosEmpleadoCalle(models.Model):
     descripcion = models.CharField(max_length=20)
@@ -35,6 +53,7 @@ class EmpleadoCalle(Usuario):
     tipoCarnet = models.CharField(max_length=2)
     ausencias = models.IntegerField()
     idEstadoEmpleadoCalle = models.ForeignKey(EstadosEmpleadoCalle, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
 
 class EstadosEmpleadoAdmnistrativo(models.Model):
     descripcion = models.CharField(max_length=20)
@@ -42,9 +61,7 @@ class EstadosEmpleadoAdmnistrativo(models.Model):
 class EmpleadoAdministrativo(Usuario):
     ausencias = models.IntegerField()
     idEstadoEmpleadoAdministrativo = models.ForeignKey(EstadosEmpleadoAdmnistrativo, on_delete=models.CASCADE)
-
-class tipoUsuario(models.Model):
-    descripcion = models.CharField(max_length=30)
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
     
 #==================================================
 
