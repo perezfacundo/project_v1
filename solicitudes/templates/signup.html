@@ -9,7 +9,7 @@
   </div>
   <div class="row vh-100 d-flex justify-content-center align-items-center">
     <div class="col-md-7 mt-3">
-      <form action="/signup/" method="post" class=" card-body">
+      <form action="/signup/" method="post" class="card-body">
         <h4 class="mb-3">Registrarse</h4>
         {{error}}
         {% csrf_token %}
@@ -57,7 +57,8 @@
               placeholder="Confirme su contraseña">
           </div>
 
-          <input type="hidden" name="idEstadoCliente" value="1">
+          <input type="hidden" name="id_estado_cliente" value="1">
+          <input type="hidden" name="id_tipo_usuario" value="1">
         </div>
 
         <hr>

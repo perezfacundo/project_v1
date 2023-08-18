@@ -27,7 +27,7 @@ class Usuario(AbstractUser):
     # date_joined datetime
     dni = models.CharField(max_length=8, unique=True)
     telefono = models.CharField(max_length=10)
-    idTipoUsuario = models.ForeignKey(tipo_usuario, on_delete=models.CASCADE, default=1)
+    id_tipo_usuario = models.ForeignKey(tipo_usuario, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"0{self.id} - {self.last_name} {self.first_name}"
@@ -40,7 +40,7 @@ class EstadosCliente(models.Model):
 
 class Cliente(Usuario):
     puntos = models.IntegerField()
-    idEstadoCliente = models.ForeignKey(EstadosCliente, on_delete=models.CASCADE)
+    id_estado_cliente = models.ForeignKey(EstadosCliente, on_delete=models.CASCADE)
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
@@ -50,9 +50,9 @@ class EstadosEmpleadoCalle(models.Model):
     descripcion = models.CharField(max_length=20)
 
 class EmpleadoCalle(Usuario):
-    tipoCarnet = models.CharField(max_length=2)
+    tipo_carnet = models.CharField(max_length=2)
     ausencias = models.IntegerField()
-    idEstadoEmpleadoCalle = models.ForeignKey(EstadosEmpleadoCalle, on_delete=models.CASCADE)
+    id_estado_empleado_calle = models.ForeignKey(EstadosEmpleadoCalle, on_delete=models.CASCADE)
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
 
 class EstadosEmpleadoAdmnistrativo(models.Model):
@@ -60,7 +60,7 @@ class EstadosEmpleadoAdmnistrativo(models.Model):
 
 class EmpleadoAdministrativo(Usuario):
     ausencias = models.IntegerField()
-    idEstadoEmpleadoAdministrativo = models.ForeignKey(EstadosEmpleadoAdmnistrativo, on_delete=models.CASCADE)
+    id_estado_empleado_administrativo = models.ForeignKey(EstadosEmpleadoAdmnistrativo, on_delete=models.CASCADE)
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
     
 #==================================================
@@ -69,14 +69,18 @@ class EstadosSolicitud(models.Model):
     descripcion = models.CharField(max_length=20)
 
 class Solicitud(models.Model):
-    desde = models.CharField(max_length=50, null=False)
-    hasta = models.CharField(max_length=50, null=False)
-    fechaSolicitud = models.DateField(auto_now_add=True)
-    detalles = models.TextField(max_length=200) #heladera, sillon, televisor, escritorio
-    pagoFaltante = models.IntegerField(validators=[MinValueValidator(0)]) #10000
-    calificacion = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)]) #de 1☆ a 5☆
+    objetos_a_transportar = models.TextField(max_length=255, null=True) #heladera, sillon, televisor, escritorio
+    detalles = models.TextField(max_length=255, null=True) 
+    direccion_desde = models.CharField(max_length=255, null=True)
+    direccion_hasta = models.CharField(max_length=255, null=True)
+    coordenadas_desde = models.CharField(max_length=50, blank=True, null=True)
+    coordenadas_hasta = models.CharField(max_length=50, blank=True, null=True)
+    fecha_solicitud = models.DateField(auto_now_add=True)
+    pago_faltante = models.IntegerField(validators=[MinValueValidator(0)]) #10000
+    calificacion = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True) #de 1☆ a 5☆
     devolucion = models.TextField(max_length=200) #Los trabajadores fueron puntuales. Las cosas llegaron a destino en perfecto estado
-    idEstadoSolicitud = models.ForeignKey(EstadosSolicitud, on_delete=models.CASCADE)
+    id_estado_solicitud = models.ForeignKey(EstadosSolicitud, on_delete=models.CASCADE)
+    cliente_id = models.ForeignKey(Cliente, on_delete=models.CASCADE, default=1)
 
     def validar_dia_habil(value):
         if value < datetime.date.today():
@@ -88,7 +92,7 @@ class Solicitud(models.Model):
             raise models.ValidationError("La fecha seleccionada debe ser un día hábil (de lunes a viernes).")
         pass
 
-    fechaTrabajo = models.DateField(blank=False, validators=[validar_dia_habil])
+    fecha_trabajo = models.DateField(blank=False, validators=[validar_dia_habil])
 
 class EstadosTransporte(models.Model):
     descripcion = models.CharField(max_length=20)
@@ -99,14 +103,14 @@ class Transporte(models.Model):
     nombre = models.CharField(max_length=30)
     modelo = models.CharField(max_length=4)
     capacidad = models.IntegerField()
-    idEstadoTransporte = models.ForeignKey(EstadosTransporte, on_delete=models.CASCADE)
+    id_estado_transporte = models.ForeignKey(EstadosTransporte, on_delete=models.CASCADE)
 
 #=================================================
 
 class SolicitudesEmpleados(models.Model):
-    idSolicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
-    idEmpleado = models.ForeignKey(EmpleadoCalle, on_delete=models.CASCADE)
+    id_solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
+    id_empleado = models.ForeignKey(EmpleadoCalle, on_delete=models.CASCADE)
 
 class SolicitudesTransportes(models.Model):
-    idSolicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
-    idTransporte = models.ForeignKey(Transporte, on_delete=models.CASCADE)
+    id_solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
+    id_transporte = models.ForeignKey(Transporte, on_delete=models.CASCADE)

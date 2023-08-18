@@ -3,115 +3,77 @@
 {% block content %}
 
 <main class="container mt-5">
-    <div class="container text-center">
-      <h3>Formulario de solicitud</h3>
-      <p>El siguiente es un formulario el cual debe completar para que se pueda presupuestar su solicitud</p>
-    </div>
-    <div class="row vh-100 d-flex justify-content-center align-items-center">
-      <div class="col-md-7 mt-3">
-        <form action="/signup/" method="post" class=" card-body">
-          <!-- <h4 class="mb-3"></h4> -->
-          {{error}}
-          {% csrf_token %}
-  
-          <div class="row g-3">
-            <div class="col-12">
-              <label for="detalles">Detalles</label>
-              <input type="text" name="first_name" class="form-control">
-            </div>
-    
-            <div class="col-sm-6">
-              <label for="last_name">Apellido</label>
-              <input type="text" name="last_name" class="form-control">
-            </div>
-    
-            <div class="input-group">
-              <span class="input-group-text" id="basic-addon1">@</span>
-              <input type="text" name="username" class="form-control" placeholder="juanperez">
-            </div>
-    
-            <div class="col-12">
-              <label for="email">Correo electrónico</label>
-              <input type="email" name="email" class="form-control" placeholder="juan@ejemplo.com">
-            </div>
-    
-            <div class="col-sm-6">
-              <label for="dni">DNI</label>
-              <input type="text" name="dni" class="form-control" placeholder="Sin espacios, guiones ni puntos">
-            </div>
-    
-            <div class="col-sm-6">
-              <label for="telefono">Telefono</label>
-              <input type="text" name="telefono" class="form-control" placeholder="Sin espacios, guiones ni puntos">
-            </div>
-    
-            <div class="mb-2">
-              <label for="password1">Contraseña:</label>
-              <input type="password" name="password1" id="password1" class="form-control"
-                placeholder="Escriba su contraseña">
-            </div>
-    
-            <div class="mb-2">
-              <label for="password2">Confirme su contraseña:</label>
-              <input type="password" name="password2" id="password2" class="form-control"
-                placeholder="Confirme su contraseña">
-            </div>
-  
-            <input type="hidden" name="idEstadoCliente" value="1">
+  <div class="container text-center">
+    <h3>Formulario de solicitud</h3>
+    <p>El siguiente es un formulario el cual debe completar para que se pueda presupuestar su solicitud</p>
+  </div>
+  <div class="row vh-100 d-flex justify-content-center">
+    <div class="col-md-7">
+      <form action="{% url 'solicitudes_crear' %}" method="post" class="card-body" id="form">
+        {% csrf_token %}
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label for="txt_detalles">¿ Qué necesita transportar ?</label>
+            <textarea name="objetos_a_transportar" id="txt_detalles" class="form-control"></textarea>
           </div>
-  
+
+          <div class="col-12">
+            <label for="direccion_desde">¿ Desde qué lugar ?</label>
+            <input type="text" name="direccion_desde" class="form-control">
+          </div>
+
+          <div class="col-12">
+            <label for="direccion_hasta">¿ Hasta qué lugar ?</label>
+            <input type="text" name="direccion_hasta" class="form-control">
+          </div>
+
+          <div class="col-12">
+            <label for="fecha_trabajo">¿ En qué fecha necesita recibirlo ?</label>
+            <input type="date" name="fecha_trabajo" class="form-control">
+          </div>
+
+          <div class="col-12">
+            <label for="detalles">Detalles</label>
+            <input type="text" name="detalles" class="form-control">
+          </div>
+
+          <input type="hidden" name="id_estado_solicitud" value="1">
+
+          {{error}}
           <hr>
-  
+
           <button class="w-100 btn btn-primary btn-lg">
-            Registrarse
+            Enviar solicitud
           </button>
-        </form>
-      </div>
+      </form>
     </div>
-  </main>
-
-
-<div class="container">
-    <div class="row">
-        <section class="col-md-6 offset-md-3 mt-5">
-            <form method="POST" class="card card-body">
-                <h3>Crear solicitud</h3>
-                
-                {{error}}
-
-                {% csrf_token %}
-
-
-
-
-                <div class="mb-3">
-                    <label for="fechaTrabajo">Fecha del trabajo</label>
-                    <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control">
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col">
-                        <label for="desde">Desde</label>
-                        <input type="text" name="desde" id="desde" class="form-control">
-                    </div>
-                    
-                    <div class="col">
-                        <label for="hasta">Hasta</label>
-                    <input type="text" name="hasta" id="hasta" class="form-control">
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="detalles">Detalles</label>
-                    <textarea name="detalles" id="detalles" cols="30" rows="5" class="form-control"></textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary">
-                    Enviar solicitud
-                </button>
-            </form>
-        </section>
-    </div>
-</div>
-
+  </div>
+</main>
 {% endblock %}
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+<!-- <script type="text/javascript">
+  $(document).ready(function() {
+    //autocompletado para la direccion1
+    $('#direccion1').autocomplete({
+        source: function(request, response){
+            $.ajax({
+                url: 'solicitudes/crear',
+                data: { term: request.term },
+                success: function(data){
+                    response(data.results);
+                }
+            });
+        },
+        minLength: 3
+    });
+  });
+
+  $("#txt-desde, #txt-hasta").autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: ""
+      })
+    }
+  })
+</script> -->

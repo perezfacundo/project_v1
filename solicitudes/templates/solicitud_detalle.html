@@ -17,21 +17,20 @@
                         <input type="text" name="id" id="id" class="form-control" value="{{solicitud.id}}" disabled readonly>
                     </div>
                     <div class="col">
-                        <label for="fechaTrabajo">Fecha trabajo</label>
-                        <input type="date" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}">
-                        <!-- <input type="text" name="fechaTrabajo" id="fechaTrabajo" class="form-control" value="{{solicitud.fechaTrabajo}}"> -->
+                        <label for="fecha_trabajo">Fecha trabajo</label>
+                        <input type="date" name="fecha_trabajo" id="fecha_trabajo" class="form-control" value="{{solicitud.fecha_trabajo}}">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col">
-                        <label for="desde">Desde</label>
-                        <input type="text" name="desde" id="desde" class="form-control" value="{{solicitud.desde}}">
+                        <label for="direccion_desde">Desde</label>
+                        <input type="text" name="direccion_desde" id="direccion_desde" class="form-control" value="{{solicitud.direccion_desde}}">
                     </div>
                     
                     <div class="col">
-                        <label for="hasta">Hasta</label>
-                    <input type="text" name="hasta" id="hasta" class="form-control" value="{{solicitud.hasta}}">
+                        <label for="direccion_hasta">Hasta</label>
+                    <input type="text" name="direccion_hasta" id="direccion_hasta" class="form-control" value="{{solicitud.direccion_hasta}}">
                     </div>
                 </div>
                 
@@ -44,14 +43,6 @@
                     <label for="estado">Estado</label>
                     <input name="estado" id="estado" cols="30" rows="5" class="form-control" value="{{solicitud.estados}}" disabled>
                 </div>
-
-                <!-- <label for="estado">Estado</label>
-                <select class="form-select" name="estado" id="estado">
-                    <option selected value="{{solicitud.estados}}"></option>
-                    <option value=""></option>
-                    <option value=""></option>
-                    <option value=""></option>
-                </select> -->
                 
                 <button class="btn btn-primary">
                     Actualizar
