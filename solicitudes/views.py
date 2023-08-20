@@ -78,10 +78,10 @@ def signup(request):
                 cliente.save()
                 login(request, cliente)
                 return redirect('solicitudes')
-            except IntegrityError:
+            except Exception as e:
+                print("Error en signup:", e)
                 return render(request, 'signup.html', {
-                    'form': UserCreationForm,
-                    'error': "Ha ocurrido un error al guardar el usuario"
+                'error': "Ocurrio un error al registrar el usuario."
                 })
         return render(request, 'signup.html', {
             'form': UserCreationForm,
@@ -139,7 +139,6 @@ def solicitudes_crear(request):
     else:
         try:
             print(request.POST)
-            print(request.session['username'])
 
             id_estado_solicitud = request.POST.get('id_estado_solicitud', None)
                         
@@ -159,50 +158,62 @@ def solicitudes_crear(request):
 
             solicitud.save()
 
-            return render(request, 'crear_solicitud.html')
+            return redirect('solicitudes')
         except Exception as e:
-            print("Error en solicitudes_crear:", e)
-            return render(request, 'crear_solicitud.html', {
-                'error': "Ha ocurrido un error al procesar la solicitud"
-            })
+            if e == "Cliente matching query does not exist.":
+                print("Error en solicitudes_crear:", e)
+                return render(request, 'crear_solicitud.html', {
+                'error': "Usted no se encuentra hablitado para crear una solicitud."
+                })
+            else: 
+                print("Error en solicitudes_crear:", e)
+                return render(request, 'crear_solicitud.html', {
+                'error': "No ha sido posible guardar la solicitud."
+                })
 
 
 @login_required
 def solicitud_detalle(request, solicitud_id):
     if request.method == 'GET':
         solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
-        # estados = 
+
+        estados = EstadosSolicitud.objects.all()
         return render(request, 'solicitud_detalle.html', {
-            'solicitud': solicitud
+            'solicitud': solicitud,
+            'estados': estados
         })
-    else:
-        resultado = actualizar_solicitud(solicitud_id, request)
+    else: #POST
+        r_post = request.POST.copy()
+        r_post.pop('csrfmiddlewaretoken', None)
+        
+        resultado = actualizar_solicitud(r_post, solicitud_id)
+        
         if resultado:
-            return redirect('solicitudes.html')
+            return redirect('solicitudes')
         else:
             return render(request, 'solicitud_detalle.html', {
                 'error': "Ha ocurrido un error al procesar la solicitud"
             })
 
 
-@login_required
-def actualizar_solicitud(request, solicitud_id):
+def actualizar_solicitud(r_post, solicitud_id):
     try:
         solicitud = Solicitud.objects.get(id=solicitud_id)
     except Solicitud.DoesNotExist:
         return False
 
-    for campo, nuevo_valor in request.POST.items():
+    for campo, nuevo_valor in r_post.items():
         if campo == "id_estado_solicitud":
-            nuevo_estado = EstadosSolicitud.objects.get(id=id_estado_solicitud)
+            nuevo_estado = EstadosSolicitud.objects.get(id=nuevo_valor)
             if solicitud.id_estado_solicitud != nuevo_estado:
                 solicitud.id_estado_solicitud = nuevo_estado
+        
         elif getattr(solicitud, campo) != nuevo_valor:
             setattr(solicitud, campo, nuevo_valor)
 
-        if any(getattr(solicitud, campo) != nuevo_valor for campo, nuevo_valor in request.POST.items()):
+        if any(getattr(solicitud, campo) != nuevo_valor for campo, nuevo_valor in r_post.items()):
             solicitud.save()
-        return True
+    return True
 
 
 @login_required

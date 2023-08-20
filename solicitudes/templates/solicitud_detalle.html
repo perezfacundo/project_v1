@@ -10,17 +10,29 @@
             
                 {{error}}
                 {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col">
+                        <label for="Cliente">Nombre</label>
+                        <input type="text" name="cliente" id="cliente" class="form-control" value="{{solicitud.cliente_id}}" disabled readonly>
+                    </div>
+                    <div class="col">
+                        <label for="Cliente">DNI</label>
+                        <input type="text" name="dni" id="dni" class="form-control" value="{{solicitud.cliente_id.dni}}" disabled readonly>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col">
-                        <label for="id">ID</label>
-                        <input type="text" name="id" id="id" class="form-control" value="{{solicitud.id}}" disabled readonly>
+                        <label for="fecha_trabajo">Fecha del trabajo</label>
+                        <input type="date" name="fecha_trabajo" id="fecha_trabajo" class="form-control" value="{{solicitud.fecha_trabajo | date:'Y-m-d'}}">
                     </div>
                     <div class="col">
-                        <label for="fecha_trabajo">Fecha trabajo</label>
-                        <input type="date" name="fecha_trabajo" id="fecha_trabajo" class="form-control" value="{{solicitud.fecha_trabajo}}">
+                        <label for="fecha_solicitud">Fecha de la solicitud</label>
+                        <input type="date" name="fecha_solicitud" id="fecha_solicitud" class="form-control" value="{{solicitud.fecha_solicitud | date:'Y-m-d'}}" disabled readonly>
                     </div>
                 </div>
+                
 
                 <div class="row mb-3">
                     <div class="col">
@@ -30,7 +42,7 @@
                     
                     <div class="col">
                         <label for="direccion_hasta">Hasta</label>
-                    <input type="text" name="direccion_hasta" id="direccion_hasta" class="form-control" value="{{solicitud.direccion_hasta}}">
+                        <input type="text" name="direccion_hasta" id="direccion_hasta" class="form-control" value="{{solicitud.direccion_hasta}}">
                     </div>
                 </div>
                 
@@ -40,8 +52,21 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="estado">Estado</label>
-                    <input name="estado" id="estado" cols="30" rows="5" class="form-control" value="{{solicitud.estados}}" disabled>
+                    <label for="objetos_a_transportar">Objetos a transportar</label>
+                    <textarea name="objetos_a_transportar" id="objetos_a_transportar" cols="30" rows="3" class="form-control">{{solicitud.objetos_a_transportar}}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_estado_solicitud">Si es necesario modifique el estado seleccionando una opcion</label>
+                    <select name="id_estado_solicitud" id="id_estado_solicitud" class="form-control" >
+                        {% for estado in estados %}
+                            {% if estado.id == solicitud.id_estado_solicitud %}
+                                <option value="{{ estado.id }}" selected>{{ estado.descripcion }}</option>
+                            {% else %}
+                                <option value="{{ estado.id }}" >{{ estado.descripcion }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
                 </div>
                 
                 <button class="btn btn-primary">
@@ -53,9 +78,3 @@
 </div>
 
 {% endblock %}
-
-<!-- <h3>{{solicitud.desde}} → {{solicitud.hasta}}, el {{solicitud.fechaTrabajo}}</h3>
-<p>Solicitado el: {{solicitud.fechaSolicitud}}</p>
-<p>Detalles: {{solicitud.detalles}}</p>
-<p>Cliente: {{solicitud.user.username}}</p>
-<P>Estado: {{solicitud.estados}}</P> -->
