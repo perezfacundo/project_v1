@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <section class="col-md-10 mt-5 card card-body">
+            <h1>Empleados</h1>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a class="btn btn-primary" href="/empleados/crear/">Nuevo empleado</a>
+            </div>
+            <hr>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">DNI</th>
+                        <th scope="col">Nombres</th>
+                        <th scope="col">Apellidos</th>
+                        <th scope="col">Edad</th>
+                        <th scope="col">Telefono</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for empleado in empleados_calle %}
+                    <tr>
+                        <th scope="row">{{empleado.id}}</th>
+                        <th>{{empleado.first_name}}</th>
+                        <th>{{empleado.last_name}}</th>
+                        <th>{{empleado.fecha_nac}}</th>
+                        <th>
+                            <div class="container text-center">
+                                <div class="row row-cols-auto">
+                                    <div class="col">
+                                        <form action="{% url 'empleado_detalle' empleado.id %}" method="GET">
+                                            {% csrf_token %}<button class="btn btn-secondary">Detalles</button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="{% url 'empleado_eliminar' empleado.id %}" method="POST">
+                                            {% csrf_token %}<button class="btn btn-danger">Eliminar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                    {% for empleado in empleados_administrativos %}
+                    <tr>
+                        <th scope="row">{{empleado.id}}</th>
+                        <th>{{empleado.first_name}}</th>
+                        <th>{{empleado.last_name}}</th>
+                        <th>{{empleado.fecha_nac}}</th>
+                        <th>
+                            <div class="container text-center">
+                                <div class="row row-cols-auto">
+                                    <div class="col">
+                                        <form action="{% url 'empleado_detalle' empleado.id %}" method="GET">
+                                            {% csrf_token %}<button class="btn btn-secondary">Detalles</button>
+                                        </form>
+                                    </div>
+                                    <div class="col">
+                                        <form action="{% url 'empleado_eliminar' empleado.id %}" method="POST">
+                                            {% csrf_token %}<button class="btn btn-danger">Eliminar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+
+{% endblock %}

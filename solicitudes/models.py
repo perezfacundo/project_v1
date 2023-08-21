@@ -13,6 +13,10 @@ class tipo_usuario(models.Model):
     def __str__(self):
         return f"{self.descripcion}"
 
+    class Meta:
+        verbose_name_plural = "Tipos de usuarios"
+
+
 class Usuario(AbstractUser):
     # id int [primary key]
     # password varchar !
@@ -32,11 +36,17 @@ class Usuario(AbstractUser):
     def __str__(self):
         return f"0{self.id} - {self.last_name} {self.first_name}"
 
+    class Meta:
+        verbose_name_plural = "Usuarios"
+
 class EstadosCliente(models.Model):
     descripcion = models.CharField(max_length=20)
     
     def __str__(self):
         return f"{self.descripcion}"
+
+    class Meta:
+        verbose_name_plural = "Estados de clientes"
 
 class Cliente(Usuario):
     puntos = models.IntegerField()
@@ -45,28 +55,63 @@ class Cliente(Usuario):
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} "
+    
+    class Meta:
+        verbose_name_plural = "Clientes"
 
 class EstadosEmpleadoCalle(models.Model):
     descripcion = models.CharField(max_length=20)
 
+    def __str__(self):
+        return f"{self.descripcion}"
+    
+    class Meta:
+        verbose_name_plural = "Estados de empleados de calle"
+
 class EmpleadoCalle(Usuario):
+    fecha_nac = models.DateField(null=True)
     tipo_carnet = models.CharField(max_length=2)
     ausencias = models.IntegerField()
     id_estado_empleado_calle = models.ForeignKey(EstadosEmpleadoCalle, on_delete=models.CASCADE)
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
 
+    def __str__(self):
+        return f"0{self.id} - {self.last_name} {self.first_name}"
+
+    class Meta:
+        verbose_name_plural = "Empleados de calle"
+
 class EstadosEmpleadoAdmnistrativo(models.Model):
     descripcion = models.CharField(max_length=20)
 
+    def __str__(self):
+        return f"{self.descripcion}"
+
+    class Meta:
+        verbose_name_plural = "Estados de empleados administrativos"
+
 class EmpleadoAdministrativo(Usuario):
+    fecha_nac = models.DateField(null=True)
     ausencias = models.IntegerField()
     id_estado_empleado_administrativo = models.ForeignKey(EstadosEmpleadoAdmnistrativo, on_delete=models.CASCADE)
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
     
+    def __str__(self):
+        return f"0{self.id} - {self.last_name} {self.first_name} {self.id_tipo_usuario.descripcion}"
+
+    class Meta:
+        verbose_name_plural = "Empleados administrativos"
+
 #==================================================
 
 class EstadosSolicitud(models.Model):
     descripcion = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"{self.descripcion}"
+
+    class Meta:
+        verbose_name_plural = "Estados de solicitudes"
 
 class Solicitud(models.Model):
     objetos_a_transportar = models.TextField(max_length=255, null=True) #heladera, sillon, televisor, escritorio
@@ -94,8 +139,20 @@ class Solicitud(models.Model):
 
     fecha_trabajo = models.DateField(blank=False, validators=[validar_dia_habil])
 
+    def __str__(self):
+        return f"ID:{self.id}- Desde:{self.direccion_desde}- Hasta:{self.direccion_hasta}"
+
+    class Meta:
+        verbose_name_plural = "Solicitudes"
+
 class EstadosTransporte(models.Model):
     descripcion = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"{self.descripcion}"
+
+    class Meta:
+        verbose_name_plural = "Estados de solicitudes"
 
 class Transporte(models.Model):
     dominio = models.CharField(max_length=7)
@@ -105,12 +162,30 @@ class Transporte(models.Model):
     capacidad = models.IntegerField()
     id_estado_transporte = models.ForeignKey(EstadosTransporte, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"ID:{self.id}- Dominio:{self.dominio}- Marca:{self.marca}- Nombre:{self.nombre}"
+
+    class Meta:
+        verbose_name_plural = "Transportes"
+
 #=================================================
 
 class SolicitudesEmpleados(models.Model):
     id_solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
     id_empleado = models.ForeignKey(EmpleadoCalle, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.id_solicitud.direccion_desde}/{self.direccion_hasta} el:{self.fecha_trabajo} - {self.id_empleado.first_name} {self.id_empleado.last_name}"
+
+    class Meta:
+        verbose_name_plural = "Solicitudes y Empleados"
+
 class SolicitudesTransportes(models.Model):
     id_solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
     id_transporte = models.ForeignKey(Transporte, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.id_solicitud.direccion_desde}/{self.direccion_hasta} el:{self.fecha_trabajo} - {self.id_transporte.marca} {self.id_transporte.nombre}"
+
+    class Meta:
+        verbose_name_plural = "Solicitudes y Transportes"

@@ -215,6 +215,16 @@ def actualizar_solicitud(r_post, solicitud_id):
             solicitud.save()
     return True
 
+@login_required
+def empleados():
+    empleados_calle = EmpleadoCalle.objects.all()
+    empleados_administrativos = EmpleadoAdministrativo.objects.all()
+
+    return render('empleados.html', {
+        'empleados_calle': empleados_calle,
+        'empleados_administrativos': empleados_administrativos
+    })
+
 
 @login_required
 def solicitud_eliminar(request, solicitud_id):

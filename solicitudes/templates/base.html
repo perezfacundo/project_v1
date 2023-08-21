@@ -21,10 +21,17 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <!-- <li class="nav-item"><a class="nav-link active" href="/">Inicio</a></li> -->
+
           {% if user.is_authenticated %}
           <li class="nav-item"><a class="nav-link" href="/solicitudes">Solicitudes</a></li>
-          <!-- <li class="nav-item"><a class="nav-link" href="/solicitudes/crear">Crear solicitud</a></li> -->
+
+          <!-- si usuario = admin o empleado administrativo then -->
+
+          {% if user.is_staff %}
+          <li class="nav-item"><a class="nav-link" href="/empleados">Empleados</a></li>
+          <li class="nav-item"><a class="nav-link" href="/transportes">Transportes</a></li>
+          {% endif %}
+
           <li class="nav-item"><a class="nav-link" href="/logout">Cerrar sesion</a></li>
           {% else %}
           <li class="nav-item"><a class="nav-link" href="/signup">Registrarse</a></li>

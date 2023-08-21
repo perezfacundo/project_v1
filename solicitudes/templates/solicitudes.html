@@ -35,11 +35,13 @@
                                             {% csrf_token %}<button class="btn btn-secondary">Detalles</button>
                                         </form>
                                     </div>
+                                    {% if user.is_staff %}
                                     <div class="col">
                                         <form action="{% url 'solicitud_eliminar' solicitud.id %}" method="POST">
                                             {% csrf_token %}<button class="btn btn-danger">Eliminar</button>
                                         </form>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </th>
