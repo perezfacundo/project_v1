@@ -22,47 +22,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for empleado in empleados_calle %}
+                    {% for empleado in empleados %}
                     <tr>
-                        <th scope="row">{{empleado.id}}</th>
+                        <th scope="row">{{empleado.dni}}</th>
                         <th>{{empleado.first_name}}</th>
                         <th>{{empleado.last_name}}</th>
                         <th>{{empleado.fecha_nac}}</th>
+                        <th>{{empleado.telefono}}</th>
                         <th>
                             <div class="container text-center">
                                 <div class="row row-cols-auto">
                                     <div class="col">
                                         <form action="{% url 'empleado_detalle' empleado.id %}" method="GET">
-                                            {% csrf_token %}<button class="btn btn-secondary">Detalles</button>
+                                            {% csrf_token %}
+                                            <button class="btn btn-secondary">Detalles</button>
                                         </form>
                                     </div>
                                     <div class="col">
                                         <form action="{% url 'empleado_eliminar' empleado.id %}" method="POST">
-                                            {% csrf_token %}<button class="btn btn-danger">Eliminar</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </th>
-                    </tr>
-                    {% endfor %}
-                    {% for empleado in empleados_administrativos %}
-                    <tr>
-                        <th scope="row">{{empleado.id}}</th>
-                        <th>{{empleado.first_name}}</th>
-                        <th>{{empleado.last_name}}</th>
-                        <th>{{empleado.fecha_nac}}</th>
-                        <th>
-                            <div class="container text-center">
-                                <div class="row row-cols-auto">
-                                    <div class="col">
-                                        <form action="{% url 'empleado_detalle' empleado.id %}" method="GET">
-                                            {% csrf_token %}<button class="btn btn-secondary">Detalles</button>
-                                        </form>
-                                    </div>
-                                    <div class="col">
-                                        <form action="{% url 'empleado_eliminar' empleado.id %}" method="POST">
-                                            {% csrf_token %}<button class="btn btn-danger">Eliminar</button>
+                                            {% csrf_token %}
+                                            <button class="btn btn-danger">Eliminar</button>
                                         </form>
                                     </div>
                                 </div>

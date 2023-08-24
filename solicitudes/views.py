@@ -4,12 +4,14 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
-from .models import Usuario, EstadosCliente, Cliente, EstadosEmpleadoCalle, EmpleadoCalle, EstadosEmpleadoAdmnistrativo, EmpleadoAdministrativo, tipo_usuario, EstadosSolicitud, Solicitud, EstadosTransporte, Transporte, SolicitudesEmpleados, SolicitudesTransportes
+from .models import Usuario, EstadosCliente, Cliente, EstadosEmpleado, Empleado, TiposUsuario, EstadosSolicitud, Solicitud, EstadosVehiculo, Vehiculo, SolicitudesEmpleados, SolicitudesVehiculos
 from django.contrib.auth.decorators import login_required
 import re
 import requests
 from datetime import datetime
 # Create your views here.
+
+# VISTAS AUTENTICACION
 
 
 def home(request):
@@ -81,7 +83,7 @@ def signup(request):
             except Exception as e:
                 print("Error en signup:", e)
                 return render(request, 'signup.html', {
-                'error': "Ocurrio un error al registrar el usuario."
+                    'error': "Ocurrio un error al registrar el usuario."
                 })
         return render(request, 'signup.html', {
             'form': UserCreationForm,
@@ -100,7 +102,8 @@ def signin(request):
             'form': AuthenticationForm
         })
     else:
-        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+        user = authenticate(
+            request, username=request.POST['username'], password=request.POST['password'])
 
         if user is None:
             return render(request, 'signin.html', {
@@ -112,6 +115,14 @@ def signin(request):
             request.session['username'] = user.username
             return redirect('solicitudes')
 
+
+@login_required
+def signout(request):
+    logout(request)
+    return redirect('home')
+
+
+# VISTAS SOLICITUDES
 
 @login_required
 def solicitudes(request):
@@ -132,16 +143,16 @@ def solicitudes(request):
             'error': "Ha ocurrido un error al listar las solicitudes"
         })
 
+
 @login_required
 def solicitudes_crear(request):
     if request.method == 'GET':
-        return render(request, 'crear_solicitud.html')
+        return render(request, 'solicitudes_crear.html')
     else:
         try:
-            print(request.POST)
 
             id_estado_solicitud = request.POST.get('id_estado_solicitud', None)
-                        
+
             solicitud = Solicitud.objects.create(
                 objetos_a_transportar=request.POST['objetos_a_transportar'],
                 detalles=request.POST['detalles'],
@@ -151,9 +162,11 @@ def solicitudes_crear(request):
                 coordenadas_hasta="prueba",
                 pago_faltante=0,
                 devolucion="",
-                id_estado_solicitud=EstadosSolicitud.objects.get(id=id_estado_solicitud),
+                id_estado_solicitud=EstadosSolicitud.objects.get(
+                    id=id_estado_solicitud),
                 fecha_trabajo=request.POST['fecha_trabajo'],
-                cliente_id = Cliente.objects.get(username = request.session['username'])
+                cliente_id=Cliente.objects.get(
+                    username=request.session['username'])
             )
 
             solicitud.save()
@@ -162,13 +175,13 @@ def solicitudes_crear(request):
         except Exception as e:
             if e == "Cliente matching query does not exist.":
                 print("Error en solicitudes_crear:", e)
-                return render(request, 'crear_solicitud.html', {
-                'error': "Usted no se encuentra hablitado para crear una solicitud."
+                return render(request, 'solicitudes_crear.html', {
+                    'error': "Usted no se encuentra hablitado para crear una solicitud."
                 })
-            else: 
+            else:
                 print("Error en solicitudes_crear:", e)
-                return render(request, 'crear_solicitud.html', {
-                'error': "No ha sido posible guardar la solicitud."
+                return render(request, 'solicitudes_crear.html', {
+                    'error': "No ha sido posible guardar la solicitud."
                 })
 
 
@@ -182,12 +195,12 @@ def solicitud_detalle(request, solicitud_id):
             'solicitud': solicitud,
             'estados': estados
         })
-    else: #POST
+    else:  # POST
         r_post = request.POST.copy()
         r_post.pop('csrfmiddlewaretoken', None)
-        
+
         resultado = actualizar_solicitud(r_post, solicitud_id)
-        
+
         if resultado:
             return redirect('solicitudes')
         else:
@@ -196,6 +209,7 @@ def solicitud_detalle(request, solicitud_id):
             })
 
 
+@login_required
 def actualizar_solicitud(r_post, solicitud_id):
     try:
         solicitud = Solicitud.objects.get(id=solicitud_id)
@@ -207,23 +221,13 @@ def actualizar_solicitud(r_post, solicitud_id):
             nuevo_estado = EstadosSolicitud.objects.get(id=nuevo_valor)
             if solicitud.id_estado_solicitud != nuevo_estado:
                 solicitud.id_estado_solicitud = nuevo_estado
-        
+
         elif getattr(solicitud, campo) != nuevo_valor:
             setattr(solicitud, campo, nuevo_valor)
 
         if any(getattr(solicitud, campo) != nuevo_valor for campo, nuevo_valor in r_post.items()):
             solicitud.save()
     return True
-
-@login_required
-def empleados():
-    empleados_calle = EmpleadoCalle.objects.all()
-    empleados_administrativos = EmpleadoAdministrativo.objects.all()
-
-    return render('empleados.html', {
-        'empleados_calle': empleados_calle,
-        'empleados_administrativos': empleados_administrativos
-    })
 
 
 @login_required
@@ -234,7 +238,42 @@ def solicitud_eliminar(request, solicitud_id):
     return redirect('solicitudes')
 
 
+# VISTAS EMPLEADOS
+
 @login_required
-def signout(request):
-    logout(request)
-    return redirect('home')
+def empleados(request):
+    empleados = Empleado.objects.all()
+    try: 
+        
+        return render(request, 'empleados.html', {
+            'empleados': empleados
+        })
+    except Exception as e:
+        print("Error en empleados:", e)
+        return render(request, 'empleados.html', {
+            'error': "Ha ocurrido un error al listar los empleados"
+        })
+
+
+@login_required
+def empleados_crear(request):
+    if request.method == 'GET':
+        return render(request, 'empleados_crear.html')
+    else:
+        try:
+            
+
+@login_required
+def empleado_detalle(request, empleado_id):
+    try:
+        print("Hola")
+    except Exception as e:
+        print("Hola")
+
+
+@login_required
+def empleado_eliminar(request, empleado_id):
+    try:
+        print("Hola")
+    except Exception as e:
+        print("Hola")

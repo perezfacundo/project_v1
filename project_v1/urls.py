@@ -29,9 +29,9 @@ urlpatterns = [
 
     #rutas empleados
     path('empleados/', views.empleados, name='empleados'),
-    # path('empleados/crear/', views.empleados_crear, name='empleados_crear'),
-    # path('empleados/<int:empleado_id/>', views.empleado_detalle, name='empleado_detalle'),
-    # path('empleados/<int:empleado_id/eliminar/>', views.empleado_eliminar, name='empleado_eliminar'),
+    path('empleados/crear/', views.empleados_crear, name='empleados_crear'),
+    path('empleados/<int:empleado_id>/', views.empleado_detalle, name='empleado_detalle'),
+    path('empleados/<int:empleado_id>/eliminar/', views.empleado_eliminar, name='empleado_eliminar'),
 
     #rutas clientes
     # path('clientes/', views.clientes, name='clientes'),
