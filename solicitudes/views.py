@@ -20,9 +20,7 @@ def home(request):
 
 def signup(request):
     if request.method == 'GET':
-        return render(request, 'signup.html', {
-            'form': UserCreationForm
-        })
+        return render(request, 'signup.html')
     else:
         print(request.POST)
         if request.POST['password1'] == request.POST['password2']:
@@ -32,18 +30,15 @@ def signup(request):
                 if validarUsername(request.POST['username']):
                     if Cliente.objects.filter(username=request.POST['username']):
                         return render(request, 'signup.html', {
-                            'form': UserCreationForm,
                             'error': "El nombre de usuario ya pertenece a una cuenta existente"
                         })
                 else:
                     return render(request, 'signup.html', {
-                        'form': UserCreationForm,
                         'error': "El nombre de usuario puede contener solo numeros o letras"
                     })
 
                 if Cliente.objects.filter(email=request.POST['email']):
                     return render(request, 'signup.html', {
-                        'form': UserCreationForm,
                         'error': "El correo electrónico ya pertenece a una cuenta existente"
                     })
 
@@ -51,12 +46,10 @@ def signup(request):
                 if longitud <= 8:
                     if Cliente.objects.filter(dni=request.POST['dni']):
                         return render(request, 'signup.html', {
-                            'form': UserCreationForm,
                             'error': "El dni ya pertenece a una cuenta existente"
                         })
                 else:
                     return render(request, 'signup.html', {
-                        'form': UserCreationForm,
                         'error': "El dni debe tener hasta 8 cifras"
                     })
 
@@ -86,7 +79,6 @@ def signup(request):
                     'error': "Ocurrio un error al registrar el usuario."
                 })
         return render(request, 'signup.html', {
-            'form': UserCreationForm,
             'error': "Las claves no coinciden"
         })
 
@@ -243,8 +235,8 @@ def solicitud_eliminar(request, solicitud_id):
 @login_required
 def empleados(request):
     empleados = Empleado.objects.all()
-    try: 
-        
+    try:
+
         return render(request, 'empleados.html', {
             'empleados': empleados
         })
@@ -260,8 +252,64 @@ def empleados_crear(request):
     if request.method == 'GET':
         return render(request, 'empleados_crear.html')
     else:
+        print(request.POST)
+        password = "hola"
         try:
-            
+            # VALIDACIONES
+            if validarUsername(request.POST['username']):
+                if Usuario.objects.filter(username=request.POST['username']):
+                    return render(request, 'signup.html', {
+                        'error': "El nombre de usuario ya pertenece a una cuenta existente"
+                    })
+            else:
+                return render(request, 'signup.html', {
+                    'error': "El nombre de usuario puede contener solo numeros o letras"
+                })
+
+            if Usuario.objects.filter(email=request.POST['email']):
+                return render(request, 'signup.html', {
+                    'error': "El correo electrónico ya pertenece a una cuenta existente"
+                })
+
+            longitud = len(request.POST['dni'])
+            if longitud <= 8:
+                if Usuario.objects.filter(dni=request.POST['dni']):
+                    return render(request, 'signup.html', {
+                        'error': "El dni ya pertenece a una cuenta existente"
+                    })
+            else:
+                return render(request, 'signup.html', {'error': "El dni debe tener hasta 8 cifras"})
+
+            id_estado_empleado = request.POST.get(
+                            'id_estado_empleado', None)
+            id_tipo_usuario = request.POST.get(
+                            'id_tipo_usuario', None)
+
+            empleado = Empleado.objects.create_user(
+                first_name=request.POST['first_name'],
+                last_name=request.POST['last_name'],
+                username=request.POST['username'],
+                password=password,
+                email=request.POST['email'],
+                dni=request.POST['dni'],
+                telefono=request.POST['telefono'],
+                fecha_nac=request.POST['fecha_nac'],
+                tipo_carnet=request.POST['tipo_carnet'],
+                ausencias=0,
+                id_estado_empleado=EstadosEmpleado.objects.get(
+                                id=id_estado_empleado),
+                    id_tipo_usuario=TiposUsuario.objects.get(
+                                id=id_tipo_usuario)
+            )
+            empleado.save()
+            login(request, empleado)
+            return redirect('empleados')
+        except Exception as e:
+            print("Error en empleados_crear:", e)
+            return render(request, 'empleados_crear.html', {
+                'error': "Ocurrio un error al registrar el empleado."
+            })
+
 
 @login_required
 def empleado_detalle(request, empleado_id):
