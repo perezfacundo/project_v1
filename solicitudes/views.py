@@ -118,6 +118,9 @@ def signout(request):
 
 @login_required
 def solicitudes(request):
+
+    # si soy cliente listar mis solicitudes, si soy empleado o administrador listar todas
+
     solicitudes = Solicitud.objects.all()
 
     try:
@@ -168,11 +171,13 @@ def solicitudes_crear(request):
             if e == "Cliente matching query does not exist.":
                 print("Error en solicitudes_crear:", e)
                 return render(request, 'solicitudes_crear.html', {
+                    'solicitud': solicitud,
                     'error': "Usted no se encuentra hablitado para crear una solicitud."
                 })
             else:
                 print("Error en solicitudes_crear:", e)
                 return render(request, 'solicitudes_crear.html', {
+                    'solicitud': solicitud,
                     'error': "No ha sido posible guardar la solicitud."
                 })
 
@@ -181,7 +186,6 @@ def solicitudes_crear(request):
 def solicitud_detalle(request, solicitud_id):
     if request.method == 'GET':
         solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
-
         estados = EstadosSolicitud.objects.all()
         return render(request, 'solicitud_detalle.html', {
             'solicitud': solicitud,
@@ -197,11 +201,10 @@ def solicitud_detalle(request, solicitud_id):
             return redirect('solicitudes')
         else:
             return render(request, 'solicitud_detalle.html', {
-                'error': "Ha ocurrido un error al procesar la solicitud"
+                'error': "Ha ocurrido un error al modificar los datos de la solicitud."
             })
 
 
-@login_required
 def actualizar_solicitud(r_post, solicitud_id):
     try:
         solicitud = Solicitud.objects.get(id=solicitud_id)
@@ -217,8 +220,8 @@ def actualizar_solicitud(r_post, solicitud_id):
         elif getattr(solicitud, campo) != nuevo_valor:
             setattr(solicitud, campo, nuevo_valor)
 
-        if any(getattr(solicitud, campo) != nuevo_valor for campo, nuevo_valor in r_post.items()):
-            solicitud.save()
+    if any(getattr(solicitud, campo) != nuevo_valor for campo, nuevo_valor in r_post.items()):
+        solicitud.save()
     return True
 
 
@@ -281,9 +284,9 @@ def empleados_crear(request):
                 return render(request, 'signup.html', {'error': "El dni debe tener hasta 8 cifras"})
 
             id_estado_empleado = request.POST.get(
-                            'id_estado_empleado', None)
+                'id_estado_empleado', None)
             id_tipo_usuario = request.POST.get(
-                            'id_tipo_usuario', None)
+                'id_tipo_usuario', None)
 
             empleado = Empleado.objects.create_user(
                 first_name=request.POST['first_name'],
@@ -297,9 +300,9 @@ def empleados_crear(request):
                 tipo_carnet=request.POST['tipo_carnet'],
                 ausencias=0,
                 id_estado_empleado=EstadosEmpleado.objects.get(
-                                id=id_estado_empleado),
-                    id_tipo_usuario=TiposUsuario.objects.get(
-                                id=id_tipo_usuario)
+                    id=id_estado_empleado),
+                id_tipo_usuario=TiposUsuario.objects.get(
+                    id=id_tipo_usuario)
             )
             empleado.save()
             login(request, empleado)
@@ -313,15 +316,56 @@ def empleados_crear(request):
 
 @login_required
 def empleado_detalle(request, empleado_id):
+    if request.method == 'GET':
+        empleado = get_object_or_404(Empleado, pk=empleado_id)
+        estados = EstadosEmpleado.objects.all()
+        
+        return render(request, 'empleado_detalle.html', {
+            'empleado': empleado,
+            'estados': estados
+        })
+    else:  # POST
+        
+        r_post = request.POST.copy()
+        r_post.pop('csrfmiddlewaretoken', None)
+        
+        resultado = actualizar_empleado(r_post, empleado_id)
+
+        if resultado:
+            return redirect('empleados')
+        else:
+            return render(request, 'empleado_detalle.html', {
+                'error': "Ha ocurrido un error al modificar los datos del empleado."
+            })
+
+
+def actualizar_empleado(r_post, empleado_id):
     try:
-        print("Hola")
-    except Exception as e:
-        print("Hola")
+        empleado = Empleado.objects.get(id=empleado_id)
+    except Empleado.DoesNotExist:
+        return False
+
+    for campo, nuevo_valor in r_post.items():
+
+        try:
+            if campo == "id_estado_empleado":
+                nuevo_estado = EstadosEmpleado.objects.get(id=nuevo_valor)
+                if empleado.id_estado_empleado != nuevo_estado:
+                    empleado.id_estado_empleado = nuevo_estado
+
+            elif getattr(empleado, campo) != nuevo_valor:
+                setattr(empleado, campo, nuevo_valor)
+        except Exception as e:
+            print("Error en empleado_detalle:", e)
+
+    if any(getattr(empleado, campo) != nuevo_valor for campo, nuevo_valor in r_post.items()):
+        empleado.save()
+    return True
 
 
 @login_required
 def empleado_eliminar(request, empleado_id):
-    try:
-        print("Hola")
-    except Exception as e:
-        print("Hola")
+    empleado = get_object_or_404(Empleado, pk=empleado_id)
+    if request.method == 'POST':
+        empleado.delete()
+    return redirect('empleados')

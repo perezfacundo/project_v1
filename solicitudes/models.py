@@ -79,13 +79,11 @@ class Empleado(Usuario):
     fecha_nac = models.DateField(null=True)
     tipo_carnet = models.CharField(max_length=2)
     ausencias = models.IntegerField()
-    id_estado_empleado = models.ForeignKey(
-        EstadosEmpleado, on_delete=models.CASCADE)
-    usuario = models.OneToOneField(
-        Usuario, on_delete=models.CASCADE, parent_link=True)
+    id_estado_empleado = models.ForeignKey(EstadosEmpleado, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
-        return f"{self.id} - {self.last_name} {self.first_name}"
+        return f"{self.id} - {self.last_name} {self.first_name} / {self.id_estado_empleado.id}"
 
     class Meta:
         verbose_name_plural = "Empleados"
