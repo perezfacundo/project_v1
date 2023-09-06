@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main class="container">
+    <div class="row vh-100 d-flex justify-content-center align-items-center">
+        <div class="col-md-7">
+            <form action="{% url 'vehiculo_detalle' vehiculo.id %}" method="post" class="card-body">
+                <h4 class="mb-3">Modificar los datos de un empleado</h4>
+                {{error}}
+                {% csrf_token %}
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="dominio">Dominio</label>
+                        <input type="text" name="dominio" class="form-control" value="{{vehiculo.dominio}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="marca">Marca</label>
+                        <input type="text" name="marca" class="form-control" value="{{vehiculo.marca}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" name="nombre" class="form-control" value="{{vehiculo.nombre}}">
+                    </div>
+
+                    <div class="col-12">
+                        <label for="modelo">Modelo</label>
+                        <input type="text" name="modelo" class="form-control" value="{{vehiculo.modelo}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="capacidad">Capacidad</label>
+                        <input type="text" name="capacidad" class="form-control" value="{{vehiculo.capacidad}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="id_estado_vehiculo">Modifique si lo requiere</label>
+                        <select name="id_estado_vehiculo" id="id_estado_vehiculo" class="form-select">
+                            {% for estado in estados %}
+                            {% if estado.id == vehiculo.id_estado_vehiculo.id %}
+                            <option value="{{ estado.id }}" selected>{{ estado.descripcion }}</option>
+                            {% else %}
+                            <option value="{{ estado.id }}">{{ estado.descripcion }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <button class="w-100 btn btn-primary btn-lg">
+                    Modificar datos del vehiculo
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

@@ -79,8 +79,10 @@ class Empleado(Usuario):
     fecha_nac = models.DateField(null=True)
     tipo_carnet = models.CharField(max_length=2)
     ausencias = models.IntegerField()
-    id_estado_empleado = models.ForeignKey(EstadosEmpleado, on_delete=models.CASCADE)
-    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
+    id_estado_empleado = models.ForeignKey(
+        EstadosEmpleado, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(
+        Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
         return f"{self.id} - {self.last_name} {self.first_name} / {self.id_estado_empleado.id}"
@@ -154,7 +156,7 @@ class EstadosVehiculo(models.Model):
 
 
 class Vehiculo(models.Model):
-    dominio = models.CharField(max_length=7)
+    dominio = models.CharField(max_length=7, unique=True)
     marca = models.CharField(max_length=20)
     nombre = models.CharField(max_length=30)
     modelo = models.CharField(max_length=4)
@@ -163,7 +165,7 @@ class Vehiculo(models.Model):
         EstadosVehiculo, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"ID:{self.id}- Dominio:{self.dominio}- Marca:{self.marca}- Nombre:{self.nombre}"
+        return f"ID:{self.id}- Dominio:{self.dominio}- Marca:{self.marca}- Nombre:{self.nombre} / Estado:{self.id_estado_vehiculo}"
 
     class Meta:
         verbose_name_plural = "Vehiculos"

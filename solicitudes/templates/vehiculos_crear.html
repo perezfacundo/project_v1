@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main class="container">
+    <div class="row vh-100 d-flex justify-content-center align-items-center">
+        <div class="col-md-7">
+            <form action="/vehiculos/crear/" method="post" class="card-body">
+                <h4 class="mb-3">Registrar nuevo vehiculo</h4>
+                {{error}}
+                {% csrf_token %}
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="dominio">Dominio</label>
+                        <input type="text" name="dominio" class="form-control">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="marca">Marca</label>
+                        <input type="text" name="marca" class="form-control">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" name="nombre" class="form-control">
+                    </div>
+
+                    <div class="col-12">
+                        <label for="modelo">Modelo</label>
+                        <input type="text" name="modelo" class="form-control">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="capacidad">Capacidad</label>
+                        <input type="text" name="capacidad" class="form-control">
+                    </div>
+
+                    <input type="hidden" name="id_estado_vehiculo" value="1">
+
+                </div>
+
+                <hr>
+
+                <button class="w-100 btn btn-primary btn-lg">
+                    Registrar empleado
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}
