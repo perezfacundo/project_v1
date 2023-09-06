@@ -15,6 +15,7 @@ from datetime import datetime
 
 
 def home(request):
+    logout(request)
     return render(request, 'home.html')
 
 
@@ -256,7 +257,7 @@ def empleados_crear(request):
         return render(request, 'empleados_crear.html')
     else:
         print(request.POST)
-        password = "hola"
+        password = "hola"  # cambiar por string compuesto por partes de fecha_nac y dni del empleado. Para que antes de dar de alta el empleado, el mismo pueda cambiar su password
         try:
             # VALIDACIONES
             if validarUsername(request.POST['username']):
@@ -305,7 +306,6 @@ def empleados_crear(request):
                     id=id_tipo_usuario)
             )
             empleado.save()
-            login(request, empleado)
             return redirect('empleados')
         except Exception as e:
             print("Error en empleados_crear:", e)
@@ -319,16 +319,16 @@ def empleado_detalle(request, empleado_id):
     if request.method == 'GET':
         empleado = get_object_or_404(Empleado, pk=empleado_id)
         estados = EstadosEmpleado.objects.all()
-        
+
         return render(request, 'empleado_detalle.html', {
             'empleado': empleado,
             'estados': estados
         })
     else:  # POST
-        
+
         r_post = request.POST.copy()
         r_post.pop('csrfmiddlewaretoken', None)
-        
+
         resultado = actualizar_empleado(r_post, empleado_id)
 
         if resultado:
@@ -369,3 +369,113 @@ def empleado_eliminar(request, empleado_id):
     if request.method == 'POST':
         empleado.delete()
     return redirect('empleados')
+
+
+# VISTAS VEHICULOS
+
+@login_required
+def vehiculos(request):
+    try:
+        vehiculos = Vehiculo.objects.all()
+        print(vehiculos)
+        return render(request, 'vehiculos.html', {
+            'vehiculos': vehiculos
+        })
+    except Exception as e:
+        print("Error en vehiculos:", e)
+        return render(request, 'vehiculos.html', {
+            'error': "Ha ocurrido un error al listar los vehiculos"
+        })
+
+
+@login_required
+def vehiculos_crear(request):
+    vehiculo = ""
+    if request.method == 'GET':
+        return render(request, 'vehiculos_crear.html')
+    else:
+        try:
+
+            id_estado_vehiculo = request.POST.get('id_estado_vehiculo', None)
+            vehiculo = Vehiculo.objects.create(
+                dominio=request.POST['dominio'],
+                marca=request.POST['marca'],
+                nombre=request.POST['nombre'],
+                modelo=request.POST['modelo'],
+                capacidad=request.POST['capacidad'],
+                id_estado_vehiculo=EstadosVehiculo.objects.get(
+                    id=id_estado_vehiculo)
+            )
+
+            vehiculo.save()
+
+            return redirect('vehiculos')
+        except Exception as e:  # revisar bug
+            if e == "UNIQUE constraint failed: solicitudes_vehiculo.dominio":
+                print("Error en patente ", e)
+                return render(request, 'vehiculos_crear.html', {
+                    'vehiculo': vehiculo,
+                    'error': "El dominio ya pertenece a otro vehiculo registrado"
+                })
+            else:
+                print("Error en vehiculos_crear: ", e)
+                return render(request, 'vehiculos_crear.html', {
+                    'vehiculo': vehiculo,
+                    'error': "No se pudo registrar el vehiculo"
+                })
+
+
+@login_required
+def vehiculo_detalle(request, vehiculo_id):
+    if request.method == 'GET':
+        vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
+        estados = EstadosVehiculo.objects.all()
+
+        return render(request, 'vehiculo_detalle.html', {
+            'vehiculo': vehiculo,
+            'estados': estados
+        })
+    else:  # POST
+
+        r_post = request.POST.copy()
+        r_post.pop('csrfmiddlewaretoken', None)
+        resultado = actualizar_vehiculo(r_post, vehiculo_id)
+
+        if resultado:
+            return redirect('vehiculos')
+        else:
+            return render(request, 'vehiculo_detalle.html', {
+                'error': "Ha ocurrido un error al modificar los datos del vehiculo"
+            })
+
+
+def actualizar_vehiculo(r_post, vehiculo_id):
+    try:
+        vehiculo = Vehiculo.objects.get(id=vehiculo_id)
+    except Vehiculo.DoesNotExist:
+        return False
+
+    for campo, nuevo_valor in r_post.items():
+        try:
+            if campo == 'id_estado_vehiculo':
+                nuevo_estado = EstadosVehiculo.objects.get(id=nuevo_valor)
+                if vehiculo.id_estado_vehiculo != nuevo_estado:
+                    vehiculo.id_estado_vehiculo = nuevo_estado
+            elif getattr(vehiculo, campo) != nuevo_valor:
+                setattr(vehiculo, campo, nuevo_valor)
+        except Exception as e:
+            print("Error en actualizar vehiculo: ", e)
+
+    if any(getattr(vehiculo, campo) != nuevo_valor for campo, nuevo_valor in r_post.items()):
+        vehiculo.save()
+    return True
+
+
+@login_required
+def vehiculo_eliminar(request, vehiculo_id):
+    vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
+    if request.method == 'POST':
+        vehiculo.delete()
+    return redirect('vehiculos')
+
+# VISTAS CLIENTES
