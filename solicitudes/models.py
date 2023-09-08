@@ -52,11 +52,10 @@ class EstadosCliente(models.Model):
 
 
 class Cliente(Usuario):
+    fecha_nac = models.DateField(null=True)
     puntos = models.IntegerField()
-    id_estado_cliente = models.ForeignKey(
-        EstadosCliente, on_delete=models.CASCADE)
-    usuario = models.OneToOneField(
-        Usuario, on_delete=models.CASCADE, parent_link=True)
+    id_estado_cliente = models.ForeignKey(EstadosCliente, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} "
@@ -85,7 +84,7 @@ class Empleado(Usuario):
         Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
-        return f"{self.id} - {self.last_name} {self.first_name} / {self.id_estado_empleado.id}"
+        return f"{self.id} - {self.last_name} {self.first_name} / {self.id_tipo_usuario.descripcion}"
 
     class Meta:
         verbose_name_plural = "Empleados"

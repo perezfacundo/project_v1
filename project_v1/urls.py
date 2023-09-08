@@ -40,10 +40,10 @@ urlpatterns = [
     path('vehiculos/<int:vehiculo_id>/eliminar/', views.vehiculo_eliminar, name='vehiculo_eliminar'),
 
     #rutas clientes
-    # path('clientes/', views.clientes, name='clientes'),
-    # path('clientes/crear/', views.clientes_crear, name='clientes_crear'),
-    # path('clientes/<int:clientes_id/>', views.cliente_detalle, name='cliente_detalle'),
-    # path('clientes/<int:clientes_id/eliminar/>', views.cliente_eliminar, name='cliente_eliminar'),
+    path('clientes/', views.clientes, name='clientes'),
+    path('clientes/crear/', views.clientes_crear, name='clientes_crear'),
+    path('clientes/<int:cliente_id>/', views.cliente_detalle, name='cliente_detalle'),
+    path('clientes/<int:cliente_id>/eliminar/', views.cliente_eliminar, name='cliente_eliminar'),
 
     #rutas authenticate
     path('signup/', views.signup, name='signup'),

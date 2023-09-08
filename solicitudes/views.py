@@ -29,7 +29,7 @@ def signup(request):
                 # VALIDACIONES
 
                 if validarUsername(request.POST['username']):
-                    if Cliente.objects.filter(username=request.POST['username']):
+                    if Usuario.objects.filter(username=request.POST['username']):
                         return render(request, 'signup.html', {
                             'error': "El nombre de usuario ya pertenece a una cuenta existente"
                         })
@@ -38,14 +38,14 @@ def signup(request):
                         'error': "El nombre de usuario puede contener solo numeros o letras"
                     })
 
-                if Cliente.objects.filter(email=request.POST['email']):
+                if Usuario.objects.filter(email=request.POST['email']):
                     return render(request, 'signup.html', {
                         'error': "El correo electrónico ya pertenece a una cuenta existente"
                     })
 
                 longitud = len(request.POST['dni'])
                 if longitud <= 8:
-                    if Cliente.objects.filter(dni=request.POST['dni']):
+                    if Usuario.objects.filter(dni=request.POST['dni']):
                         return render(request, 'signup.html', {
                             'error': "El dni ya pertenece a una cuenta existente"
                         })
@@ -67,8 +67,9 @@ def signup(request):
                     telefono=request.POST['telefono'],
                     id_estado_cliente=EstadosCliente.objects.get(
                         id=id_estado_cliente),
-                    id_tipo_usuario=tipo_usuario.objects.get(
+                    id_tipo_usuario=TiposUsuario.objects.get(
                         id=id_tipo_usuario),
+                    fecha_nac=request.POST['fecha_nac'],
                     puntos=0
                 )
                 cliente.save()
@@ -95,6 +96,7 @@ def signin(request):
             'form': AuthenticationForm
         })
     else:
+
         user = authenticate(
             request, username=request.POST['username'], password=request.POST['password'])
 
@@ -120,9 +122,16 @@ def signout(request):
 @login_required
 def solicitudes(request):
 
-    # si soy cliente listar mis solicitudes, si soy empleado o administrador listar todas
+    try:
+        if request.user.id_tipo_usuario.id == 1:  # Cliente
+            solicitudes = Solicitud.objects.filter(cliente_id=request.user.id)
+        elif request.user.id_tipo_usuario.id == 3:  # Administrador
+            solicitudes = Solicitud.objects.all()
+        else:
+            solicitudes = Solicitud.objects.all()  # Filtrar por empleado
 
-    solicitudes = Solicitud.objects.all()
+    except Exception as e:
+        print("Error al listar solicitudes: ", e)
 
     try:
         for solicitud in solicitudes:
@@ -146,7 +155,8 @@ def solicitudes_crear(request):
         return render(request, 'solicitudes_crear.html')
     else:
         try:
-
+            print(request)
+            print(request.session)
             id_estado_solicitud = request.POST.get('id_estado_solicitud', None)
 
             solicitud = Solicitud.objects.create(
@@ -172,13 +182,13 @@ def solicitudes_crear(request):
             if e == "Cliente matching query does not exist.":
                 print("Error en solicitudes_crear:", e)
                 return render(request, 'solicitudes_crear.html', {
-                    'solicitud': solicitud,
+                    # 'REQUEST': request,
                     'error': "Usted no se encuentra hablitado para crear una solicitud."
                 })
             else:
                 print("Error en solicitudes_crear:", e)
                 return render(request, 'solicitudes_crear.html', {
-                    'solicitud': solicitud,
+                    # 'solicitud': solicitud,
                     'error': "No ha sido posible guardar la solicitud."
                 })
 
@@ -257,7 +267,8 @@ def empleados_crear(request):
         return render(request, 'empleados_crear.html')
     else:
         print(request.POST)
-        password = "hola"  # cambiar por string compuesto por partes de fecha_nac y dni del empleado. Para que antes de dar de alta el empleado, el mismo pueda cambiar su password
+        password = request.POST['last_name'] + "E"
+        print(password)
         try:
             # VALIDACIONES
             if validarUsername(request.POST['username']):
@@ -282,7 +293,9 @@ def empleados_crear(request):
                         'error': "El dni ya pertenece a una cuenta existente"
                     })
             else:
-                return render(request, 'signup.html', {'error': "El dni debe tener hasta 8 cifras"})
+                return render(request, 'signup.html', {
+                    'error': "El dni debe tener hasta 8 cifras"
+                })
 
             id_estado_empleado = request.POST.get(
                 'id_estado_empleado', None)
@@ -300,6 +313,7 @@ def empleados_crear(request):
                 fecha_nac=request.POST['fecha_nac'],
                 tipo_carnet=request.POST['tipo_carnet'],
                 ausencias=0,
+                is_staff=1,
                 id_estado_empleado=EstadosEmpleado.objects.get(
                     id=id_estado_empleado),
                 id_tipo_usuario=TiposUsuario.objects.get(
@@ -445,7 +459,7 @@ def vehiculo_detalle(request, vehiculo_id):
             return redirect('vehiculos')
         else:
             return render(request, 'vehiculo_detalle.html', {
-                'error': "Ha ocurrido un error al modificar los datos del vehiculo"
+                'error': "Ha ocurrido un error al actualizar los datos del vehiculo"
             })
 
 
@@ -479,3 +493,80 @@ def vehiculo_eliminar(request, vehiculo_id):
     return redirect('vehiculos')
 
 # VISTAS CLIENTES
+
+
+@login_required
+def clientes_crear(request):
+    print("hola")
+
+
+@login_required
+def clientes(request):
+    clientes = Cliente.objects.all()
+    try:
+        return render(request, 'clientes.html', {
+            'clientes': clientes
+        })
+    except Exception as e:
+        print("Error en clientes: ", e)
+        return render(request, 'clientes.html', {
+            'error': "Ha ocurrido un error al listar los clientes"
+        })
+
+
+@login_required
+def cliente_detalle(request, cliente_id):
+    if request.method == 'GET':
+        cliente = get_object_or_404(Cliente, pk=cliente_id)
+        estados = EstadosCliente.objects.all()
+
+        return render(request, 'cliente_detalle.html', {
+            'cliente': cliente,
+            'estados': estados
+        })
+    else:
+        print(request)
+        r_post = request.POST.copy()
+        print(r_post)
+        r_post.pop('csrfmiddlewaretoken', None)
+        print(r_post)
+
+        resultado = actualizar_cliente(r_post, cliente_id)
+        print(resultado)
+
+        if resultado:
+            return redirect('clientes')
+        else:
+            return render(request, 'cliente_detalle.html', {
+                'error': "Ha ocurrido un error al actualizar los datos del cliente"
+            })
+
+
+def actualizar_cliente(r_post, cliente_id):
+    try:
+        cliente = Cliente.objects.get(id=cliente_id)
+    except Cliente.DoesNotExist:
+        return False
+
+    for campo, nuevo_valor in r_post.items():
+        try:
+            if campo == 'id_estado_cliente':
+                nuevo_estado = EstadosCliente.objects.get(id=nuevo_valor)
+                if cliente.id_estado_cliente != nuevo_estado:
+                    cliente.id_estado_cliente = nuevo_estado
+            elif getattr(cliente, campo) != nuevo_valor:
+                setattr(cliente, campo, nuevo_valor)
+        except Exception as e:
+            print("Error en actualizar cliente: ", e)
+
+    if any(getattr(cliente, campo) != nuevo_valor for campo, nuevo_valor in r_post.items()):
+        cliente.save()
+    return True
+
+
+@login_required
+def cliente_eliminar(request, cliente_id):
+    cliente = get_object_or_404(Cliente, pk=cliente_id)
+    if request.method == 'POST':
+        cliente.delete()
+    return redirect('clientes')

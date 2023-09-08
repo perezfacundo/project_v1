@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<main class="container">
+    <div class="row vh-100 d-flex justify-content-center align-items-center">
+        <div class="col-md-7">
+            <form action="{% url 'cliente_detalle' cliente.id %}" method="post" class="card-body">
+                <h4 class="mb-3">Modificar los datos de un cliente</h4>
+                {{error}}
+                {% csrf_token %}
+
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <label for="first_name">Nombre</label>
+                        <input type="text" name="first_name" class="form-control" value="{{cliente.first_name}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="last_name">Apellido</label>
+                        <input type="text" name="last_name" class="form-control" value="{{cliente.last_name}}">
+                    </div>
+
+                    <div class="input-group">
+                        <span class="input-group-text" id="basic-addon1">@</span>
+                        <input type="text" name="username" class="form-control" value="{{cliente.username}}">
+                    </div>
+
+                    <div class="col-12">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" name="email" class="form-control" value="{{cliente.email}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="dni">DNI</label>
+                        <input type="text" name="dni" class="form-control" value="{{cliente.dni}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="telefono">Telefono</label>
+                        <input type="text" name="telefono" class="form-control" value="{{cliente.telefono}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="fecha_nac">Fecha de nacimiento</label>
+                        <input type="date" name="fecha_nac" class="form-control"
+                            value="{{cliente.fecha_nac | date:'Y-m-d'}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="id_estado_cliente">Modifique si lo requiere</label>
+                        <select name="id_estado_cliente" id="id_estado_cliente" class="form-select">
+                            {% for estado in estados %}
+                            {% if estado.id == empleado.id_estado_cliente.id %}
+                            <option value="{{ estado.id }}" selected>{{ estado.descripcion }}</option>
+                            {% else %}
+                            <option value="{{ estado.id }}">{{ estado.descripcion }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <button class="w-100 btn btn-primary btn-lg">
+                    Modificar datos del cliente
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

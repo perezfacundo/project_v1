@@ -5,10 +5,10 @@
 <div class="container">
     <div class="row">
         <section class="col-md-10 mt-5 card card-body">
-            <h1>Empleados</h1>
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a class="btn btn-primary" href="/empleados/crear/">Nuevo empleado</a>
-            </div>
+            <h1>Clientes</h1>
+            <!-- <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a class="btn btn-primary" href="/clientes/crear/">Nuevo cliente</a>
+            </div> -->
             <hr>
             <table class="table table-hover">
                 <thead>
@@ -16,30 +16,32 @@
                         <th scope="col">DNI</th>
                         <th scope="col">Nombres</th>
                         <th scope="col">Apellidos</th>
-                        <th scope="col">Fecha de nacimiento</th>
+                        <th scope="col">Edad</th>
                         <th scope="col">Telefono</th>
+                        <th scope="col">Estado</th>
                         <th scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for empleado in empleados %}
+                    {% for cliente in clientes %}
                     <tr>
-                        <th scope="row">{{empleado.dni}}</th>
-                        <th>{{empleado.first_name}}</th>
-                        <th>{{empleado.last_name}}</th>
-                        <th>{{empleado.fecha_nac | date:'d-m-Y'}}</th>
-                        <th>{{empleado.telefono}}</th>
+                        <th scope="row">{{cliente.dni}}</th>
+                        <th>{{cliente.first_name}}</th>
+                        <th>{{cliente.last_name}}</th>
+                        <th>{{cliente.fecha_nac | date:'d-m-Y'}}</th>
+                        <th>{{cliente.telefono}}</th>
+                        <th>{{cliente.id_estado_cliente}}</th>
                         <th>
                             <div class="container text-center">
                                 <div class="row row-cols-auto">
                                     <div class="col">
-                                        <form action="{% url 'empleado_detalle' empleado.id %}" method="GET">
+                                        <form action="{% url 'cliente_detalle' cliente.id %}" method="GET">
                                             {% csrf_token %}
                                             <button class="btn btn-secondary">Detalles</button>
                                         </form>
                                     </div>
                                     <div class="col">
-                                        <form action="{% url 'empleado_eliminar' empleado.id %}" method="POST">
+                                        <form action="{% url 'cliente_eliminar' cliente.id %}" method="POST">
                                             {% csrf_token %}
                                             <button class="btn btn-danger">Eliminar</button>
                                         </form>
