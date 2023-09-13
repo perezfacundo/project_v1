@@ -77,7 +77,45 @@
                     </select>
                 </div>
 
-                <button class="btn btn-primary">
+                <div class="row">
+                    <div class="col-sm-6 mb-3">
+                        <label for="sel_empleados">Asignar empleados</label>
+                        {% for empleado in lista_empleados_disponibles %}
+                                <div class="form-check">
+                                    {% if empleado in lista_empleados_asignados %}
+                                        <input class="form-check-input" type="checkbox" name="empleados" value="{{ empleado.id }}"id="empleado_{{ empleado.id }}" checked>
+                                        <label class="form-check-label" for="empleado_{{ empleado.id }}">{{ empleado.last_name }} {{ empleado.first_name }}</label>
+                                    {% else %}
+                                        <input class="form-check-input" type="checkbox" name="empleados" value="{{ empleado.id }}" id="empleado_{{ empleado.id }}">
+                                        <label class="form-check-label" for="empleado_{{ empleado.id }}">{{ empleado.last_name }} {{ empleado.first_name }}</label>
+                                    {% endif %}
+                                </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-sm-6 mb-3">
+                        <label for="sel_vehiculos">Asignar vehiculos</label>
+                        {% for vehiculo in lista_vehiculos_disponibles %}
+                        <div class="form-check">
+                            {% if vehiculo in lista_vehiculos_asignados %}
+                            <input class="form-check-input" type="checkbox" name="vehiculos" value="{{ vehiculo.id }}"
+                                id="vehiculo_{{ vehiculo.id }}" checked>
+                            <label class="form-check-label" for="vehiculo_{{ vehiculo.id }}">
+                                {{ vehiculo.marca }} {{ vehiculo.nombre }}
+                            </label>
+                            {% else %}
+                            <input class="form-check-input" type="checkbox" name="vehiculos" value="{{ vehiculo.id }}"
+                                id="vehiculo_{{ vehiculo.id }}">
+                            <label class="form-check-label" for="vehiculo_{{ vehiculo.id }}">
+                                {{ vehiculo.marca }} {{ vehiculo.nombre }}
+                            </label>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <button type="submit" class="w-100 btn btn-primary btn-lg">
                     Actualizar
                 </button>
             </form>

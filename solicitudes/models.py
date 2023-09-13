@@ -84,7 +84,7 @@ class Empleado(Usuario):
         Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
-        return f"{self.id} - {self.last_name} {self.first_name} / {self.id_tipo_usuario.descripcion}"
+        return f"{self.id}"
 
     class Meta:
         verbose_name_plural = "Empleados"
@@ -164,7 +164,7 @@ class Vehiculo(models.Model):
         EstadosVehiculo, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"ID:{self.id}- Dominio:{self.dominio}- Marca:{self.marca}- Nombre:{self.nombre} / Estado:{self.id_estado_vehiculo}"
+        return f"ID:{self.id}"
 
     class Meta:
         verbose_name_plural = "Vehiculos"
@@ -176,8 +176,11 @@ class SolicitudesEmpleados(models.Model):
     id_solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
     id_empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
 
+    # def __str__(self):
+    #     return f"{self.id_solicitud.direccion_desde}/{self.direccion_hasta} el:{self.fecha_trabajo} - {self.id_empleado.first_name} {self.id_empleado.last_name}"
+
     def __str__(self):
-        return f"{self.id_solicitud.direccion_desde}/{self.direccion_hasta} el:{self.fecha_trabajo} - {self.id_empleado.first_name} {self.id_empleado.last_name}"
+        return f"{self.id_empleado}"
 
     class Meta:
         verbose_name_plural = "Solicitudes y Empleados"
@@ -187,8 +190,13 @@ class SolicitudesVehiculos(models.Model):
     id_solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
     id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
 
+    # def __str__(self):
+    #     return f"{self.id_solicitud.direccion_desde}/{self.direccion_hasta} el:{self.fecha_trabajo} - {self.id_vehiculo.marca} {self.id_vehiculo.nombre}"
+
     def __str__(self):
-        return f"{self.id_solicitud.direccion_desde}/{self.direccion_hasta} el:{self.fecha_trabajo} - {self.id_vehiculo.marca} {self.id_vehiculo.nombre}"
+        # Acceder a las propiedades de la solicitud relacionada
+        solicitud = self.id_solicitud
+        return f"{self.id}"
 
     class Meta:
         verbose_name_plural = "Solicitudes y vehiculos"

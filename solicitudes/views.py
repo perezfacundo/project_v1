@@ -3,13 +3,12 @@ from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from .models import Usuario, EstadosCliente, Cliente, EstadosEmpleado, Empleado, TiposUsuario, EstadosSolicitud, Solicitud, EstadosVehiculo, Vehiculo, SolicitudesEmpleados, SolicitudesVehiculos
 from django.contrib.auth.decorators import login_required
 import re
 import requests
 from datetime import datetime
-# Create your views here.
 
 # VISTAS AUTENTICACION
 
@@ -140,7 +139,8 @@ def solicitudes(request):
             solicitud.fecha_solicitud = solicitud.fecha_solicitud.strftime(
                 "%d/%m/%Y")
         return render(request, 'solicitudes.html', {
-            'solicitudes': solicitudes
+            'solicitudes': solicitudes,
+
         })
     except Exception as e:
         print("Error en solicitudes:", e)
@@ -172,7 +172,7 @@ def solicitudes_crear(request):
                     id=id_estado_solicitud),
                 fecha_trabajo=request.POST['fecha_trabajo'],
                 cliente_id=Cliente.objects.get(
-                    username=request.session['username'])
+                    username=request.user.username)
             )
 
             solicitud.save()
@@ -182,58 +182,147 @@ def solicitudes_crear(request):
             if e == "Cliente matching query does not exist.":
                 print("Error en solicitudes_crear:", e)
                 return render(request, 'solicitudes_crear.html', {
-                    # 'REQUEST': request,
                     'error': "Usted no se encuentra hablitado para crear una solicitud."
                 })
             else:
                 print("Error en solicitudes_crear:", e)
                 return render(request, 'solicitudes_crear.html', {
-                    # 'solicitud': solicitud,
                     'error': "No ha sido posible guardar la solicitud."
                 })
 
 
 @login_required
 def solicitud_detalle(request, solicitud_id):
+    solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
+    estados = EstadosSolicitud.objects.all()
+
+    lista_empleados_disponibles = list(
+        Empleado.objects.filter(id_estado_empleado=1))  # 1 = disponible
+    lista_empleados_asignados = [
+        sel.id_empleado for sel in SolicitudesEmpleados.objects.filter(id_solicitud=solicitud_id)]
+    lista_vehiculos_disponibles = list(
+        Vehiculo.objects.filter(id_estado_vehiculo=1))  # 1 = disponible
+    lista_vehiculos_asignados = [
+        sel.id_vehiculo for sel in SolicitudesVehiculos.objects.filter(id_solicitud=solicitud_id)]
+
     if request.method == 'GET':
-        solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
-        estados = EstadosSolicitud.objects.all()
         return render(request, 'solicitud_detalle.html', {
             'solicitud': solicitud,
-            'estados': estados
+            'estados': estados,
+            'lista_empleados_disponibles': lista_empleados_disponibles,
+            'lista_empleados_asignados': lista_empleados_asignados,
+            'lista_vehiculos_disponibles': lista_vehiculos_disponibles,
+            'lista_vehiculos_asignados': lista_vehiculos_asignados
         })
-    else:  # POST
-        r_post = request.POST.copy()
-        r_post.pop('csrfmiddlewaretoken', None)
+    elif request.method == 'POST':
+        form_data = request.POST.copy()
+        form_data.pop('csrfmiddlewaretoken', None)
 
-        resultado = actualizar_solicitud(r_post, solicitud_id)
+        empleados_asignados = form_data.getlist('empleados')
+        vehiculos_asignados = form_data.getlist('vehiculos')
 
-        if resultado:
+        # 1: Actualizar los datos modificados de la solicitud
+        resultado_solicitud = actualizar_solicitud(solicitud, form_data)
+
+        # 2: Actualizar los empleados asignados al viaje
+        resultado_empleados = actualizar_empleados_asignados(
+            solicitud, empleados_asignados)
+
+        # 3: Actualizar los vehiculos asignados al viaje
+        resultado_vehiculos = actualizar_vehiculos_asignados(
+            solicitud, vehiculos_asignados)
+
+        if resultado_solicitud and resultado_empleados and resultado_vehiculos:
             return redirect('solicitudes')
         else:
+            error = ""
+            if resultado_solicitud is False:
+                error = "No se pudo actualizar la solicitud"
+            elif resultado_empleados is False:
+                error = "No se pudo actualizar la asignacion de empleados a la solicitud"
+            elif resultado_vehiculos is False:
+                error = "No se pudo actualizar la asignacion de vehiculos a la solicitud"
+
             return render(request, 'solicitud_detalle.html', {
-                'error': "Ha ocurrido un error al modificar los datos de la solicitud."
+                'solicitud': solicitud,
+                'estados': estados,
+                'lista_empleados_disponibles': lista_empleados_disponibles,
+                'lista_empleados_asignados': lista_empleados_asignados,
+                'lista_vehiculos_disponibles': lista_vehiculos_disponibles,
+                'lista_vehiculos_asignados': lista_vehiculos_asignados,
+                'error': error
             })
 
 
-def actualizar_solicitud(r_post, solicitud_id):
+@transaction.atomic
+def actualizar_solicitud(solicitud, form_data):
     try:
-        solicitud = Solicitud.objects.get(id=solicitud_id)
-    except Solicitud.DoesNotExist:
+        for campo, nuevo_valor in form_data.items():
+            if campo == "id_estado_solicitud":
+                nuevo_estado = EstadosSolicitud.objects.get(id=nuevo_valor)
+                if solicitud.id_estado_solicitud != nuevo_estado:
+                    solicitud.id_estado_solicitud = nuevo_estado
+            elif campo == "objetos_a_transportar":
+                solicitud.objetos_a_transportar = nuevo_valor
+            elif campo == "detalles":
+                solicitud.detalles = nuevo_valor
+            elif campo == "direccion_desde":
+                solicitud.direccion_desde = nuevo_valor
+            elif campo == "direccion_hasta":
+                solicitud.direccion_hasta = nuevo_valor
+
+        solicitud.save()
+        return True
+    except Exception as e:
+        print("Error al actualizar_solicitud", e)
         return False
 
-    for campo, nuevo_valor in r_post.items():
-        if campo == "id_estado_solicitud":
-            nuevo_estado = EstadosSolicitud.objects.get(id=nuevo_valor)
-            if solicitud.id_estado_solicitud != nuevo_estado:
-                solicitud.id_estado_solicitud = nuevo_estado
 
-        elif getattr(solicitud, campo) != nuevo_valor:
-            setattr(solicitud, campo, nuevo_valor)
+@transaction.atomic
+def actualizar_empleados_asignados(solicitud, lista_empleados_asignados):
+    try:
 
-    if any(getattr(solicitud, campo) != nuevo_valor for campo, nuevo_valor in r_post.items()):
-        solicitud.save()
-    return True
+        # Eliminar registros de empleados deseleccionados
+        empleados_solicitud = SolicitudesEmpleados.objects.filter(
+            id_solicitud=solicitud)
+        for empleado_relacion in empleados_solicitud:
+            if str(empleado_relacion.id_empleado_id) not in lista_empleados_asignados:
+                empleado_relacion.delete()
+
+        # Agregar registros para empleados seleccionados
+        for empleado_id in lista_empleados_asignados:
+            if not SolicitudesEmpleados.objects.filter(id_solicitud=solicitud, id_empleado_id=empleado_id).exists():
+                empleado_relacion = SolicitudesEmpleados(
+                    id_solicitud=solicitud, id_empleado_id=empleado_id)
+                empleado_relacion.save()
+
+        return True
+    except Exception as e:
+        print("Error al actualizar asignacion de empleados", e)
+        return False
+
+
+@transaction.atomic
+def actualizar_vehiculos_asignados(solicitud, lista_vehiculos_asignados):
+    try:
+        # Eliminar registros de vehiculos deselecciondos
+        vehiculos_solicitud = SolicitudesVehiculos.objects.filter(
+            id_solicitud=solicitud)
+        for vehiculo_relacion in vehiculos_solicitud:
+            if str(vehiculo_relacion.id_vehiculo_id) not in lista_vehiculos_asignados:
+                vehiculo_relacion.delete()
+
+        # Agregar registros para vehiculos seleccionados
+        for vehiculo_id in lista_vehiculos_asignados:
+            if not SolicitudesVehiculos.objects.filter(id_solicitud=solicitud, id_vehiculo_id=vehiculo_id).exists():
+                vehiculo_relacion = SolicitudesVehiculos(
+                    id_solicitud=solicitud, id_vehiculo_id=vehiculo_id)
+                vehiculo_relacion.save()
+
+        return True
+    except Exception as e:
+        print("Error al actualizar asignacion de vehiculos", e)
+        return False
 
 
 @login_required
@@ -266,10 +355,8 @@ def empleados_crear(request):
     if request.method == 'GET':
         return render(request, 'empleados_crear.html')
     else:
-        print(request.POST)
-        password = request.POST['last_name'] + "E"
-        print(password)
         try:
+
             # VALIDACIONES
             if validarUsername(request.POST['username']):
                 if Usuario.objects.filter(username=request.POST['username']):
@@ -306,7 +393,7 @@ def empleados_crear(request):
                 first_name=request.POST['first_name'],
                 last_name=request.POST['last_name'],
                 username=request.POST['username'],
-                password=password,
+                password=request.POST['last_name'] + "-e",
                 email=request.POST['email'],
                 dni=request.POST['dni'],
                 telefono=request.POST['telefono'],
@@ -330,9 +417,10 @@ def empleados_crear(request):
 
 @login_required
 def empleado_detalle(request, empleado_id):
+    empleado = get_object_or_404(Empleado, pk=empleado_id)
+    estados = EstadosEmpleado.objects.all()
+
     if request.method == 'GET':
-        empleado = get_object_or_404(Empleado, pk=empleado_id)
-        estados = EstadosEmpleado.objects.all()
 
         return render(request, 'empleado_detalle.html', {
             'empleado': empleado,
@@ -348,9 +436,7 @@ def empleado_detalle(request, empleado_id):
         if resultado:
             return redirect('empleados')
         else:
-            return render(request, 'empleado_detalle.html', {
-                'error': "Ha ocurrido un error al modificar los datos del empleado."
-            })
+            return redirect('empleado_detalle.html')
 
 
 def actualizar_empleado(r_post, empleado_id):
