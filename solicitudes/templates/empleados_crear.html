@@ -17,52 +17,53 @@
             <div class="valid-feedback">Perfecto!</div>
             <div class="invalid-feedback">Este campo es obligatorio</div>
           </div>
-  
+
           <div class="col-sm-6">
             <label for="last_name" class="form-label">Apellido</label>
             <input type="text" class="form-control" id="last-name" name="last_name" required>
             <div class="valid-feedback">Excelente!</div>
             <div class="invalid-feedback">Este campo es obligatorio</div>
           </div>
-  
+
           <div class="input-group">
             <label for="username" class="form-label">Nombre de usuario</label>
             <div class="input-group has-validation">
               <span class="input-group-text" id="inputGroupPrepend">@</span>
-              <input type="text" class="form-control" id="username" name="username" aria-describedby="inputGroupPrepend" required>
+              <input type="text" class="form-control" id="username" name="username" aria-describedby="inputGroupPrepend"
+                required>
               <div class="invalid-feedback">Por favor, escribe un nombre de usuario</div>
               <div class="valid-feedback">Se ve muy bien!</div>
             </div>
           </div>
-  
+
           <div class="col-12">
             <label for="email" class="form-label">Correo electrónico</label>
             <input type="email" class="form-control" id="email" name="email" required>
             <div class="invalid-feedback">Este campo es obligatorio</div>
             <div class="valid-feedback">Perfecto!</div>
           </div>
-  
+
           <div class="col-sm-6">
             <label for="dni" class="form-label">DNI</label>
             <input type="text" class="form-control" name="dni" id="dni" maxlength="8" min="1" required>
             <div class="invalid-feedback">Porfavor escribe tu dni</div>
             <div class="valid-feedback">Bien!</div>
           </div>
-  
+
           <div class="col-sm-6">
             <label for="telefono" class="form-label">Telefono</label>
             <input type="text" class="form-control" name="telefono" id="telefono" maxlength="10" min="10" required>
             <div class="invalid-feedback">Este campo es obligatorio</div>
             <div class="valid-feedback">Perfecto!</div>
           </div>
-  
+
           <div class="col-sm-6">
             <label for="fecha_nac" class="form-label">Fecha de nacimiento</label>
             <input type="date" class="form-control" id="fecha_nac" name="fecha_nac" required>
             <div class="invalid-feedback">Este campo es obligatorio</div>
             <div class="valid-feedback">Excelente!</div>
           </div>
-  
+
           <div class="col-sm-6">
             <label for="tipo_carnet" class="form-label">Tipo de carnet</label>
             <input type="text" name="tipo_carnet" class="form-control text-uppercase" required>
@@ -87,38 +88,38 @@
 <script>
   //control de ingreso de numeros en dni y telefono
   var inputDNI = document.getElementById('dni');
-  inputDNI.addEventListener('input', function() {
-  var valor = inputDNI.value;
-  valor = valor.replace(/[^0-9]/g, '');
-  inputDNI.value = valor;
-});
+  inputDNI.addEventListener('input', function () {
+    var valor = inputDNI.value;
+    valor = valor.replace(/[^0-9]/g, '');
+    inputDNI.value = valor;
+  });
 
   var inputTelefono = document.getElementById('telefono');
-  inputTelefono.addEventListener('input', function() {
-  var valor = inputTelefono.value;
-  valor = valor.replace(/[^0-9]/g, '');
-  inputTelefono.value = valor;
-});
+  inputTelefono.addEventListener('input', function () {
+    var valor = inputTelefono.value;
+    valor = valor.replace(/[^0-9]/g, '');
+    inputTelefono.value = valor;
+  });
 
-(function () {
-  'use strict'
+  (function () {
+    'use strict'
 
-  // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
-  var forms = document.querySelectorAll('.needs-validation')
+    // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+    var forms = document.querySelectorAll('.needs-validation')
 
-  // Bucle sobre ellos y evitar el envío
-  Array.prototype.slice.call(forms)
-    .forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
+    // Bucle sobre ellos y evitar el envío
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
 
-        form.classList.add('was-validated')
-      }, false)
-    })
-})()
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
 </script>
 
 {% endblock %}

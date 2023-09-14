@@ -5,48 +5,80 @@
 <main class="container">
     <div class="row vh-100 d-flex justify-content-center align-items-center">
         <div class="col-md-7">
-            <form action="/vehiculos/crear/" method="post" class="card-body">
+            <form action="/vehiculos/crear/" method="post" class="card-body needs-validation" novalidate>
                 <h4 class="mb-3">Registrar nuevo vehiculo</h4>
                 {{error}}
                 {% csrf_token %}
 
                 <div class="row g-3">
                     <div class="col-sm-6">
-                        <label for="dominio">Dominio</label>
-                        <input type="text" name="dominio" class="form-control">
+                        <label for="dominio" class="form-label">Dominio (patente del vehículo)</label>
+                        <input type="text" class="form-control" id="dominio" name="dominio" required>
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        <div class="valid-feedback">Perfecto!</div>
                     </div>
 
                     <div class="col-sm-6">
-                        <label for="marca">Marca</label>
-                        <input type="text" name="marca" class="form-control">
+                        <label for="marca" class="form-label">Marca</label>
+                        <input type="text" class="form-control" id="marca" name="marca" required>
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        <div class="valid-feedback">Bien!</div>
                     </div>
 
                     <div class="col-sm-6">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" name="nombre" class="form-control">
-                    </div>
-
-                    <div class="col-12">
-                        <label for="modelo">Modelo</label>
-                        <input type="text" name="modelo" class="form-control">
+                        <label for="modelo" class="form-label">Modelo</label>
+                        <input type="text" class="form-control" id="modelo" name="modelo" required>
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        <div class="valid-feedback">Perfecto!</div>
                     </div>
 
                     <div class="col-sm-6">
-                        <label for="capacidad">Capacidad</label>
-                        <input type="text" name="capacidad" class="form-control">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        <div class="valid-feedback">Excelente!</div>
                     </div>
 
-                    <input type="hidden" name="id_estado_vehiculo" value="1">
+                    <div class="col-sm-6">
+                        <label for="capacidad" class="form-label">Capacidad</label>
+                        <input type="text" class="form-control" id="capacidad" name="capacidad" required>
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        <div class="valid-feedback">Bien!</div>
+                    </div>
+
+                    <input type="hidden" name="id_estado_vehiculo" value="1"> <!--Disponible-->
 
                 </div>
 
                 <hr>
 
-                <button class="w-100 btn btn-primary btn-lg">
+                <button type="submit" class="w-100 btn btn-primary btn-lg">
                     Registrar empleado
                 </button>
             </form>
         </div>
     </div>
 </main>
+
+<script>
+    (function () {
+        'use strict'
+
+        // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+        var forms = document.querySelectorAll('.needs-validation')
+
+        // Bucle sobre ellos y evitar el envío
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
 {% endblock %}
