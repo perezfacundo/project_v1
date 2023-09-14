@@ -5,7 +5,7 @@
 <main class="container">
   <div class="row vh-100 d-flex justify-content-center align-items-center">
     <div class="col-md-7">
-      <form action="/empleados/crear/" method="post" class="card-body">
+      <form action="/empleados/crear/" method="post" class="card-body needs-validation">
         <h4 class="mb-3">Registrar un empleado</h4>
         {{error}}
         {% csrf_token %}
@@ -13,12 +13,12 @@
         <div class="row g-3">
           <div class="col-sm-6">
             <label for="first_name">Nombre</label>
-            <input type="text" name="first_name" class="form-control">
+            <input type="text" name="first_name" class="form-control" placeholder="Juan">
           </div>
   
           <div class="col-sm-6">
             <label for="last_name">Apellido</label>
-            <input type="text" name="last_name" class="form-control">
+            <input type="text" name="last_name" class="form-control" placeholder="Perez">
           </div>
   
           <div class="input-group">
@@ -33,12 +33,12 @@
   
           <div class="col-sm-6">
             <label for="dni">DNI</label>
-            <input type="text" name="dni" class="form-control" placeholder="Sin espacios, guiones ni puntos">
+            <input type="text" name="dni" id="dni" class="form-control" maxlength="8" min="1">
           </div>
   
           <div class="col-sm-6">
             <label for="telefono">Telefono</label>
-            <input type="text" name="telefono" class="form-control" placeholder="Sin espacios, guiones ni puntos">
+            <input type="text" name="telefono" id="telefono" class="form-control" maxlength="10" min="10">
           </div>
   
           <div class="col-sm-6">
@@ -48,7 +48,7 @@
   
           <div class="col-sm-6">
             <label for="tipo_carnet">Tipo de carnet</label>
-            <input type="text" name="tipo_carnet" class="form-control">
+            <input type="text" name="tipo_carnet" class="form-control text-uppercase">
           </div>
 
           <input type="hidden" name="id_estado_empleado" value="1">
@@ -64,4 +64,42 @@
     </div>
   </div>
 </main>
+
+<script>
+  //control de ingreso de numeros en dni y telefono
+  var inputDNI = document.getElementById('dni');
+  inputDNI.addEventListener('input', function() {
+  var valor = inputDNI.value;
+  valor = valor.replace(/[^0-9]/g, '');
+  inputDNI.value = valor;
+});
+
+  var inputTelefono = document.getElementById('telefono');
+  inputTelefono.addEventListener('input', function() {
+  var valor = inputTelefono.value;
+  valor = valor.replace(/[^0-9]/g, '');
+  inputTelefono.value = valor;
+});
+
+(function () {
+  'use strict'
+
+  // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+  var forms = document.querySelectorAll('.needs-validation')
+
+  // Bucle sobre ellos y evitar el envío
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+</script>
+
 {% endblock %}

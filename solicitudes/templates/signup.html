@@ -2,64 +2,79 @@
 
 {% block content %}
 
-<main class="container mt-5">
-  <div class="container text-center">
-    <h3 >Formulario de registro</h3>
-    <p>El siguiente es un formulario de registro para habilitar todas las funciones de la aplicacion y que todo funcione de la mejor manera</p>
-  </div>
+<main class="container mt-3">
   <div class="row vh-100 d-flex justify-content-center align-items-center">
-    <div class="col-md-7 mt-3">
-      <form action="/signup/" method="post" class="card-body">
+    <div class="col-md-7">
+      <form action="/signup/" method="post" class="card-body needs-validation" novalidate>
         <h4 class="mb-3">Registrarse</h4>
         {{error}}
         {% csrf_token %}
 
         <div class="row g-3">
           <div class="col-sm-6">
-            <label for="first_name">Nombre</label>
-            <input type="text" name="first_name" class="form-control" autofocus>
+            <label for="first_name" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" required>
+            <div class="valid-feedback">¡Se ve bien!</div>
+            <div class="invalid-feedback">Tu nombre es un campo obligatorio</div>
           </div>
   
           <div class="col-sm-6">
-            <label for="last_name">Apellido</label>
-            <input type="text" name="last_name" class="form-control">
+            <label for="last_name" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="last-name" name="last_name" required>
+            <div class="valid-feedback">Perfecto!</div>
+            <div class="invalid-feedback">Tu apellido es un campo obligatorio</div>
           </div>
   
           <div class="input-group">
-            <span class="input-group-text" id="basic-addon1">@</span>
-            <input type="text" name="username" class="form-control" placeholder="juanperez">
+            <label for="username" class="form-label">Nombre de usuario</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text" id="inputGroupPrepend">@</span>
+              <input type="text" class="form-control" id="username" name="username" aria-describedby="inputGroupPrepend" required>
+              <div class="invalid-feedback">Por favor, elije un nombre de usuario</div>
+              <div class="valid-feedback">Se ve muy bien!</div>
+            </div>
           </div>
 
           <div class="col-sm-6">
-            <label for="email">Correo electrónico</label>
-            <input type="email" name="email" class="form-control" placeholder="juan@ejemplo.com">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <div class="invalid-feedback">Escibe tu correo electrónico</div>
+            <div class="valid-feedback">Excelente!</div>
           </div>
   
           <div class="col-sm-6">
-            <label for="fecha_nac">Fecha de nacimiento</label>
-            <input type="date" name="fecha_nac" class="form-control">
+            <label for="fecha_nac" class="form-label" >Fecha de nacimiento</label>
+            <input type="date" class="form-control" id="fecha_nac" name="fecha_nac" required>
+            <div class="invalid-feedback">Tu fecha de nacimiento es obligatoria</div>
+            <div class="valid-feedback">Perfecto!</div>
           </div>
 
           <div class="col-sm-6">
-            <label for="dni">DNI</label>
-            <input type="text" name="dni" class="form-control" placeholder="Sin espacios, guiones ni puntos">
+            <label for="dni" class="form-label">DNI</label>
+            <input type="text" class="form-control" name="dni" id="dni"  maxlength="8" minlength="1" required>
+            <div class="invalid-feedback">Necesitamos tu dni</div>
+            <div class="valid-feedback">Excelente!</div>
           </div>
   
           <div class="col-sm-6">
-            <label for="telefono">Telefono</label>
-            <input type="text" name="telefono" class="form-control" placeholder="Sin espacios, guiones ni puntos">
+            <label for="telefono" class="form-label">Telefono</label>
+            <input type="text" class="form-control" name="telefono" id="telefono" maxlength="10" minlength="10" required>
+            <div class="invalid-feedback">Tu número de teléfono es importante</div>
+            <div class="valid-feedback">Perfecto!</div>
           </div>
   
           <div class="mb-2">
-            <label for="password1">Contraseña:</label>
-            <input type="password" name="password1" id="password1" class="form-control"
-              placeholder="Escriba su contraseña">
+            <label for="password1" class="form-label">Contraseña:</label>
+            <input type="password" class="form-control" name="password1" id="password1" required>
+            <div class="invalid-feedback">Por favor, escribe tu contraseña</div>
+            <div class="valid-feedback">Perfecto!</div>
           </div>
   
           <div class="mb-2">
-            <label for="password2">Confirme su contraseña:</label>
-            <input type="password" name="password2" id="password2" class="form-control"
-              placeholder="Confirme su contraseña">
+            <label for="password2" class="form-label">Confirme su contraseña:</label>
+            <input type="password" class="form-control" name="password2" id="password2" required>
+            <div class="invalid-feedback">Por favor, confirma tu contraseña</div>
+            <div class="valid-feedback">Perfecto!</div>
           </div>
 
           <input type="hidden" name="id_estado_cliente" value="1">
@@ -68,11 +83,49 @@
 
         <hr>
 
-        <button class="w-100 btn btn-primary btn-lg">
+        <button class="w-100 btn btn-primary btn-lg" type="submit">
           Registrarse
         </button>
       </form>
     </div>
   </div>
 </main>
+
+<script>
+
+(function () {
+  'use strict'
+
+  // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+  var forms = document.querySelectorAll('.needs-validation')
+
+  // Bucle sobre ellos y evitar el envío
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()
+
+//   //control de ingreso de numeros en dni y telefono
+//   var inputDNI = document.getElementById('dni');
+//   inputDNI.addEventListener('input', function() {
+//   var valor = inputDNI.value;
+//   valor = valor.replace(/[^0-9]/g, '');
+//   inputDNI.value = valor;
+// });
+
+//   var inputTelefono = document.getElementById('telefono');
+//   inputTelefono.addEventListener('input', function() {
+//   var valor = inputTelefono.value;
+//   valor = valor.replace(/[^0-9]/g, '');
+//   inputTelefono.value = valor;
+// });
+</script>
 {% endblock %}

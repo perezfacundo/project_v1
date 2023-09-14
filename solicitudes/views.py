@@ -193,6 +193,10 @@ def solicitudes_crear(request):
 
 @login_required
 def solicitud_detalle(request, solicitud_id):
+
+    tipo_usuario = Usuario.objects.get(username=request.user.username)
+    print(tipo_usuario.id_tipo_usuario.id)
+
     solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
     estados = EstadosSolicitud.objects.all()
 
@@ -224,12 +228,16 @@ def solicitud_detalle(request, solicitud_id):
         # 1: Actualizar los datos modificados de la solicitud
         resultado_solicitud = actualizar_solicitud(solicitud, form_data)
 
-        # 2: Actualizar los empleados asignados al viaje
-        resultado_empleados = actualizar_empleados_asignados(
+        resultado_empleados = True
+        resultado_vehiculos = True
+
+        if tipo_usuario.id_tipo_usuario.id != 1:
+            # 2: Actualizar los empleados asignados al viaje
+            resultado_empleados = actualizar_empleados_asignados(
             solicitud, empleados_asignados)
 
-        # 3: Actualizar los vehiculos asignados al viaje
-        resultado_vehiculos = actualizar_vehiculos_asignados(
+            # 3: Actualizar los vehiculos asignados al viaje
+            resultado_vehiculos = actualizar_vehiculos_asignados(
             solicitud, vehiculos_asignados)
 
         if resultado_solicitud and resultado_empleados and resultado_vehiculos:
@@ -280,6 +288,7 @@ def actualizar_solicitud(solicitud, form_data):
 
 @transaction.atomic
 def actualizar_empleados_asignados(solicitud, lista_empleados_asignados):
+    
     try:
 
         # Eliminar registros de empleados deseleccionados
