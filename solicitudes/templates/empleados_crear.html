@@ -5,54 +5,73 @@
 <main class="container">
   <div class="row vh-100 d-flex justify-content-center align-items-center">
     <div class="col-md-7">
-      <form action="/empleados/crear/" method="post" class="card-body needs-validation">
+      <form action="/empleados/crear/" method="post" class="card-body needs-validation" novalidate>
         <h4 class="mb-3">Registrar un empleado</h4>
         {{error}}
         {% csrf_token %}
 
         <div class="row g-3">
           <div class="col-sm-6">
-            <label for="first_name">Nombre</label>
-            <input type="text" name="first_name" class="form-control" placeholder="Juan">
+            <label for="first_name" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" required>
+            <div class="valid-feedback">Perfecto!</div>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
           </div>
   
           <div class="col-sm-6">
-            <label for="last_name">Apellido</label>
-            <input type="text" name="last_name" class="form-control" placeholder="Perez">
+            <label for="last_name" class="form-label">Apellido</label>
+            <input type="text" class="form-control" id="last-name" name="last_name" required>
+            <div class="valid-feedback">Excelente!</div>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
           </div>
   
           <div class="input-group">
-            <span class="input-group-text" id="basic-addon1">@</span>
-            <input type="text" name="username" class="form-control" placeholder="juanperez">
+            <label for="username" class="form-label">Nombre de usuario</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text" id="inputGroupPrepend">@</span>
+              <input type="text" class="form-control" id="username" name="username" aria-describedby="inputGroupPrepend" required>
+              <div class="invalid-feedback">Por favor, escribe un nombre de usuario</div>
+              <div class="valid-feedback">Se ve muy bien!</div>
+            </div>
           </div>
   
           <div class="col-12">
-            <label for="email">Correo electrónico</label>
-            <input type="email" name="email" class="form-control" placeholder="juan@ejemplo.com">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <div class="valid-feedback">Perfecto!</div>
           </div>
   
           <div class="col-sm-6">
-            <label for="dni">DNI</label>
-            <input type="text" name="dni" id="dni" class="form-control" maxlength="8" min="1">
+            <label for="dni" class="form-label">DNI</label>
+            <input type="text" class="form-control" name="dni" id="dni" maxlength="8" min="1" required>
+            <div class="invalid-feedback">Porfavor escribe tu dni</div>
+            <div class="valid-feedback">Bien!</div>
           </div>
   
           <div class="col-sm-6">
-            <label for="telefono">Telefono</label>
-            <input type="text" name="telefono" id="telefono" class="form-control" maxlength="10" min="10">
+            <label for="telefono" class="form-label">Telefono</label>
+            <input type="text" class="form-control" name="telefono" id="telefono" maxlength="10" min="10" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <div class="valid-feedback">Perfecto!</div>
           </div>
   
           <div class="col-sm-6">
-            <label for="fecha_nac">Fecha de nacimiento</label>
-            <input type="date" name="fecha_nac" class="form-control">
+            <label for="fecha_nac" class="form-label">Fecha de nacimiento</label>
+            <input type="date" class="form-control" id="fecha_nac" name="fecha_nac" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <div class="valid-feedback">Excelente!</div>
           </div>
   
           <div class="col-sm-6">
-            <label for="tipo_carnet">Tipo de carnet</label>
-            <input type="text" name="tipo_carnet" class="form-control text-uppercase">
+            <label for="tipo_carnet" class="form-label">Tipo de carnet</label>
+            <input type="text" name="tipo_carnet" class="form-control text-uppercase" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <div class="valid-feedback">Bien!</div>
           </div>
 
-          <input type="hidden" name="id_estado_empleado" value="1">
-          <input type="hidden" name="id_tipo_usuario" value="4">
+          <input type="hidden" name="id_estado_empleado" value="1"> <!-- Disponible -->
+          <input type="hidden" name="id_tipo_usuario" value="4"> <!--Empleado-->
         </div>
 
         <hr>
