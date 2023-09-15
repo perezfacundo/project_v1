@@ -13,16 +13,21 @@
         {% csrf_token %}
 
         <div class="mb-3">
-          <label for="username">Nombre de usuario</label>
-          <input type="text" name="username" class="form-control" placeholder="Escriba su nombre de usuario" autofocus>
+          <label for="username" class="form-label">Nombre de usuario</label>
+          <input type="text" name="username" class="form-control" autofocus>
         </div>
 
         <div class="mb-3">
-          <label for="password">Contraseña:</label>
-          <input type="password" name="password" id="password" class="form-control" placeholder="Escriba su contraseña">
+          <label for="password" class="form-label">Contraseña:</label>
+          <input type="password" name="password" id="password" class="form-control">
         </div>
 
-        <button class="btn btn-primary">
+        <div class="mb-3">
+          <a href="">Olvidé mi contraseña</a><br>
+          <a href="">No tengo cuenta</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
           Iniciar sesion
         </button>
 

@@ -128,9 +128,35 @@ def solicitudes(request):
             solicitudes = Solicitud.objects.all()
         else:
             solicitudes = Solicitud.objects.all()  # Filtrar por empleado
-
     except Exception as e:
         print("Error al listar solicitudes: ", e)
+
+    for solicitud in solicitudes:
+        print(solicitud.fecha_trabajo)
+
+    #FILTROS
+    busqueda_desde = request.GET.get('busqueda_desde')
+    busqueda_hasta = request.GET.get('busqueda_hasta')
+    fecha_desde = request.GET.get('fecha_desde')
+    fecha_hasta = request.GET.get('fecha_hasta')
+    estado = request.GET.get('estado')
+
+    if busqueda_desde:
+        solicitudes = solicitudes.filter(direccion_desde__icontains=busqueda_desde)
+
+    if busqueda_hasta:
+        solicitudes = solicitudes.filter(direccion_hasta__icontains=busqueda_hasta)
+
+    if fecha_desde:
+        solicitudes = solicitudes.filter(fecha_trabajo__gte=fecha_desde)
+    
+    if fecha_hasta:
+        solicitudes = solicitudes.filter(fecha_trabajo__gte=fecha_hasta)
+
+    if estado:
+        solicitudes = solicitudes.filter(id_estado_solicitud=estado)
+
+    estados = EstadosSolicitud.objects.all()
 
     try:
         for solicitud in solicitudes:
@@ -140,7 +166,12 @@ def solicitudes(request):
                 "%d/%m/%Y")
         return render(request, 'solicitudes.html', {
             'solicitudes': solicitudes,
-
+            'estados': estados,
+            'busqueda_desde': busqueda_desde,
+            'busqueda_hasta': busqueda_hasta,
+            'fecha_desde': fecha_desde,
+            'fecha_hasta': fecha_hasta,
+            'estado': estado
         })
     except Exception as e:
         print("Error en solicitudes:", e)
@@ -155,8 +186,6 @@ def solicitudes_crear(request):
         return render(request, 'solicitudes_crear.html')
     else:
         try:
-            print(request)
-            print(request.session)
             id_estado_solicitud = request.POST.get('id_estado_solicitud', None)
 
             solicitud = Solicitud.objects.create(
@@ -195,7 +224,6 @@ def solicitudes_crear(request):
 def solicitud_detalle(request, solicitud_id):
 
     tipo_usuario = Usuario.objects.get(username=request.user.username)
-    print(tipo_usuario.id_tipo_usuario.id)
 
     solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
     estados = EstadosSolicitud.objects.all()

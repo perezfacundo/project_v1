@@ -137,8 +137,8 @@ class Solicitud(models.Model):
     fecha_trabajo = models.DateField(
         blank=False, validators=[validar_dia_habil])
 
-    def __str__(self):
-        return f"ID:{self.id}- Desde:{self.direccion_desde}- Hasta:{self.direccion_hasta}"
+    # def __str__(self):
+    #     return f"ID:{self.id}- Desde:{self.direccion_desde}- Hasta:{self.direccion_hasta}"
 
     class Meta:
         verbose_name_plural = "Solicitudes"

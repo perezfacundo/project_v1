@@ -4,19 +4,57 @@
 
 <div class="container">
     <div class="row">
-        <section class="col-md-10 mt-5 card card-body">
-            <h3>Solicitudes</h3>
+        <div class=" col-md-10 mt-3 pb-0 card card-body" id="filtros">
+                <h5>Filtros</h5>
+                <form method="get" action="{% url 'solicitudes' %}" class="card-body">
+                    <div class="row mb-3">
+
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" name="busqueda_desde" placeholder="Origen"
+                                value="{{busqueda_desde}}">
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" name="busqueda_hasta" placeholder="Destino"
+                                value="{{busqueda_hasta}}">
+                        </div>
+
+                        <div class="col-sm-2">
+                            <input type="date" class="form-control" name="fecha_desde" placeholder="Desde la fecha"
+                                value="{{fecha_desde}}">
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="date" class="form-control" name="fecha_hasta" placeholder="Hasta la fecha"
+                                value="{{fecha_hasta}}">
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-select" name="estado">
+                                <option value="">Estado</option>
+                                {% for estado in estados %}
+                                <option value="{{ estado.id }}">{{ estado.descripcion }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                        </div>
+                    </div>
+                </form>
+        </div>
+
+        <section class="col-md-10 mt-3 card card-body">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                {% if not user.is_staff %}<a class="btn btn-primary" href="/solicitudes/crear/">Nueva solicitud</a>{% endif %}
+                {% if not user.is_staff %}
+                <a class="btn btn-primary" href="/solicitudes/crear/">Nueva solicitud</a>
+                {% endif %}
             </div>
-            <hr>
+
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th scope="col"># ID</th>
                         <th scope="col">Desde</th>
                         <th scope="col">Hasta</th>
-                        <th scope="col">Fecha</th>
+                        <th scope="col">A realizar el</th>
                         <th scope="col">Estado</th>
                         <th scope="col">Acciones</th>
                     </tr>
