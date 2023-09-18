@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container col-md-6 card card-body mt-5">
+    <form action="{% url 'solicitud_calificar' solicitud_id %}" method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col">
+                <label for="calificacion" class="form-label">¿Cómo calificarías nuestro desempeño?</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="rating">
+                    <input type="radio" name="calificacion" value="1" id="estrella1" />
+                    <label for="estrella1" class="star"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="calificacion" value="2" id="estrella2" />
+                    <label for="estrella2" class="star"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="calificacion" value="3" id="estrella3" />
+                    <label for="estrella3" class="star"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="calificacion" value="4" id="estrella4" />
+                    <label for="estrella4" class="star"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="calificacion" value="5" id="estrella5" />
+                    <label for="estrella5" class="star"><i class="bi bi-star-fill"></i></label>
+                  </div>
+            </div>
+        </div>
+      
+        <div class="row">
+            <div class="col">
+                <label for="devolucion" class="form-label">Devolución:</label>
+                <textarea name="devolucion" class="form-control" id="devolucion" rows="4" cols="50"></textarea>
+            </div>
+        </div>
+      
+        <div class="row mt-3">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+        </div>
+      </form>
+</div>
+
+{% endblock %}

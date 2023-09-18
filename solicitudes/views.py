@@ -132,7 +132,7 @@ def solicitudes(request):
         print("Error al listar solicitudes: ", e)
 
     for solicitud in solicitudes:
-        print(solicitud.fecha_trabajo)
+        print(solicitud.id_estado_solicitud.id)
 
     #FILTROS
     busqueda_desde = request.GET.get('busqueda_desde')
@@ -306,7 +306,11 @@ def actualizar_solicitud(solicitud, form_data):
                 solicitud.direccion_desde = nuevo_valor
             elif campo == "direccion_hasta":
                 solicitud.direccion_hasta = nuevo_valor
-
+            elif campo == "calificacion": 
+                solicitud.calificacion = nuevo_valor
+            elif campo == "devolucion":
+                solicitud.devolucion = nuevo_valor
+                
         solicitud.save()
         return True
     except Exception as e:
@@ -358,7 +362,7 @@ def actualizar_vehiculos_asignados(solicitud, lista_vehiculos_asignados):
 
         return True
     except Exception as e:
-        print("Error al actualizar asignacion de vehiculos", e)
+        print("Error al actualzar asignacion de vehiculos", e)
         return False
 
 
@@ -369,6 +373,30 @@ def solicitud_eliminar(request, solicitud_id):
         solicitud.delete()
     return redirect('solicitudes')
 
+@login_required
+def solicitud_calificar(request, solicitud_id):
+    solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
+
+    if request.method == 'GET':
+        return render(request, 'solicitud_calificar.html', {
+            'solicitud_id': solicitud_id
+        })
+    elif request.method == 'POST':
+
+        form_data = request.POST.copy()
+        form_data.pop('csrfmiddlewaretoken', None)
+
+        resultado_solicitud = actualizar_solicitud(solicitud, form_data)
+
+        if resultado_solicitud:
+            return redirect('solicitudes')
+        else:
+            error = "No se pudo guardar los datos"
+
+        return render(request, 'solicitud_calificar.html', {
+            'solicitud': solicitud,
+            'error': error
+        })
 
 # VISTAS EMPLEADOS
 

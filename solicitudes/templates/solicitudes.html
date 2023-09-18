@@ -5,40 +5,40 @@
 <div class="container">
     <div class="row">
         <div class=" col-md-10 mt-3 pb-0 card card-body" id="filtros">
-                <h5>Filtros</h5>
-                <form method="get" action="{% url 'solicitudes' %}" class="card-body">
-                    <div class="row mb-3">
+            <h5>Filtros</h5>
+            <form method="get" action="{% url 'solicitudes' %}" class="card-body">
+                <div class="row mb-3">
 
-                        <div class="col-sm-2">
-                            <input type="text" class="form-control" name="busqueda_desde" placeholder="Origen"
-                                value="{{busqueda_desde}}">
-                        </div>
-                        <div class="col-sm-2">
-                            <input type="text" class="form-control" name="busqueda_hasta" placeholder="Destino"
-                                value="{{busqueda_hasta}}">
-                        </div>
-
-                        <div class="col-sm-2">
-                            <input type="date" class="form-control" name="fecha_desde" placeholder="Desde la fecha"
-                                value="{{fecha_desde}}">
-                        </div>
-                        <div class="col-sm-2">
-                            <input type="date" class="form-control" name="fecha_hasta" placeholder="Hasta la fecha"
-                                value="{{fecha_hasta}}">
-                        </div>
-                        <div class="col-sm-2">
-                            <select class="form-select" name="estado">
-                                <option value="">Estado</option>
-                                {% for estado in estados %}
-                                <option value="{{ estado.id }}">{{ estado.descripcion }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-sm-2">
-                            <button type="submit" class="btn btn-primary">Filtrar</button>
-                        </div>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="busqueda_desde" placeholder="Origen"
+                            value="{{busqueda_desde}}">
                     </div>
-                </form>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" name="busqueda_hasta" placeholder="Destino"
+                            value="{{busqueda_hasta}}">
+                    </div>
+
+                    <div class="col-sm-2">
+                        <input type="date" class="form-control" name="fecha_desde" placeholder="Desde la fecha"
+                            value="{{fecha_desde}}">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="date" class="form-control" name="fecha_hasta" placeholder="Hasta la fecha"
+                            value="{{fecha_hasta}}">
+                    </div>
+                    <div class="col-sm-2">
+                        <select class="form-select" name="estado">
+                            <option value="">Estado</option>
+                            {% for estado in estados %}
+                            <option value="{{ estado.id }}">{{ estado.descripcion }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </div>
+            </form>
         </div>
 
         <section class="col-md-10 mt-3 card card-body">
@@ -57,6 +57,7 @@
                         <th scope="col">A realizar el</th>
                         <th scope="col">Estado</th>
                         <th scope="col">Acciones</th>
+                        <th scope="col">Calificacion</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,7 +73,7 @@
                                 <div class="row row-cols-auto">
                                     <div class="col">
                                         <form action="{% url 'solicitud_detalle' solicitud.id %}" method="GET">
-                                            {% csrf_token %}<button class="btn btn-secondary">Detalles</button>
+                                            {% csrf_token %}<button class="btn btn-info">Detalles</button>
                                         </form>
                                     </div>
                                     {% if user.is_staff %}
@@ -81,9 +82,24 @@
                                             {% csrf_token %}<button class="btn btn-danger">Eliminar</button>
                                         </form>
                                     </div>
+                                    {% else %}
+                                    {% if solicitud.id_estado_solicitud.id == 6 %}
+                                    <div class="col">
+                                        <form action="{% url 'solicitud_calificar' solicitud.id %}" method="GET">
+                                            {% csrf_token %}<button class="btn btn-secondary">Calificar</button>
+                                        </form>
+                                    </div>
+                                    {% endif %}
                                     {% endif %}
                                 </div>
                             </div>
+                        </th>
+                        <th>
+                            {% if solicitud.calificacion is None %}
+                            <p> Sin calificar </p>
+                            {% else %}
+                            <p class="small-rating">{{solicitud.calificacion}}</p>
+                            {% endif %}
                         </th>
                     </tr>
                     {% endfor %}
