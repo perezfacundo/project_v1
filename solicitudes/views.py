@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 import re
 import requests
 from datetime import datetime
+from django.core import serializers
 
 # VISTAS AUTENTICACION
 
@@ -119,65 +120,90 @@ def signout(request):
 # VISTAS SOLICITUDES
 
 @login_required
-def solicitudes(request):
+def solicitudes1(request):
 
-    try:
-        if request.user.id_tipo_usuario.id == 1:  # Cliente
-            solicitudes = Solicitud.objects.filter(cliente_id=request.user.id)
-        elif request.user.id_tipo_usuario.id == 3:  # Administrador
-            solicitudes = Solicitud.objects.all()
-        else:
-            solicitudes = Solicitud.objects.all()  # Filtrar por empleado
-    except Exception as e:
-        print("Error al listar solicitudes: ", e)
+    if request.method == 'GET':
+        try:
+            if request.user.id_tipo_usuario.id == 1:  # Cliente
+                solicitudes = Solicitud.objects.filter(cliente_id=request.user.id)
+            elif request.user.id_tipo_usuario.id == 3:  # Administrador
+                solicitudes = Solicitud.objects.all()
+            else:
+                solicitudes = Solicitud.objects.all()  # Filtrar por empleado
+        except Exception as e:
+            print("Error al listar solicitudes: ", e)
 
-    for solicitud in solicitudes:
-        print(solicitud.id_estado_solicitud.id)
+        #FILTROS
+        busqueda_desde = request.GET.get('busqueda_desde')
+        busqueda_hasta = request.GET.get('busqueda_hasta')
+        fecha_desde = request.GET.get('fecha_desde')
+        fecha_hasta = request.GET.get('fecha_hasta')
+        estado = request.GET.get('estado')
 
-    #FILTROS
-    busqueda_desde = request.GET.get('busqueda_desde')
-    busqueda_hasta = request.GET.get('busqueda_hasta')
-    fecha_desde = request.GET.get('fecha_desde')
-    fecha_hasta = request.GET.get('fecha_hasta')
-    estado = request.GET.get('estado')
+        if busqueda_desde:
+            solicitudes = solicitudes.filter(direccion_desde__icontains=busqueda_desde)
 
-    if busqueda_desde:
-        solicitudes = solicitudes.filter(direccion_desde__icontains=busqueda_desde)
+        if busqueda_hasta:
+            solicitudes = solicitudes.filter(direccion_hasta__icontains=busqueda_hasta)
 
-    if busqueda_hasta:
-        solicitudes = solicitudes.filter(direccion_hasta__icontains=busqueda_hasta)
+        if fecha_desde:
+            solicitudes = solicitudes.filter(fecha_trabajo__gte=fecha_desde)
 
-    if fecha_desde:
-        solicitudes = solicitudes.filter(fecha_trabajo__gte=fecha_desde)
-    
-    if fecha_hasta:
-        solicitudes = solicitudes.filter(fecha_trabajo__gte=fecha_hasta)
+        if fecha_hasta:
+            solicitudes = solicitudes.filter(fecha_trabajo__lte=fecha_hasta)
 
-    if estado:
-        solicitudes = solicitudes.filter(id_estado_solicitud=estado)
+        if estado:
+            solicitudes = solicitudes.filter(id_estado_solicitud=estado)
 
-    estados = EstadosSolicitud.objects.all()
+        estados = EstadosSolicitud.objects.all()
 
-    try:
         for solicitud in solicitudes:
-            solicitud.fecha_trabajo = solicitud.fecha_trabajo.strftime(
-                "%d/%m/%Y")
-            solicitud.fecha_solicitud = solicitud.fecha_solicitud.strftime(
-                "%d/%m/%Y")
-        return render(request, 'solicitudes.html', {
-            'solicitudes': solicitudes,
-            'estados': estados,
-            'busqueda_desde': busqueda_desde,
-            'busqueda_hasta': busqueda_hasta,
-            'fecha_desde': fecha_desde,
-            'fecha_hasta': fecha_hasta,
-            'estado': estado
-        })
-    except Exception as e:
-        print("Error en solicitudes:", e)
-        return render(request, 'solicitudes.html', {
-            'error': "Ha ocurrido un error al listar las solicitudes"
-        })
+            print(solicitud.fecha_trabajo)
+            solicitud.fecha_trabajo = solicitud.fecha_trabajo.strftime("%d/%m/%Y")
+            solicitud.fecha_solicitud = solicitud.fecha_solicitud.strftime("%d/%m/%Y")
+            if solicitud.calificacion is not None:
+                solicitud.estrellas = range(solicitud.calificacion)
+            else:
+                solicitud.estrellas = []
+
+        try:
+
+            return render(request, 'solicitudes.html', {
+                'solicitudes': solicitudes,
+                'estados': estados,
+                'fecha_desde': fecha_desde,
+                'fecha_hasta': fecha_hasta,
+                'estado': estado
+            })
+        except Exception as e:
+            print("Error en solicitudes:", e)
+            return render(request, 'solicitudes.html', {
+                'error': "Ha ocurrido un error al listar las solicitudes"
+            })
+
+@login_required
+def solicitudes(request):
+    return render(request, 'solicitudes.html')
+
+def solicitudes_listado(request):
+    registro = Usuario.objects.get(username=request.session["username"])
+    usuario = {}
+
+    for field in registro._meta.fields:
+        campo = field.name
+        valor = getattr(registro, campo)
+        usuario[campo] = valor
+
+    print(usuario)
+
+    solicitudes = list(Solicitud.objects.values())
+    estados = list(EstadosSolicitud.objects.values())    
+
+    data={
+        'solicitudes':solicitudes,
+        'estados':estados
+    }
+    return JsonResponse(data)
 
 
 @login_required
@@ -229,11 +255,11 @@ def solicitud_detalle(request, solicitud_id):
     estados = EstadosSolicitud.objects.all()
 
     lista_empleados_disponibles = list(
-        Empleado.objects.filter(id_estado_empleado=1))  # 1 = disponible
+        Empleado.objects.filter(id_estado_empleado=1))
     lista_empleados_asignados = [
         sel.id_empleado for sel in SolicitudesEmpleados.objects.filter(id_solicitud=solicitud_id)]
     lista_vehiculos_disponibles = list(
-        Vehiculo.objects.filter(id_estado_vehiculo=1))  # 1 = disponible
+        Vehiculo.objects.filter(id_estado_vehiculo=1))
     lista_vehiculos_asignados = [
         sel.id_vehiculo for sel in SolicitudesVehiculos.objects.filter(id_solicitud=solicitud_id)]
 
@@ -310,7 +336,7 @@ def actualizar_solicitud(solicitud, form_data):
                 solicitud.calificacion = nuevo_valor
             elif campo == "devolucion":
                 solicitud.devolucion = nuevo_valor
-                
+
         solicitud.save()
         return True
     except Exception as e:

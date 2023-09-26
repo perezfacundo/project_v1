@@ -14,6 +14,12 @@ class TiposUsuario(models.Model):
     def __str__(self):
         return f"{self.descripcion}"
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'descripcion': self.descripcion
+        }
+
     class Meta:
         verbose_name_plural = "Tipos de usuarios"
 
