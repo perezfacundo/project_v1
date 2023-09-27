@@ -37,7 +37,7 @@ const listSolicitudes = async () => {
         const data = await response.json();
         const estados = data.estados
         const usuario = data.usuario
-        console.log(usuario)
+        console.log(data.usuario)
 
         let content = '';
         let estado = '';
@@ -51,32 +51,28 @@ const listSolicitudes = async () => {
                     <td>${solicitud.fecha_trabajo}</td>
                     <td>${estado}</td>
                     <td>
-                        <a class="btn" style="background-color:#3B4C7D;" href="">
+                        <a class="btn btn-sm" style="background-color:#3B4C7D;" href="">
                             <i class="bi bi-star-fill" style="color:#FFFFFF"></i>
                         </a>
 
-                        <a class="btn" style="background-color:#357266" href="">
+                        <a class="btn btn-sm" style="background-color:#357266" href="">
                         <i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i>
                         </a>
 
-                        <a class="btn" style="background-color:#C44558" href="">
+                        <a class="btn btn-sm" style="background-color:#C44558" href="">
                             <i class="bi bi-trash-fill" style="color:#FFFFFF"></i>
                         </a>
-                        
                     </td>
+
                     <td>
                     `;
-
             if(solicitud.calificacion != null){
                 for(var i=1; i <= solicitud.calificacion; i++){
                     content+= `
                         <i class="bi bi-star-fill" style="color:#F8DA62;"></i>
                     `
                 }
-            }else{
-                content += `sin calificar`
-            }
-            content += `</td>`
+            }else{content += `sin calificar`}content += `</td>`
         });
         tableBody_Solicitudes.innerHTML = content;
     } catch (ex) {

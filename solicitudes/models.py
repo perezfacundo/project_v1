@@ -41,7 +41,19 @@ class Usuario(AbstractUser):
     id_tipo_usuario = models.ForeignKey(TiposUsuario, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"0{self.id} - {self.last_name} {self.first_name}"
+        return f"0{self.id} - {self.last_name} {self.first_name} {self.id_tipo_usuario.descripcion}"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "is_superuser": self.is_superuser,
+            "is_staff": self.is_staff,
+            "username": self.username,
+            "dni": self.dni,
+            "id_tipo_usuario": self.id_tipo_usuario.descripcion,
+            "is_active": self.is_active,
+            "email":self.email
+        }
 
     class Meta:
         verbose_name_plural = "Usuarios"
@@ -65,6 +77,11 @@ class Cliente(Usuario):
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} "
+
+    def to_dict(self):
+        return {
+            "id_estado_cliente": self.id_estado_cliente.descripcion
+        }
 
     class Meta:
         verbose_name_plural = "Clientes"
@@ -104,6 +121,11 @@ class EstadosSolicitud(models.Model):
     def __str__(self):
         return f"{self.descripcion}"
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "descripcion": self.descripcion
+        }
     class Meta:
         verbose_name_plural = "Estados de solicitudes"
 
@@ -143,8 +165,19 @@ class Solicitud(models.Model):
     fecha_trabajo = models.DateField(
         blank=False, validators=[validar_dia_habil])
 
-    # def __str__(self):
-    #     return f"ID:{self.id}- Desde:{self.direccion_desde}- Hasta:{self.direccion_hasta}"
+    def __str__(self):
+        return f"ID:{self.id}- Desde:{self.direccion_desde}- Hasta:{self.direccion_hasta}"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "direccion_desde": self.direccion_desde,
+            "direccion_hasta": self.direccion_hasta,
+            "fecha_solicitud": self.fecha_solicitud,
+            "fecha_trabajo": self.fecha_trabajo,
+            "calificacion": self.calificacion,
+            "id_estado_solicitud": self.id_estado_solicitud.descripcion
+        }
 
     class Meta:
         verbose_name_plural = "Solicitudes"
