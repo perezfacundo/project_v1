@@ -137,7 +137,7 @@ def solicitudes_listado(request):
     else:
         objSolicitudes = Solicitud.objects.values()
     
-    solicitudes = [solicitud.to_dict() for solicitud in objSolicitudes]
+    solicitudes = [solicitud for solicitud in objSolicitudes]
     print(solicitudes)
     
 

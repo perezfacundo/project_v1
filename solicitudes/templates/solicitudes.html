@@ -4,34 +4,54 @@
 
 {% block content %}
 
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <div class="table-responsive">
-                    <table id="datatable_Solicitudes" class="table">
-                        <caption>
-                            Solicitudes
-                        </caption>
-                        <thead>
-                            <tr>
-                                <th class="centered">#</th>
-                                <th class="centered">Nombres</th>
-                                <th class="centered">Apellidos</th>
-                                <th class="centered">A realizar el</th>
-                                <th class="centered">Estado</th>
-                                <th class="centered">Acciones</th>
-                                <th class="centered">Calificacion</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody_Solicitudes"></tbody>
-                    </table>
-                </div>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <div class="table-responsive">
+                <table id="datatable_Solicitudes" class="table">
+                    <caption>
+                        Solicitudes
+                    </caption>
+                    <thead>
+                        <tr>
+                            <th class="centered">#</th>
+                            <th class="centered">Nombres</th>
+                            <th class="centered">Apellidos</th>
+                            <th class="centered">A realizar el</th>
+                            <th class="centered">Estado</th>
+                            <th class="centered">Acciones</th>
+                            <th class="centered">Calificacion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody_Solicitudes"></tbody>
+                </table>
             </div>
         </div>
     </div>
+</div>
 
+<div class="fixed-bottom mr-3 mb-3">
+    <!-- Botón para generar un gráfico -->
+    <button class="btn btn-primary mb-2" data-toggle="tooltip" data-placement="left" title="Generar Gráfico">
+        <i class="fas fa-chart-bar"></i>
+    </button>
 
+    <!-- Botón para generar un reporte -->
+    <button class="btn btn-success mb-2" data-toggle="tooltip" data-placement="left" title="Generar Reporte">
+        <i class="fas fa-file-alt"></i>
+    </button>
+
+    <!-- Botón para redirigir al usuario al chat -->
+    <a href="enlace-a-tu-chat" target="_blank" class="btn btn-info mb-2" data-toggle="tooltip" data-placement="left" title="Chat con la Empresa">
+        <i class="fas fa-comment"></i>
+    </a>
 </div>
 
 <script src='{% static "js/solicitudes.js" %}'></script>
+
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
 {% endblock %}
