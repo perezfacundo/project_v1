@@ -37,7 +37,9 @@ const listSolicitudes = async () => {
         const data = await response.json();
         const estados = data.estados
         const usuario = data.usuario
-        console.log(data.usuario)
+        console.log(usuario)
+        console.log(data.solicitudes)
+        console.log(estados)
 
         let content = '';
         let estado = '';

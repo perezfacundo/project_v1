@@ -130,14 +130,16 @@ def solicitudes_listado(request):
 
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario = objUsuario.to_dict()
-    print(objUsuario)
+    print(usuario)
 
     if objUsuario.id_tipo_usuario.descripcion == "Cliente":
         objSolicitudes = Solicitud.objects.filter(cliente_id=objUsuario.id)
     else:
         objSolicitudes = Solicitud.objects.values()
-
-    solicitudes = [model_to_dict(solicitud) for solicitud in objSolicitudes]
+    
+    solicitudes = [solicitud.to_dict() for solicitud in objSolicitudes]
+    print(solicitudes)
+    
 
     objEstados = EstadosSolicitud.objects.values()
     estados = list(objEstados)
@@ -147,7 +149,7 @@ def solicitudes_listado(request):
         'estados': estados,
         'usuario': usuario
     }
-    return JsonResponse(data)
+    return JsonResponse(data, safe=False)
 
 
 @login_required
