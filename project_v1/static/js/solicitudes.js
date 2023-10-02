@@ -4,19 +4,19 @@ let dataTableIsInitialized = false;
 function encontrarDescripcion(numero, estados) {
     const estadoEncontrado = estados.find(estado => estado.id === numero);
     if (estadoEncontrado) {
-      return estadoEncontrado.descripcion;
+        return estadoEncontrado.descripcion;
     } else {
-      return 'No se encontró una descripción para el número ' + numero;
+        return 'No se encontró una descripción para el número ' + numero;
     }
-  }
+}
 
-const dataTableOptions={
-    columnDefs:[
-        {className:'centered', targets:[0,1,2,3,4,5,6]},
-        {orderable: false, targets:[5,6]},
-        {searchable: true, targets:[1,2,3]}
+const dataTableOptions = {
+    columnDefs: [
+        { className: 'centered', targets: [0, 1, 2, 3, 4, 5, 6] },
+        { orderable: false, targets: [5, 6] },
+        { searchable: false, targets: [4, 5, 6] }
     ],
-    pageLength:4,
+    pageLength: 4,
     destroy: true
 }
 
@@ -26,7 +26,13 @@ const initDataTable = async () => {
     }
     await listSolicitudes();
 
-    dataTable = $(`#datatable_Solicitudes`).DataTable({dataTableOptions});
+    try {
+        // dataTable = $(`#datatable_Solicitudes`).DataTable({dataTableOptions});
+        dataTable = $(`#datatable_Solicitudes`).DataTable({ ...dataTableOptions });
+
+    } catch (ex) {
+        alert(ex)
+    }
 
     dataTableIsInitialized = true;
 }
@@ -37,9 +43,9 @@ const listSolicitudes = async () => {
         const data = await response.json();
         const estados = data.estados
         const usuario = data.usuario
-        console.log(usuario)
-        console.log(data.solicitudes)
-        console.log(estados)
+        // console.log(usuario)
+        // console.log(data.solicitudes)
+        // console.log(estados)
 
         let content = '';
         let estado = '';
@@ -53,12 +59,12 @@ const listSolicitudes = async () => {
                     <td>${solicitud.fecha_trabajo}</td>
                     <td>${estado}</td>
                     <td>
-                        <a class="btn btn-sm" style="background-color:#3B4C7D;" href="">
+                        <a class="btn btn-sm" style="background-color:#3B4C7D;" >
                             <i class="bi bi-star-fill" style="color:#FFFFFF"></i>
                         </a>
 
                         <a class="btn btn-sm" style="background-color:#357266" href="">
-                        <i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i>
+                            <i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i>
                         </a>
 
                         <a class="btn btn-sm" style="background-color:#C44558" href="">
@@ -68,13 +74,13 @@ const listSolicitudes = async () => {
 
                     <td>
                     `;
-            if(solicitud.calificacion != null){
-                for(var i=1; i <= solicitud.calificacion; i++){
-                    content+= `
+            if (solicitud.calificacion != null) {
+                for (var i = 1; i <= solicitud.calificacion; i++) {
+                    content += `
                         <i class="bi bi-star-fill" style="color:#F8DA62;"></i>
                     `
                 }
-            }else{content += `sin calificar`}content += `</td>`
+            } else { content += `sin calificar` } content += `</td>`
         });
         tableBody_Solicitudes.innerHTML = content;
     } catch (ex) {
