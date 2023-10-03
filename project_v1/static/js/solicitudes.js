@@ -51,6 +51,7 @@ const listSolicitudes = async () => {
         let estado = '';
         data.solicitudes.forEach((solicitud, index) => {
             estado = encontrarDescripcion(solicitud.id_estado_solicitud_id, estados)
+            urlCalificar = `http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/`;
             content += `
                 <tr>
                     <td>${solicitud.id}</td>
@@ -59,7 +60,7 @@ const listSolicitudes = async () => {
                     <td>${solicitud.fecha_trabajo}</td>
                     <td>${estado}</td>
                     <td>
-                        <a class="btn btn-sm" style="background-color:#3B4C7D;" >
+                        <a class="btn btn-sm" style="background-color:#3B4C7D;" href="${urlCalificar}">
                             <i class="bi bi-star-fill" style="color:#FFFFFF"></i>
                         </a>
 
