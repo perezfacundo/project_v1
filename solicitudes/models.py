@@ -50,7 +50,7 @@ class Usuario(AbstractUser):
             "is_staff": self.is_staff,
             "username": self.username,
             "dni": self.dni,
-            "id_tipo_usuario": self.id_tipo_usuario.descripcion,
+            "tipo_usuario": self.id_tipo_usuario.descripcion,
             "is_active": self.is_active,
             "email":self.email
         }
@@ -173,10 +173,10 @@ class Solicitud(models.Model):
             "id": self.id,
             "direccion_desde": self.direccion_desde,
             "direccion_hasta": self.direccion_hasta,
-            "fecha_solicitud": self.fecha_solicitud,
-            "fecha_trabajo": self.fecha_trabajo,
+            "fecha_solicitud": self.fecha_solicitud.strftime("%d-%m-%Y"),
+            "fecha_trabajo": self.fecha_trabajo.strftime("%d-%m-%Y"),
             "calificacion": self.calificacion,
-            "id_estado_solicitud": self.id_estado_solicitud.descripcion
+            "estado": self.id_estado_solicitud.descripcion
         }
 
     class Meta:

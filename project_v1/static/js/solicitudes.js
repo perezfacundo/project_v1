@@ -1,19 +1,10 @@
 let dataTable;
 let dataTableIsInitialized = false;
 
-function encontrarDescripcion(numero, estados) {
-    const estadoEncontrado = estados.find(estado => estado.id === numero);
-    if (estadoEncontrado) {
-        return estadoEncontrado.descripcion;
-    } else {
-        return 'No se encontró una descripción para el número ' + numero;
-    }
-}
-
 const dataTableOptions = {
     columnDefs: [
         { className: 'centered', targets: [0, 1, 2, 3, 4, 5, 6] },
-        { orderable: false, targets: [5, 6] },
+        { orderable: false, targets: [4, 5, 6] },
         { searchable: false, targets: [4, 5, 6] }
     ],
     pageLength: 4,
@@ -27,7 +18,6 @@ const initDataTable = async () => {
     await listSolicitudes();
 
     try {
-        // dataTable = $(`#datatable_Solicitudes`).DataTable({dataTableOptions});
         dataTable = $(`#datatable_Solicitudes`).DataTable({ ...dataTableOptions });
 
     } catch (ex) {
@@ -43,38 +33,35 @@ const listSolicitudes = async () => {
         const data = await response.json();
         const estados = data.estados
         const usuario = data.usuario
-        // console.log(usuario)
-        // console.log(data.solicitudes)
-        // console.log(estados)
+
+        console.log(data.usuario)
 
         let content = '';
         let estado = '';
+        let urlCalificar = '';
+        let urlDetalles = '';
+        let urlEliminar = '';
+
         data.solicitudes.forEach((solicitud, index) => {
-            estado = encontrarDescripcion(solicitud.id_estado_solicitud_id, estados)
-            urlCalificar = `http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/`;
+            btnCalificar = `<a class="btn btn-sm me-md-2" style="background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;
+            btnDetalles = `<a class="btn btn-sm me-md-2" style="background-color:#357266;" href="http://127.0.0.1:8000/solicitudes/${solicitud.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
+            btnEliminar = `<a class="btn btn-sm me-md-2" style="background-color:#C44558;" href="http://127.0.0.1:8000/solicitudes/eliminar/${solicitud.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
             content += `
                 <tr>
                     <td>${solicitud.id}</td>
                     <td>${solicitud.direccion_desde}</td>
                     <td>${solicitud.direccion_hasta}</td>
                     <td>${solicitud.fecha_trabajo}</td>
-                    <td>${estado}</td>
-                    <td>
-                        <a class="btn btn-sm" style="background-color:#3B4C7D;" href="${urlCalificar}">
-                            <i class="bi bi-star-fill" style="color:#FFFFFF"></i>
-                        </a>
+                    <td>${solicitud.estado}</td>
+                    <td>${btnDetalles}`
+                    
+                    if(solicitud.estado == "Entregado"){
+                        if(usuario.tipo_usuario == "Cliente"){
+                            content += `${btnCalificar}`
+                        }
+                    }
 
-                        <a class="btn btn-sm" style="background-color:#357266" href="">
-                            <i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i>
-                        </a>
-
-                        <a class="btn btn-sm" style="background-color:#C44558" href="">
-                            <i class="bi bi-trash-fill" style="color:#FFFFFF"></i>
-                        </a>
-                    </td>
-
-                    <td>
-                    `;
+                    content += `</td><td>`;
             if (solicitud.calificacion != null) {
                 for (var i = 1; i <= solicitud.calificacion; i++) {
                     content += `

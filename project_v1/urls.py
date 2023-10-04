@@ -27,7 +27,7 @@ urlpatterns = [
     path('solicitudes_listado/', views.solicitudes_listado, name='solicitudes_listado'),
     path('solicitudes/crear/', views.solicitudes_crear, name='solicitudes_crear'),
     path('solicitudes/<int:solicitud_id>/', views.solicitud_detalle, name='solicitud_detalle'),
-    path('solicitudes/<int:solicitud_id>/eliminar/', views.solicitud_eliminar, name='solicitud_eliminar'),
+    path('solicitudes/eliminar/<int:solicitud_id>/', views.solicitud_eliminar, name='solicitud_eliminar'),
     path('solicitudes/calificar/<int:solicitud_id>/', views.solicitud_calificar, name='solicitud_calificar'),
 
     #rutas empleados

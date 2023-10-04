@@ -76,6 +76,7 @@ def signup(request):
                 )
                 cliente.save()
                 login(request, cliente)
+                
                 return redirect('solicitudes')
             except Exception as e:
                 print("Error en signup:", e)
@@ -123,6 +124,7 @@ def signout(request):
 
 @login_required
 def solicitudes(request):
+
     return render(request, 'solicitudes.html')
 
 
@@ -130,22 +132,19 @@ def solicitudes_listado(request):
 
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario = objUsuario.to_dict()
-    print(usuario)
 
     if objUsuario.id_tipo_usuario.descripcion == "Cliente":
-        objSolicitudes = Solicitud.objects.filter(cliente_id=objUsuario.id)
+        solicitudes = Solicitud.objects.filter(cliente_id=objUsuario.id)
     else:
-        objSolicitudes = Solicitud.objects.values()
-    
-    solicitudes = [solicitud for solicitud in objSolicitudes]
-    print(solicitudes)
-    
+        solicitudes = Solicitud.objects.all()
+
+    solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
 
     objEstados = EstadosSolicitud.objects.values()
     estados = list(objEstados)
 
     data = {
-        'solicitudes': solicitudes,
+        'solicitudes': solicitudes_data,
         'estados': estados,
         'usuario': usuario
     }
@@ -341,8 +340,7 @@ def actualizar_vehiculos_asignados(solicitud, lista_vehiculos_asignados):
 @login_required
 def solicitud_eliminar(request, solicitud_id):
     solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
-    if request.method == 'POST':
-        solicitud.delete()
+    solicitud.delete()
     return redirect('solicitudes')
 
 

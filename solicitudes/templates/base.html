@@ -9,7 +9,8 @@
   <title>Transportes Dean Funes</title>
 
   <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
   <!-- CSS de DataTable.js -->
@@ -54,9 +55,32 @@
   {% block content %}
   {% endblock %}
 
+  <div class="floating-buttons">
+    {% if user.is_staff %}
+    <!-- Botón para generar un gráfico -->
+    <a class="btn btn-primary" data-toggle="tooltip" data-placement="left" title="Generar Gráfico"
+        data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        <i class="bi bi-bar-chart-fill"></i>
+    </a>
+
+    <!-- Botón para generar un reporte -->
+    <a class="btn btn-success" data-toggle="tooltip" data-placement="left" title="Generar Reporte">
+        <i class="bi bi-file-earmark-spreadsheet-fill"></i>
+    </a>
+    {% endif %}
+
+    <!-- Botón para redirigir al usuario al chat -->
+    <a href="https://w.app/widget-v1/kS1rmQ.js" target="_blank" class="btn btn-success" data-toggle="tooltip" data-placement="left"
+        title="Chat con la Empresa">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+</div>
+
   <!-- Bootstrap -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+
   <!-- jQuery -->
   <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 
@@ -64,4 +88,5 @@
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 </body>
+
 </html>
