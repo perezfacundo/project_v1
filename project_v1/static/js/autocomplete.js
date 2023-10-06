@@ -9,7 +9,7 @@ function initAutocomplete() {
 
     var options = {
         types: ['address'],
-        componentRestrictions: { country: 'ARG' },
+        componentRestrictions: { country: 'AR' }
     };
 
     var autocomplete1 = new google.maps.places.Autocomplete(input1, options);
@@ -27,17 +27,6 @@ function initAutocomplete() {
 
         latitudInput1.value = latitud;
         longitudInput1.value = longitud;
-
-        // Guardar la dirección y sus coordenadas en un objeto o matriz.
-        var direccion1 = input1.value;
-        var coordenadas1 = { latitud: latitud, longitud: longitud };
-
-        // Puedes almacenar esta información en un objeto o matriz global según tus necesidades.
-        // Ejemplo con un objeto:
-        var direcciones = {
-            direccion1: coordenadas1,
-            direccion2: coordenadas2, // Agrega más direcciones si es necesario.
-        };
     });
 
     autocomplete2.addListener('place_changed', function () {
@@ -52,17 +41,6 @@ function initAutocomplete() {
 
         latitudInput2.value = latitud;
         longitudInput2.value = longitud;
-
-        // Guardar la dirección y sus coordenadas en un objeto o matriz.
-        var direccion2 = input2.value;
-        var coordenadas2 = { latitud: latitud, longitud: longitud };
-
-        // Puedes almacenar esta información en un objeto o matriz global según tus necesidades.
-        // Ejemplo con un objeto:
-        var direcciones = {
-            direccion1: coordenadas1,
-            direccion2: coordenadas2, // Agrega más direcciones si es necesario.
-        };
     });
 }
 
