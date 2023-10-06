@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
 
 <main class="container mt-5">
@@ -20,12 +22,16 @@
 
           <div class="col-12">
             <label for="direccion_desde">¿ Desde qué lugar ?</label>
-            <input type="text" name="direccion_desde" class="form-control">
+            <input type="text" name="direccion_desde" id="direccion1" class="form-control">
+            <input type="hidden" name="latitud_desde" id="latitud1">
+            <input type="hidden" name="longitud_desde" id="longitud1">
           </div>
 
           <div class="col-12">
             <label for="direccion_hasta">¿ Hasta qué lugar ?</label>
-            <input type="text" name="direccion_hasta" class="form-control">
+            <input type="text" name="direccion_hasta" id="direccion2" class="form-control">
+            <input type="hidden" name="latitud_hasta" id="latitud2">
+            <input type="hidden" name="longitud_hasta" id="longitud2">
           </div>
 
           <div class="col-12">
@@ -50,4 +56,8 @@
     </div>
   </div>
 </main>
+
+<script src='{% static "js/autocomplete.js" %}'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBT2JD48DifkZB6hadzvJLtC1u7O5MQEkw&libraries=places"></script></script>
 {% endblock %}

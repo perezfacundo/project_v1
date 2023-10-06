@@ -131,24 +131,21 @@ class EstadosSolicitud(models.Model):
 
 
 class Solicitud(models.Model):
-    # heladera, sillon, televisor, escritorio
+
     objetos_a_transportar = models.TextField(max_length=255, null=True)
     detalles = models.TextField(max_length=255, null=True)
     direccion_desde = models.CharField(max_length=255, null=True)
+    latitud_desde = models. CharField(max_length=13, null=True)
+    longitud_desde = models.CharField(max_length=13, null=True)
     direccion_hasta = models.CharField(max_length=255, null=True)
-    coordenadas_desde = models.CharField(max_length=50, blank=True, null=True)
-    coordenadas_hasta = models.CharField(max_length=50, blank=True, null=True)
+    latitud_hasta = models. CharField(max_length=13, null=True)
+    longitud_hasta = models.CharField(max_length=13, null=True)
     fecha_solicitud = models.DateField(auto_now_add=True)
-    pago_faltante = models.IntegerField(
-        validators=[MinValueValidator(0)])  # 10000
-    calificacion = models.IntegerField(validators=[MinValueValidator(
-        1), MaxValueValidator(5)], null=True)  # de 1☆ a 5☆
-    # Los trabajadores fueron puntuales. Las cosas llegaron a destino en perfecto estado
+    pago_faltante = models.IntegerField(validators=[MinValueValidator(0)])
+    calificacion = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True)  # de 1☆ a 5☆
     devolucion = models.TextField(max_length=200)
-    id_estado_solicitud = models.ForeignKey(
-        EstadosSolicitud, on_delete=models.CASCADE)
-    cliente_id = models.ForeignKey(
-        Cliente, on_delete=models.CASCADE, default=1)
+    id_estado_solicitud = models.ForeignKey(EstadosSolicitud, on_delete=models.CASCADE)
+    cliente_id = models.ForeignKey(Cliente, on_delete=models.CASCADE, default=1)
 
     def validar_dia_habil(value):
         if value < datetime.date.today():

@@ -76,7 +76,7 @@ def signup(request):
                 )
                 cliente.save()
                 login(request, cliente)
-                
+
                 return redirect('solicitudes')
             except Exception as e:
                 print("Error en signup:", e)
@@ -162,10 +162,14 @@ def solicitudes_crear(request):
             solicitud = Solicitud.objects.create(
                 objetos_a_transportar=request.POST['objetos_a_transportar'],
                 detalles=request.POST['detalles'],
+
                 direccion_desde=request.POST['direccion_desde'],
+                latitud_desde=request.POST['latitud_desde'],
+                longitud_desde=request.POST['longitud_desde'],
+
                 direccion_hasta=request.POST['direccion_hasta'],
-                coordenadas_desde="prueba",
-                coordenadas_hasta="prueba",
+                latitud_hasta=request.POST['latitud_hasta'],
+                longitud_hasta=request.POST['longitud_hasta'],
                 pago_faltante=0,
                 devolucion="",
                 id_estado_solicitud=EstadosSolicitud.objects.get(
