@@ -19,7 +19,7 @@ const initDataTable = async () => {
 
     try {
         dataTable = $(`#datatable_Solicitudes`).DataTable({ ...dataTableOptions });
-
+        $('#dataTable_Solicitudes').find('tbody td').css('font-size', '12px');
     } catch (ex) {
         alert(ex)
     }
@@ -70,6 +70,7 @@ const listSolicitudes = async () => {
                 }
             } else { content += `sin calificar` } content += `</td>`
         });
+
         tableBody_Solicitudes.innerHTML = content;
     } catch (ex) {
         alert(ex);

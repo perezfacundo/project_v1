@@ -34,12 +34,65 @@
         <ul class="navbar-nav ms-auto">
 
           {% if user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="/solicitudes">Solicitudes</a></li>
+          <!-- Solicitudes -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Solicitudes
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/solicitudes">Listado</a></li>
+              <li><a class="dropdown-item" href="/solicitudes/crear">Nueva solicitud</a></li>
+              {% if user.is_staff %}
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="#">Reportes</a></li>
+              {% endif %}
+            </ul>
+          </li>
 
           {% if user.is_staff %}
-          <li class="nav-item"><a class="nav-link" href="/empleados">Empleados</a></li>
-          <li class="nav-item"><a class="nav-link" href="/vehiculos">Vehiculos</a></li>
-          <li class="nav-item"><a class="nav-link" href="/clientes">Clientes</a></li>
+          <!-- Empleados -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">Empleados</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/empleados">Listado</a></li>
+              <li><a class="dropdown-item" href="/empleados/crear">Nuevo empleado</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="#">Reportes</a></li>
+            </ul>
+          </li>
+
+          <!-- Vehiculos -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">Vehiculos</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/vehiculos">Listado</a></li>
+              <li><a class="dropdown-item" href="/vehiculos/crear">Nuevo vehiculo</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="#">Reportes</a></li>
+            </ul>
+          </li>
+
+          <!-- Clientes -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">Clientes</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/clientes">Listado</a></li>
+              <li><a class="dropdown-item" href="/clientes/crear">Nuevo cliente</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="#">Reportes</a></li>
+            </ul>
+          </li>
           {% endif %}
 
           <li class="nav-item"><a class="nav-link" href="/logout">Cerrar sesion</a></li>

@@ -373,8 +373,11 @@ def solicitud_calificar(request, solicitud_id):
             'error': error
         })
 
-# VISTAS EMPLEADOS
+@login_required
+def solicitudes_reportes(request):
+    
 
+# VISTAS EMPLEADOS
 
 @login_required
 def empleados(request):
