@@ -375,7 +375,18 @@ def solicitud_calificar(request, solicitud_id):
 
 @login_required
 def solicitudes_reportes(request):
-    
+    solicitudes = Solicitud.objects.all()
+
+    solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
+
+    objEstados = EstadosSolicitud.objects.values()
+    estados = list(objEstados)
+
+    data = {
+        'solicitudes': solicitudes_data,
+        'estados': estados
+    }
+    return JsonResponse(data, safe=False)
 
 # VISTAS EMPLEADOS
 
