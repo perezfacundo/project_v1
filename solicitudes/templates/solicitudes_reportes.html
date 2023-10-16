@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<form id="form-filtros" method="POST">
+    {% csrf_token %}
+    <label for="start-date">Fecha de inicio:</label>
+    <input type="date" id="start-date" name="start_date">
+    <label for="end-date">Fecha de fin:</label>
+    <input type="date" id="end-date" name="end_date">
+    <label for="group-by">Agrupar por:</label>
+    <select id="group-by" name="group_by">
+        <option value="estado">Estado</option>
+        <option value="calificacion">Calificacion</option>
+    </select>
+    <button type="submit" id="filter-button">Filtrar</button>
+</form>
+
+<table id="solicitudes-table">
+    <!-- Aquí se mostrarán las solicitudes filtradas -->
+</table>
+
+<script src='{% static "js/solicitudes_reportes.js" %}'></script>
+
+{% endblock %}

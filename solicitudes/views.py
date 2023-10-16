@@ -170,7 +170,8 @@ def solicitudes_crear(request):
                 direccion_hasta=request.POST['direccion_hasta'],
                 latitud_hasta=request.POST['latitud_hasta'],
                 longitud_hasta=request.POST['longitud_hasta'],
-                pago_faltante=0,
+                
+                ha_pagado=0,
                 devolucion="",
                 id_estado_solicitud=EstadosSolicitud.objects.get(
                     id=id_estado_solicitud),
@@ -375,19 +376,23 @@ def solicitud_calificar(request, solicitud_id):
 
 @login_required
 def solicitudes_reportes(request):
-    solicitudes = Solicitud.objects.all()
 
-    solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
+    if request.method == 'GET':
+        return render (request, 'solicitudes_reportes.html')
+    elif request.method == 'POST':
+        start_date_str = request.POST.get('start_date')
+        end_date_str = request.POST.get('end_date')
+        group_by_str = request.POST.get('group_by')
 
-    objEstados = EstadosSolicitud.objects.values()
-    estados = list(objEstados)
+        solicitudes = Solicitud.objects.filter(fecha_trabajo__gte=start_date_str, fecha_trabajo__lte=end_date_str)
 
-    data = {
-        'solicitudes': solicitudes_data,
-        'estados': estados
-    }
-    return JsonResponse(data, safe=False)
+        solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
+        print(solicitudes_data)
 
+        data = {
+            'solicitudes': solicitudes_data
+        }
+        return JsonResponse(data, safe=False)
 # VISTAS EMPLEADOS
 
 @login_required

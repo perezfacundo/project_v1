@@ -141,7 +141,8 @@ class Solicitud(models.Model):
     latitud_hasta = models. CharField(max_length=13, null=True)
     longitud_hasta = models.CharField(max_length=13, null=True)
     fecha_solicitud = models.DateField(auto_now_add=True)
-    pago_faltante = models.IntegerField(validators=[MinValueValidator(0)])
+    presupuesto = models.IntegerField(null=True)
+    ha_pagado = models.IntegerField(validators=[MinValueValidator(0)])
     calificacion = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True)  # de 1☆ a 5☆
     devolucion = models.TextField(max_length=200)
     id_estado_solicitud = models.ForeignKey(EstadosSolicitud, on_delete=models.CASCADE)
