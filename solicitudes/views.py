@@ -387,7 +387,6 @@ def solicitudes_reportes(request):
         solicitudes = Solicitud.objects.filter(fecha_trabajo__gte=start_date_str, fecha_trabajo__lte=end_date_str)
 
         solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
-        print(solicitudes_data)
 
         data = {
             'solicitudes': solicitudes_data

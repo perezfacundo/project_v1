@@ -1,6 +1,7 @@
 let dataTable;
 let dataTableIsInitialized = false;
 
+// Configuracion de la datatable
 const dataTableOptions = {
     columnDefs: [
         { className: 'centered', targets: [0, 1, 2, 3, 4, 5, 6] },
@@ -11,6 +12,7 @@ const dataTableOptions = {
     destroy: true
 }
 
+// Inicializacion de la datatable
 const initDataTable = async () => {
     if (dataTableIsInitialized) {
         dataTable.destroy();
@@ -19,7 +21,6 @@ const initDataTable = async () => {
 
     try {
         dataTable = $(`#datatable_Solicitudes`).DataTable({ ...dataTableOptions });
-        $('#dataTable_Solicitudes').find('tbody td').css('font-size', '12px');
     } catch (ex) {
         alert(ex)
     }
@@ -27,6 +28,7 @@ const initDataTable = async () => {
     dataTableIsInitialized = true;
 }
 
+// Proceso de informacion 
 const listSolicitudes = async () => {
     try {
         const response = await fetch('http://127.0.0.1:8000/solicitudes_listado/');
@@ -68,7 +70,7 @@ const listSolicitudes = async () => {
                         <i class="bi bi-star-fill" style="color:#F8DA62;"></i>
                     `
                 }
-            } else { content += `sin calificar` } content += `</td>`
+            } else { content += `sin calificar` } content += `</td></tr>`
         });
 
         tableBody_Solicitudes.innerHTML = content;
@@ -77,6 +79,8 @@ const listSolicitudes = async () => {
     }
 };
 
+
+// Escucha del evento load
 window.addEventListener('load', async () => {
     await initDataTable();
 })

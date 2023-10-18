@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
 
 <form id="form-filtros" method="POST">
@@ -16,7 +18,7 @@
     <button type="submit" id="filter-button">Filtrar</button>
 </form>
 
-<table id="solicitudes-table">
+<table id="datatable_Solicitudes">
     <!-- Aquí se mostrarán las solicitudes filtradas -->
 </table>
 
