@@ -170,7 +170,7 @@ def solicitudes_crear(request):
                 direccion_hasta=request.POST['direccion_hasta'],
                 latitud_hasta=request.POST['latitud_hasta'],
                 longitud_hasta=request.POST['longitud_hasta'],
-                
+
                 ha_pagado=0,
                 devolucion="",
                 id_estado_solicitud=EstadosSolicitud.objects.get(
@@ -374,24 +374,36 @@ def solicitud_calificar(request, solicitud_id):
             'error': error
         })
 
+
 @login_required
 def solicitudes_reportes(request):
 
     if request.method == 'GET':
-        return render (request, 'solicitudes_reportes.html')
+        return render(request, 'solicitudes_reportes.html')
+
     elif request.method == 'POST':
-        start_date_str = request.POST.get('start_date')
-        end_date_str = request.POST.get('end_date')
-        group_by_str = request.POST.get('group_by')
 
-        solicitudes = Solicitud.objects.filter(fecha_trabajo__gte=start_date_str, fecha_trabajo__lte=end_date_str)
+        try:
+            data = json.loads(request.body)
+            fecha_inicio = data.get('fechaInicio', None)
+            fecha_fin = data.get('fechaFin', None)
 
-        solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
+            print(f"desde el dia {fecha_inicio}, hasta el dia {fecha_fin}")
 
-        data = {
-            'solicitudes': solicitudes_data
-        }
-        return JsonResponse(data, safe=False)
+            solicitudes = Solicitud.objects.filter(
+                fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin)
+
+            solicitudes_data = [solicitud.to_dict()
+                                for solicitud in solicitudes]
+
+            data = {
+                'solicitudes': solicitudes_data
+            }
+            return JsonResponse(data, safe=False)
+        except json.JSONDecodeError as e:
+            return JsonResponse({'error': 'Error en los datos JSON'}, status=400)
+
+
 # VISTAS EMPLEADOS
 
 @login_required

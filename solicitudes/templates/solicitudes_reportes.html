@@ -4,24 +4,36 @@
 
 {% block content %}
 
-<form id="form-filtros" method="POST">
-    {% csrf_token %}
-    <label for="start-date">Fecha de inicio:</label>
-    <input type="date" id="start-date" name="start_date">
-    <label for="end-date">Fecha de fin:</label>
-    <input type="date" id="end-date" name="end_date">
-    <label for="group-by">Agrupar por:</label>
-    <select id="group-by" name="group_by">
-        <option value="estado">Estado</option>
-        <option value="calificacion">Calificacion</option>
-    </select>
-    <button type="submit" id="filter-button">Filtrar</button>
-</form>
+<div class="container mt-4">
+  <div class="input-group">
+    <form id="formulario" method="POST" action="{% url 'solicitudes_reportes' %}">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col">
+          <input class="form-control" type="date" name="fechaInicio" id="fechaInicio">
+        </div>
+        <div class="col">
+          <input class="form-control" type="date" name="fechaFin" id="fechaFin">
+        </div>
+        <div class="col">
+          <button class="btn btn-primary" type="button" id="enviarButton">Enviar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  
+  <div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+      <div class="table-responsive">
+        <table id="datatable_Solicitudes" class="table table-hover">
+          <!-- #contenido -->
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
-<table id="datatable_Solicitudes">
-    <!-- Aquí se mostrarán las solicitudes filtradas -->
-</table>
-
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src='{% static "js/solicitudes_reportes.js" %}'></script>
 
 {% endblock %}
