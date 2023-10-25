@@ -21,19 +21,26 @@
       </div>
     </form>
   </div>
-  
-  <div class="row">
+
+  <div class="row mt-5">
     <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
       <div class="table-responsive">
-        <table id="datatable_Solicitudes" class="table table-hover">
-          <!-- #contenido -->
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th class="centered">Estado</th>
+              <th class="centered">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody_Solicitudes">
+            <!-- Contenido -->
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src='{% static "js/solicitudes_reportes.js" %}'></script>
 
 {% endblock %}

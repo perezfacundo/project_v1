@@ -384,6 +384,7 @@ def solicitudes_reportes(request):
     elif request.method == 'POST':
 
         try:
+            
             data = json.loads(request.body)
             fecha_inicio = data.get('fechaInicio', None)
             fecha_fin = data.get('fechaFin', None)
@@ -393,11 +394,15 @@ def solicitudes_reportes(request):
             solicitudes = Solicitud.objects.filter(
                 fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin)
 
-            solicitudes_data = [solicitud.to_dict()
-                                for solicitud in solicitudes]
-
+            estados = Estado.objects.all()
+            reporte = []
+            for estado in estados:
+                cantidad_solicitudes = Solicitud.objects.filter(fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin, estado=estado).count()
+                reporte.append({'estado':estado.descripcion, 'cantidad':cantidad_solicitudes})
+                print(reporte)
+            
             data = {
-                'solicitudes': solicitudes_data
+                'reporte': reporte
             }
             return JsonResponse(data, safe=False)
         except json.JSONDecodeError as e:
