@@ -394,12 +394,13 @@ def solicitudes_reportes(request):
             solicitudes = Solicitud.objects.filter(
                 fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin)
 
-            estados = Estado.objects.all()
+            estados = EstadosSolicitud.objects.all()
+            print(estados)
+
             reporte = []
             for estado in estados:
-                cantidad_solicitudes = Solicitud.objects.filter(fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin, estado=estado).count()
+                cantidad_solicitudes = Solicitud.objects.filter(fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin, id_estado_solicitud=estado).count()
                 reporte.append({'estado':estado.descripcion, 'cantidad':cantidad_solicitudes})
-                print(reporte)
             
             data = {
                 'reporte': reporte

@@ -6,7 +6,6 @@ const dataTableOptions = {
         { orderable: false, targets: [1] },
         { searchable: false, targets: [1] }
     ],
-    destroy: true,
     dom: 'Bfrtip',
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
@@ -15,19 +14,15 @@ const dataTableOptions = {
 
 // Función para inicializar la DataTable
 const initDataTable = async () => {
-    try {
-        if (dataTableIsInitialized) {
-            dataTable.destroy()
-        };
-
-        await listReportes();
-
-        dataTable = $('#tableBody_Solicitudes').DataTable(dataTableOptions);
-
-        dataTableIsInitialized = true;
-    } catch (ex) {
-        alert(ex)
+    if (dataTableIsInitialized) {
+        dataTable.destroy();
     };
+
+    await listReportes();
+
+    dataTable = $('#table').DataTable(dataTableOptions);
+
+    dataTableIsInitialized = true;
 };
 
 const listReportes = async () => {
@@ -68,11 +63,24 @@ const listReportes = async () => {
                     let total = 0;
 
                     data.reporte.forEach((estado, index) => {
-                        console.log(estado)
+                        total += estado.cantidad;
+                        content += `
+                            <tr>
+                                <td>${estado.estado}</td>
+                                <td class="centered">${estado.cantidad}</td>
+                            </tr>
+                        `;
                     });
-                    
 
-                    $('#tableBody_Solicitudes').html(content);
+                    content += `
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td class="centered">${total}</td>
+                        </tr>
+                    </tbody>
+                    `
+
+                    tablebody.innerHTML = content;
                 },
 
                 error: function (error) {
