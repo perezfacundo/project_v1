@@ -400,7 +400,7 @@ def solicitudes_reportes(request):
             reporte = []
             for estado in estados:
                 cantidad_solicitudes = Solicitud.objects.filter(fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin, id_estado_solicitud=estado).count()
-                reporte.append({'estado':estado.descripcion, 'cantidad':cantidad_solicitudes})
+                reporte.append({'descripcion':estado.descripcion, 'cantidad':cantidad_solicitudes})
             
             data = {
                 'reporte': reporte

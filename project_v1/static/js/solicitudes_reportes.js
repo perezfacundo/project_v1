@@ -1,11 +1,47 @@
 let dataTable;
 let dataTableIsInitialized = false;
 
+let aEstados = []
+let aCantidades = []
+var colors = ["#5470c6", "#91cc75", "#fac858", "#ee6666", "#73c0de", "#3ba272"]
+var random_color = colors[Math.floor(Math.random() * colors.length)];
+
+let chart = {
+    'tooltip': {
+        'show': true,
+        'trigger': "axis",
+        'triggerOn': "mousemove|click"
+    },
+    'xAxis': [
+        {
+            'type': "category",
+            'data': aEstados
+        }
+    ],
+    'yAxis': [
+        {
+            'type': "value"
+        }
+    ],
+    'series': [
+        {
+            'data': aCantidades,
+            'type': "bar"/*,
+            'itemStyle': {
+                'color': random_color
+            },
+            'lineStyle': {
+                'color': random_color
+            }*/
+        }
+    ]
+}
+
 const dataTableOptions = {
     columnDefs: [
         { orderable: false, targets: [1] },
-        { searchable: false, targets: [1] }
     ],
+    "searching": false,
     dom: 'Bfrtip',
     buttons: [
         'copy', 'csv', 'excel', 'pdf', 'print'
@@ -48,7 +84,6 @@ const listReportes = async () => {
                 },
                 success: function (data) {
                     //Proceso de la informacion
-                    console.log(data.reporte);
 
                     let content = '';
 
@@ -66,10 +101,12 @@ const listReportes = async () => {
                         total += estado.cantidad;
                         content += `
                             <tr>
-                                <td>${estado.estado}</td>
+                                <td>${estado.descripcion}</td>
                                 <td class="centered">${estado.cantidad}</td>
                             </tr>
                         `;
+                        aEstados.push(estado.descripcion)
+                        aCantidades.push(estado.cantidad)
                     });
 
                     content += `
@@ -81,8 +118,8 @@ const listReportes = async () => {
                     `
 
                     tablebody.innerHTML = content;
-                },
 
+                },
                 error: function (error) {
                     console.log('Error: ', error)
                 }
@@ -93,6 +130,28 @@ const listReportes = async () => {
     };
 };
 
+const getOptionChart = async () => {
+    try {
+        console.log(chart)
+        return chart
+    } catch (ex) {
+        alert(ex);
+    }
+};
+
+const initChart = async () => {
+    try{
+        const myChart = echarts.init(document.getElementById("chart"));
+
+    myChart.setOption(await getOptionChart());
+
+    myChart.resize();
+    } catch (ex){
+        alert(ex)
+    }
+}
+
 window.addEventListener("load", async () => {
     await initDataTable();
+    await initChart();
 });
