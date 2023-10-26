@@ -1,14 +1,16 @@
-
 .floating-buttons {
   position: fixed;
-  right: 10px; /* Ajusta la posición a tu preferencia */
-  bottom: 10px; /* Ajusta la posición a tu preferencia */
+  right: 10px;
+  /* Ajusta la posición a tu preferencia */
+  bottom: 10px;
+  /* Ajusta la posición a tu preferencia */
   display: flex;
   flex-direction: column;
   align-items: flex-end;
 }
 
-.floating-buttons button, .floating-buttons a {
+.floating-buttons button,
+.floating-buttons a {
   border-radius: 50%;
   margin-bottom: 5px;
   width: 50px;
@@ -74,9 +76,4 @@
 .centered {
   text-align: center !important;
   vertical-align: middle !important;
-}
-
-.chart {
-  width: 50%;
-  min-height: 400px;
 }

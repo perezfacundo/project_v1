@@ -38,14 +38,14 @@
       </div>
     </div>
 
-    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-      <div id="chart" class="chart"></div>
+    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+      <div id="chart" style="width: 600px; height: 400px;"></div>
     </div>
   </div>
 </div>
 
 <!-- Apache Echarts (requiere jQuery) -->
-<script src="{% static 'js/echarts.min.js' %}"></script>
+<script src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src='{% static "js/solicitudes_reportes.js" %}'></script>
 
 {% endblock %}

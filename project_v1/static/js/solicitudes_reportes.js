@@ -3,8 +3,8 @@ let dataTableIsInitialized = false;
 
 let aEstados = []
 let aCantidades = []
-var colors = ["#5470c6", "#91cc75", "#fac858", "#ee6666", "#73c0de", "#3ba272"]
-var random_color = colors[Math.floor(Math.random() * colors.length)];
+// var colors = ["#5470c6", "#91cc75", "#fac858", "#ee6666", "#73c0de", "#3ba272"]
+// var random_color = colors[Math.floor(Math.random() * colors.length)];
 
 let chart = {
     'tooltip': {
@@ -26,13 +26,7 @@ let chart = {
     'series': [
         {
             'data': aCantidades,
-            'type': "bar"/*,
-            'itemStyle': {
-                'color': random_color
-            },
-            'lineStyle': {
-                'color': random_color
-            }*/
+            'type': "bar"
         }
     ]
 }
@@ -119,6 +113,7 @@ const listReportes = async () => {
 
                     tablebody.innerHTML = content;
 
+                    console.log(aEstados, aCantidades)
                 },
                 error: function (error) {
                     console.log('Error: ', error)
@@ -127,27 +122,18 @@ const listReportes = async () => {
         });
     } catch (ex) {
         alert(ex);
+        console.log("Error: ", ex)
     };
 };
 
-const getOptionChart = async () => {
+const initChart = async () => {
     try {
-        console.log(chart)
-        return chart
+        const myChart = echarts.init(document.getElementById("chart"));
+        myChart.setOption(chart);
+        myChart.resize();
     } catch (ex) {
         alert(ex);
-    }
-};
-
-const initChart = async () => {
-    try{
-        const myChart = echarts.init(document.getElementById("chart"));
-
-    myChart.setOption(await getOptionChart());
-
-    myChart.resize();
-    } catch (ex){
-        alert(ex)
+        console.log("Error: ", ex)
     }
 }
 
