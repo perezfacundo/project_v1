@@ -1,4 +1,4 @@
-#!/home/facundoperez/Documentos/project_v1/venv/bin/python3.11
+#!/home/facundoperez/Documentos/Proyectos/project_v1/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
