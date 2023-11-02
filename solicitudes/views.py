@@ -742,3 +742,8 @@ def objetos_a_json(objeto_o_lista):
         json_resultado = objeto_o_lista.__dict__
 
     return json.dumps(json_resultado, indent=4)
+
+# VISTAS DE ERROR
+def error_view_500(request):
+    context = {'error_message': 'Se ha producido un error interno en el servidor.'}  # Puedes personalizar el mensaje de error aquí
+    return render(request, 'error_500.html', context, status=500)
