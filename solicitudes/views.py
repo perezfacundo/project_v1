@@ -745,5 +745,10 @@ def objetos_a_json(objeto_o_lista):
 
 # VISTAS DE ERROR
 def error_view_500(request):
-    context = {'error_message': 'Se ha producido un error interno en el servidor.'}  # Puedes personalizar el mensaje de error aquí
+    error_message = "Se ha producido un error interno en el servidor."
+    error_details = "Missing staticfiles manifest entry for 'css/styles.css'"
+    context = {
+        'error_message': error_message,
+        'error_details': error_details,
+    }
     return render(request, 'error_500.html', context, status=500)
