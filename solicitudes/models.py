@@ -1,5 +1,5 @@
 from django.utils import timezone
-import datetime
+from datetime import datetime
 from django.db import models
 from django.forms import DateField
 from django.contrib.auth.models import AbstractUser, Group, Permission
@@ -52,7 +52,7 @@ class Usuario(AbstractUser):
             "dni": self.dni,
             "tipo_usuario": self.id_tipo_usuario.descripcion,
             "is_active": self.is_active,
-            "email":self.email
+            "email": self.email
         }
 
     class Meta:
@@ -70,10 +70,23 @@ class EstadosCliente(models.Model):
 
 
 class Cliente(Usuario):
+    # id int [primary key]
+    # password varchar !
+    # last_login datetime
+    # is_superuser boolean
+    # username varchar !
+    # first_name varchar !
+    # last_name varchar !
+    # email varchar !
+    # is_staff boolean //0 = no es empleado
+    # is_active boolean
+    # date_joined datetime
     fecha_nac = models.DateField(null=True)
     puntos = models.IntegerField()
-    id_estado_cliente = models.ForeignKey(EstadosCliente, on_delete=models.CASCADE)
-    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
+    id_estado_cliente = models.ForeignKey(
+        EstadosCliente, on_delete=models.CASCADE)
+    usuario = models.OneToOneField(
+        Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} "
@@ -98,6 +111,17 @@ class EstadosEmpleado(models.Model):
 
 
 class Empleado(Usuario):
+    # id int [primary key]
+    # password varchar !
+    # last_login datetime
+    # is_superuser boolean
+    # username varchar !
+    # first_name varchar !
+    # last_name varchar !
+    # email varchar !
+    # is_staff boolean //0 = no es empleado
+    # is_active boolean
+    # date_joined datetime
     fecha_nac = models.DateField(null=True)
     tipo_carnet = models.CharField(max_length=2)
     ausencias = models.IntegerField()
@@ -108,6 +132,24 @@ class Empleado(Usuario):
 
     def __str__(self):
         return f"{self.id}"
+
+    def to_dict(self):
+
+        fUltLogin = None
+        if self.last_login:
+            fUltLogin = self.last_login.strftime("%d/%m/%Y %H:%M:%S")
+        else:
+            fUltLogin = "no inició"
+
+        return {
+            'id': self.id,
+            'last_name': self.last_name,
+            'first_name': self.first_name,
+            'last_login': fUltLogin,
+            'telefono': self.telefono,
+            'ausencias': self.ausencias,
+            'estado': self.id_estado_empleado.descripcion
+        }
 
     class Meta:
         verbose_name_plural = "Empleados"
@@ -126,6 +168,7 @@ class EstadosSolicitud(models.Model):
             "id": self.id,
             "descripcion": self.descripcion
         }
+
     class Meta:
         verbose_name_plural = "Estados de solicitudes"
 
@@ -143,10 +186,13 @@ class Solicitud(models.Model):
     fecha_solicitud = models.DateField(auto_now_add=True)
     presupuesto = models.IntegerField(null=True)
     ha_pagado = models.IntegerField(validators=[MinValueValidator(0)])
-    calificacion = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True)  # de 1☆ a 5☆
+    calificacion = models.IntegerField(validators=[MinValueValidator(
+        1), MaxValueValidator(5)], null=True)  # de 1☆ a 5☆
     devolucion = models.TextField(max_length=200)
-    id_estado_solicitud = models.ForeignKey(EstadosSolicitud, on_delete=models.CASCADE)
-    cliente_id = models.ForeignKey(Cliente, on_delete=models.CASCADE, default=1)
+    id_estado_solicitud = models.ForeignKey(
+        EstadosSolicitud, on_delete=models.CASCADE)
+    cliente_id = models.ForeignKey(
+        Cliente, on_delete=models.CASCADE, default=1)
 
     def validar_dia_habil(value):
         if value < datetime.date.today():

@@ -113,24 +113,13 @@
   </nav>
 
   <div class="floating-buttons">
-    <!-- {% if user.is_staff %}
-    Botón para generar un gráfico
-    <a class="btn btn-primary" data-toggle="tooltip" data-placement="left" title="Generar Gráfico"
-      data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-      <i class="bi bi-bar-chart-fill"></i>
-    </a>
-
-    Botón para generar un reporte
-    <a class="btn btn-success" data-toggle="tooltip" data-placement="left" title="Exportar a excel">
-      <i class="bi bi-file-earmark-spreadsheet-fill"></i>
-    </a>
-    {% endif %} -->
-
+    {% if not user.is_staff %}
     <!-- Botón para redirigir al usuario al chat -->
     <a href="https://w.app/widget-v1/kS1rmQ.js" target="_blank" class="btn btn-success" data-toggle="tooltip"
       data-placement="left" title="Chat con la Empresa">
       <i class="bi bi-whatsapp"></i>
     </a>
+    {% endif %}
   </div>
 
   <!-- jQuery -->

@@ -124,7 +124,6 @@ def signout(request):
 
 @login_required
 def solicitudes(request):
-
     return render(request, 'solicitudes.html')
 
 
@@ -384,7 +383,7 @@ def solicitudes_reportes(request):
     elif request.method == 'POST':
 
         try:
-            
+
             data = json.loads(request.body)
             fecha_inicio = data.get('fechaInicio', None)
             fecha_fin = data.get('fechaFin', None)
@@ -399,9 +398,11 @@ def solicitudes_reportes(request):
 
             reporte = []
             for estado in estados:
-                cantidad_solicitudes = Solicitud.objects.filter(fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin, id_estado_solicitud=estado).count()
-                reporte.append({'descripcion':estado.descripcion, 'cantidad':cantidad_solicitudes})
-            
+                cantidad_solicitudes = Solicitud.objects.filter(
+                    fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin, id_estado_solicitud=estado).count()
+                reporte.append({'descripcion': estado.descripcion,
+                               'cantidad': cantidad_solicitudes})
+
             data = {
                 'reporte': reporte
             }
@@ -414,12 +415,21 @@ def solicitudes_reportes(request):
 
 @login_required
 def empleados(request):
-    empleados = Empleado.objects.all()
-    try:
+    return render(request, 'empleados.html')
 
-        return render(request, 'empleados.html', {
-            'empleados': empleados
-        })
+
+def empleados_listado(request):
+
+    try:
+        empleados = Empleado.objects.all()
+        empleados_data = [empleado.to_dict() for empleado in empleados]
+
+        data = {
+            'empleados': empleados_data
+        }
+
+        return JsonResponse(data, safe=False)
+
     except Exception as e:
         print("Error en empleados:", e)
         return render(request, 'empleados.html', {
@@ -548,7 +558,24 @@ def empleado_eliminar(request, empleado_id):
     return redirect('empleados')
 
 
+@login_required
+def empleados_reportes(request):
+    if request.method == 'GET':
+        return render(request, 'empleados_reportes.html')
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            fecha_inicio = data.get('fechaInicio', None)
+            fecha_fin = data.get('fechaFin', None)
+
+            data = {
+                'Empleados'
+            }
+        except:
+            print()
+
 # VISTAS VEHICULOS
+
 
 @login_required
 def vehiculos(request):
@@ -744,6 +771,8 @@ def objetos_a_json(objeto_o_lista):
     return json.dumps(json_resultado, indent=4)
 
 # VISTAS DE ERROR
+
+
 def error_view_500(request):
     error_message = "Se ha producido un error interno en el servidor."
     error_details = "Missing staticfiles manifest entry for 'css/styles.css'"

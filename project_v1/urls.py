@@ -41,12 +41,13 @@ urlpatterns = [
 
     # rutas empleados
     path('empleados/', views.empleados, name='empleados'),
+    path('empleados_listado/', views.empleados_listado, name='empleados_listado'),
     path('empleados/crear/', views.empleados_crear, name='empleados_crear'),
     path('empleados/<int:empleado_id>/',
          views.empleado_detalle, name='empleado_detalle'),
     path('empleados/<int:empleado_id>/eliminar/',
          views.empleado_eliminar, name='empleado_eliminar'),
-    # path('empleados/reportes/', views.empleados_reportes, name='empleados_reportes'),
+    path('empleados/reportes/', views.empleados_reportes, name='empleados_reportes'),
 
     # rutas vehiculos
     path('vehiculos/', views.vehiculos, name='vehiculos'),

@@ -3,8 +3,6 @@ let dataTableIsInitialized = false;
 
 let aEstados = []
 let aCantidades = []
-// var colors = ["#5470c6", "#91cc75", "#fac858", "#ee6666", "#73c0de", "#3ba272"]
-// var random_color = colors[Math.floor(Math.random() * colors.length)];
 
 let chart = {
     'tooltip': {
