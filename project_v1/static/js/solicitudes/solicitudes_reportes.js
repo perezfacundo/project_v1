@@ -10,10 +10,18 @@ let option = {
         'trigger': "axis",
         'triggerOn': "mousemove|click"
     },
+    'toolbox': {
+        'feature': {
+          'saveAsImage': { show: true }
+        }
+    },
     'xAxis': [
         {
             'type': "category",
-            'data': aEstados
+            'data': aEstados,
+            'axisLabel': {
+                rotate: 30
+            }
         }
     ],
     'yAxis': [
@@ -101,8 +109,6 @@ const listReportes = async () => {
                     `
 
                     tablebody.innerHTML = content;
-
-                    console.log(aEstados, aCantidades)
 
                     const myChart = echarts.init(document.getElementById("chart"));
                     myChart.setOption(option);
