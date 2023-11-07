@@ -67,7 +67,7 @@ const listReportes = async () => {
             };
 
             $.ajax({
-                url: 'http://127.0.0.1:8000/solicitudes/reportes/',
+                url: 'http://127.0.0.1:8000/empleados/reportes/',
                 type: 'POST',
                 data: JSON.stringify(datos),
                 contentType: 'application/json',

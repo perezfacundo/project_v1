@@ -568,11 +568,17 @@ def empleados_reportes(request):
             fecha_inicio = data.get('fechaInicio', None)
             fecha_fin = data.get('fechaFin', None)
 
+            empleados_data = [empleado.to_dict() for empleado in empleados]
+            print(empleados_data)
             data = {
-                'Empleados'
+                'empleados': empleados_data
             }
+            print(data)
+            return JsonResponse(data, safe=False)
         except:
-            print()
+            return JsonResponse({
+                'error': 'Error en los datos JSON'
+            }, status=400)
 
 # VISTAS VEHICULOS
 

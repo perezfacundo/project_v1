@@ -4,7 +4,7 @@ let dataTableIsInitialized = false;
 let aEstados = []
 let aCantidades = []
 
-let chart = {
+let option = {
     'tooltip': {
         'show': true,
         'trigger': "axis",
@@ -78,15 +78,6 @@ const listReportes = async () => {
                     //Proceso de la informacion
 
                     let content = '';
-
-                    // Estados
-                    let aPresupuestar = 0;       // 1. A presupuestar
-                    let presupuestada = 0;       // 2. Presupuestada
-                    let presupuestoEnviado = 0;  // 3. Presupuesto enviado
-                    let presupuestoAceptado = 0; // 4. Presupuesto aceptado
-                    let enCamino = 0;            // 5. En camino
-                    let entregado = 0;           // 6. Entregado
-                    let calificado = 0;          // 7. Calificado
                     let total = 0;
 
                     data.reporte.forEach((estado, index) => {
@@ -112,6 +103,10 @@ const listReportes = async () => {
                     tablebody.innerHTML = content;
 
                     console.log(aEstados, aCantidades)
+
+                    const myChart = echarts.init(document.getElementById("chart"));
+                    myChart.setOption(option);
+                    myChart.resize();
                 },
                 error: function (error) {
                     console.log('Error: ', error)
@@ -124,18 +119,6 @@ const listReportes = async () => {
     };
 };
 
-const initChart = async () => {
-    try {
-        const myChart = echarts.init(document.getElementById("chart"));
-        myChart.setOption(chart);
-        myChart.resize();
-    } catch (ex) {
-        alert(ex);
-        console.log("Error: ", ex)
-    }
-}
-
 window.addEventListener("load", async () => {
     await initDataTable();
-    await initChart();
 });
