@@ -1,5 +1,6 @@
 let dataTable;
 let dataTableIsInitialized = false;
+const myChart = echarts.init(document.getElementById("chart"));
 
 let aEstados = []
 let aCantidades = []
@@ -51,12 +52,18 @@ const dataTableOptions = {
 // Función para inicializar la DataTable
 const initDataTable = async () => {
     if (dataTableIsInitialized) {
-        dataTable.destroy();
+        if (dataTable) {
+            dataTable.destroy();
+        }
     };
 
     await listReportes();
 
-    dataTable = $('#table').DataTable(dataTableOptions);
+    try {
+        dataTable = $('#datatable_Solicitudes').DataTable(dataTableOptions);
+    } catch (error) {
+        alert(ex)
+    }
 
     dataTableIsInitialized = true;
 };
@@ -83,7 +90,6 @@ const listReportes = async () => {
                     'X-CSRFToken': csrfToken
                 },
                 success: function (data) {
-                    //Proceso de la informacion
 
                     let content = '';
                     let total = 0;
@@ -105,12 +111,10 @@ const listReportes = async () => {
                             <td><strong>Total</strong></td>
                             <td class="centered">${total}</td>
                         </tr>
-                    </tbody>
                     `
 
-                    tablebody.innerHTML = content;
+                    tableBody_Solicitudes.innerHTML = content;
 
-                    const myChart = echarts.init(document.getElementById("chart"));
                     myChart.setOption(option);
                     myChart.resize();
                 },

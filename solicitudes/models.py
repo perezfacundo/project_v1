@@ -131,7 +131,7 @@ class Empleado(Usuario):
         Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
-        return f"{self.id}"
+        return f"{self.id} - "
 
     def to_dict(self):
 
@@ -141,6 +141,9 @@ class Empleado(Usuario):
         else:
             fUltLogin = "no inició"
 
+        cantidadViajes = 0
+        cantidadViajes = SolicitudesEmpleados.objects.filter(id_empleado=self.id).count()
+
         return {
             'id': self.id,
             'last_name': self.last_name,
@@ -148,7 +151,8 @@ class Empleado(Usuario):
             'last_login': fUltLogin,
             'telefono': self.telefono,
             'ausencias': self.ausencias,
-            'estado': self.id_estado_empleado.descripcion
+            'estado': self.id_estado_empleado.descripcion,
+            'cantidadViajes': cantidadViajes
         }
 
     class Meta:

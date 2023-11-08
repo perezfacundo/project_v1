@@ -565,15 +565,18 @@ def empleados_reportes(request):
     elif request.method == 'POST':
         try:
             data = json.loads(request.body)
-            fecha_inicio = data.get('fechaInicio', None)
-            fecha_fin = data.get('fechaFin', None)
 
+            fecha_inicio = data.get('fechaInicio', None)
+
+            fecha_fin = data.get('fechaFin', None)
+            
+            empleados = Empleado.objects.all()
             empleados_data = [empleado.to_dict() for empleado in empleados]
-            print(empleados_data)
+
             data = {
                 'empleados': empleados_data
             }
-            print(data)
+            
             return JsonResponse(data, safe=False)
         except:
             return JsonResponse({

@@ -31,7 +31,7 @@ let chart = {
 
 const dataTableOptions = {
     columnDefs: [
-        { orderable: false, targets: [1] },
+        { orderable: false, targets: [2] },
     ],
     "searching": false,
     dom: 'Bfrtip',
@@ -76,23 +76,38 @@ const listReportes = async () => {
                 },
                 success: function (data) {
                     //Proceso de la informacion
-
+                    let total = 0;
                     let content = '';
 
-                    data.reporte.forEach((estado, index) => {
+                    data.empleados.forEach((empleado, index) => {
+                        total+= empleado.cantidadViajes
                         content += `
                             <tr>
-                                <td>${estado.descripcion}</td>
-                                <td class="centered">${estado.cantidad}</td>
+                                <td>${empleado.last_name}</td>
+                                <td>${empleado.first_name}</td>
+                                <td class="centered">${empleado.cantidadViajes}</td>
                             </tr>
                         `;
-                        aEmpleados.push()
-                        aCantidades.push()
+                        aEmpleados.push(empleado.last_name)
+                        aCantidades.push(empleado.cantidadViajes)
                     });
+                    
+                    content += `
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td></td>
+                            <td class="centered">${total}</td>
+                        </tr>
+                    `
 
                     tablebody.innerHTML = content;
 
                     console.log(aEmpleados, aCantidades)
+
+                    
+                    const myChart = echarts.init(document.getElementById("chart"));
+                    myChart.setOption(chart);
+                    myChart.resize();
                 },
                 error: function (error) {
                     console.log('Error: ', error)
@@ -105,18 +120,6 @@ const listReportes = async () => {
     };
 };
 
-const initChart = async () => {
-    try {
-        const myChart = echarts.init(document.getElementById("chart"));
-        myChart.setOption(chart);
-        myChart.resize();
-    } catch (ex) {
-        alert(ex);
-        console.log("Error: ", ex)
-    }
-}
-
 window.addEventListener("load", async () => {
     await initDataTable();
-    await initChart();
 });
