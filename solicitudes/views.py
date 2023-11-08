@@ -388,13 +388,10 @@ def solicitudes_reportes(request):
             fecha_inicio = data.get('fechaInicio', None)
             fecha_fin = data.get('fechaFin', None)
 
-            print(f"desde el dia {fecha_inicio}, hasta el dia {fecha_fin}")
-
             solicitudes = Solicitud.objects.filter(
                 fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin)
 
             estados = EstadosSolicitud.objects.all()
-            print(estados)
 
             reporte = []
             for estado in estados:
@@ -569,14 +566,14 @@ def empleados_reportes(request):
             fecha_inicio = data.get('fechaInicio', None)
 
             fecha_fin = data.get('fechaFin', None)
-            
+
             empleados = Empleado.objects.all()
             empleados_data = [empleado.to_dict() for empleado in empleados]
 
             data = {
                 'empleados': empleados_data
             }
-            
+
             return JsonResponse(data, safe=False)
         except:
             return JsonResponse({
@@ -588,18 +585,11 @@ def empleados_reportes(request):
 
 @login_required
 def vehiculos(request):
-    try:
-        vehiculos = Vehiculo.objects.all()
-        print(vehiculos)
-        return render(request, 'vehiculos.html', {
-            'vehiculos': vehiculos
-        })
-    except Exception as e:
-        print("Error en vehiculos:", e)
-        return render(request, 'vehiculos.html', {
-            'error': "Ha ocurrido un error al listar los vehiculos"
-        })
+    return render(request, 'vehiculos.html')
 
+def vehiculos_listado(request):
+    objVehiculos = Vehiculos.objects.values()
+    print(objVehiculos)
 
 @login_required
 def vehiculos_crear(request):

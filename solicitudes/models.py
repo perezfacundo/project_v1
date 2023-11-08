@@ -237,6 +237,12 @@ class EstadosVehiculo(models.Model):
     def __str__(self):
         return f"{self.descripcion}"
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'descripcion': self.descripcion
+        }
+
     class Meta:
         verbose_name_plural = "Estados de vehiculos"
 
@@ -253,6 +259,20 @@ class Vehiculo(models.Model):
     def __str__(self):
         return f"ID:{self.id}"
 
+    def to_dict(self):
+        cantidadViajes = 0
+        cantidadViajes = SolicitudesVehiculos.objects.filter(id_vehiculo=self.id).count()
+
+        return {
+            'dominio': self.dominio,
+            'marca': self.marca,
+            'nombre': self.nombre,
+            'modelo': self.modelo,
+            'capacidad': self.capacidad,
+            'estado': self.id_estado_vehiculo.descripcion,
+            'cantidadViajes': cantidadViajes
+        }
+
     class Meta:
         verbose_name_plural = "Vehiculos"
 
@@ -262,9 +282,6 @@ class Vehiculo(models.Model):
 class SolicitudesEmpleados(models.Model):
     id_solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
     id_empleado = models.ForeignKey(Empleado, on_delete=models.CASCADE)
-
-    # def __str__(self):
-    #     return f"{self.id_solicitud.direccion_desde}/{self.direccion_hasta} el:{self.fecha_trabajo} - {self.id_empleado.first_name} {self.id_empleado.last_name}"
 
     def __str__(self):
         return f"{self.id_empleado}"
@@ -277,8 +294,6 @@ class SolicitudesVehiculos(models.Model):
     id_solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE)
     id_vehiculo = models.ForeignKey(Vehiculo, on_delete=models.CASCADE)
 
-    # def __str__(self):
-    #     return f"{self.id_solicitud.direccion_desde}/{self.direccion_hasta} el:{self.fecha_trabajo} - {self.id_vehiculo.marca} {self.id_vehiculo.nombre}"
 
     def __str__(self):
         # Acceder a las propiedades de la solicitud relacionada

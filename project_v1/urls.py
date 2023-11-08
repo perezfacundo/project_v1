@@ -47,10 +47,12 @@ urlpatterns = [
          views.empleado_detalle, name='empleado_detalle'),
     path('empleados/<int:empleado_id>/eliminar/',
          views.empleado_eliminar, name='empleado_eliminar'),
-    path('empleados/reportes/', views.empleados_reportes, name='empleados_reportes'),
+    path('empleados/reportes/', views.empleados_reportes,
+         name='empleados_reportes'),
 
     # rutas vehiculos
     path('vehiculos/', views.vehiculos, name='vehiculos'),
+    path('vehiculos_listado/', views.vehiculos_listado, name='vehiculos_listado'),
     path('vehiculos/crear/', views.vehiculos_crear, name='vehiculos_crear'),
     path('vehiculos/<int:vehiculo_id>/',
          views.vehiculo_detalle, name='vehiculo_detalle'),
