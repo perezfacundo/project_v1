@@ -418,8 +418,8 @@ def empleados(request):
 def empleados_listado(request):
 
     try:
-        empleados = Empleado.objects.all()
-        empleados_data = [empleado.to_dict() for empleado in empleados]
+        ObjEmpleados = Empleado.objects.all()
+        empleados_data = [empleado.to_dict() for empleado in ObjEmpleados]
 
         data = {
             'empleados': empleados_data
@@ -567,8 +567,8 @@ def empleados_reportes(request):
 
             fecha_fin = data.get('fechaFin', None)
 
-            empleados = Empleado.objects.all()
-            empleados_data = [empleado.to_dict() for empleado in empleados]
+            objEmpleados = Empleado.objects.all()
+            empleados_data = [empleado.to_dict() for empleado in objEmpleados]
 
             data = {
                 'empleados': empleados_data
@@ -580,16 +580,31 @@ def empleados_reportes(request):
                 'error': 'Error en los datos JSON'
             }, status=400)
 
-# VISTAS VEHICULOS
 
+# VISTAS VEHICULOS
 
 @login_required
 def vehiculos(request):
     return render(request, 'vehiculos.html')
 
+
 def vehiculos_listado(request):
-    objVehiculos = Vehiculos.objects.values()
-    print(objVehiculos)
+
+    try:
+        objVehiculos = Vehiculos.objects.all()
+        vehiculos_data = [vehiculo.to_dict() for vehiculo in objVehiculos]
+
+        data = {
+            'vehiculos': vehiculos_data
+        }
+
+        return JsonResponse(data, safe=False)
+    except:
+        print("Error en vehiculos:", e)
+        return render(request, 'vehiculos.html', {
+            'error': "Ha ocurrido un error al listar los vehiculos"
+        })
+
 
 @login_required
 def vehiculos_crear(request):
@@ -681,6 +696,29 @@ def vehiculo_eliminar(request, vehiculo_id):
         vehiculo.delete()
     return redirect('vehiculos')
 
+
+@login_required
+def vehiculos_reportes(request):
+    if request.method == 'GET':
+        return render(request, 'vehiculos_reportes.html')
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            fecha_inicio = data.get('fechaInicio', None)
+            fecha_fin = data.get('fechaFin', None)
+
+            objVehiculos = Vehiculo.objects.all()
+            vehiculos_data = [vehiculos.to_dict() for vehiculo in objVehiculos]
+
+            data = {
+                'vehiculos': vehiculos_data
+            }
+
+            return JsonResponse(data, safe=False)
+        except:
+            return JsonResponse({
+                'error': 'Error en los datos JSON'
+            }, status=400)
 # VISTAS CLIENTES
 
 
