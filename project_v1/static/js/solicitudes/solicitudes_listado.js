@@ -44,10 +44,9 @@ const listSolicitudes = async () => {
         console.log(data.usuario)
 
         let content = '';
-        let estado = '';
-        let urlCalificar = '';
-        let urlDetalles = '';
-        let urlEliminar = '';
+        let btnCalificar = '';
+        let btnDetalles = '';
+        let btnEliminar = '';
 
         data.solicitudes.forEach((solicitud, index) => {
             btnCalificar = `<a class="btn btn-sm " style="background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;

@@ -45,11 +45,11 @@ const listSolicitudes = async () => {
         let btnDetalles = '';
         let btnEliminar = '';
 
-        data.vehiculos.forEach((vehiculo, index) => {
-            
+        data.vehiculos.forEach((vehiculo) => {
+
             btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/vehiculos/${vehiculo.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
             btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/vehiculos/eliminar/${vehiculo.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
-            
+
             content += `
                 <tr>
                     <td>${vehiculo.id}</td>

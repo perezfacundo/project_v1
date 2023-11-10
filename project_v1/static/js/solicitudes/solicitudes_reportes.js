@@ -81,6 +81,7 @@ const listReportes = async () => {
                 csrfmiddlewaretoken: csrfToken
             };
 
+            //intentar consulta con fetch para que funcione la tabla 
             $.ajax({
                 url: 'http://127.0.0.1:8000/solicitudes/reportes/',
                 type: 'POST',
