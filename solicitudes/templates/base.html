@@ -44,9 +44,9 @@
               Solicitudes
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/solicitudes">Listado</a></li>
+              <li><a class="dropdown-item" href="/solicitudes/">Listado</a></li>
               {% if not user.is_staff %}
-              <li><a class="dropdown-item" href="/solicitudes/crear">Nueva solicitud</a></li>
+              <li><a class="dropdown-item" href="/solicitudes/crear/">Nueva solicitud</a></li>
               {% endif %}
 
               {% if user.is_staff %}
@@ -64,8 +64,8 @@
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
               aria-expanded="false">Empleados</a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/empleados">Listado</a></li>
-              <li><a class="dropdown-item" href="/empleados/crear">Nuevo empleado</a></li>
+              <li><a class="dropdown-item" href="/empleados/">Listado</a></li>
+              <li><a class="dropdown-item" href="/empleados/crear/">Nuevo empleado</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
@@ -78,12 +78,12 @@
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
               aria-expanded="false">Vehiculos</a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/vehiculos">Listado</a></li>
-              <li><a class="dropdown-item" href="/vehiculos/crear">Nuevo vehiculo</a></li>
+              <li><a class="dropdown-item" href="/vehiculos/">Listado</a></li>
+              <li><a class="dropdown-item" href="/vehiculos/crear/">Nuevo vehiculo</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item" href="#">Reportes</a></li>
+              <li><a class="dropdown-item" href="/vehiculos/reportes/">Reportes</a></li>
             </ul>
           </li>
 
@@ -92,20 +92,20 @@
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
               aria-expanded="false">Clientes</a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/clientes">Listado</a></li>
-              <li><a class="dropdown-item" href="/clientes/crear">Nuevo cliente</a></li>
+              <li><a class="dropdown-item" href="/clientes/">Listado</a></li>
+              <li><a class="dropdown-item" href="/clientes/crear/">Nuevo cliente</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item" href="#">Reportes</a></li>
+              <li><a class="dropdown-item" href="/clientes/reportes/">Reportes</a></li>
             </ul>
           </li>
           {% endif %}
 
-          <li class="nav-item"><a class="nav-link" href="/logout">Cerrar sesion</a></li>
+          <li class="nav-item"><a class="nav-link" href="/logout/">Cerrar sesion</a></li>
           {% else %}
-          <li class="nav-item"><a class="nav-link" href="/signup">Registrarse</a></li>
-          <li class="nav-item"><a class="nav-link" href="/signin">Iniciar sesion</a></li>
+          <li class="nav-item"><a class="nav-link" href="/signup/">Registrarse</a></li>
+          <li class="nav-item"><a class="nav-link" href="/signin/">Iniciar sesion</a></li>
           {% endif %}
         </ul>
       </div>

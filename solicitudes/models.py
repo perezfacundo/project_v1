@@ -264,6 +264,7 @@ class Vehiculo(models.Model):
         cantidadViajes = SolicitudesVehiculos.objects.filter(id_vehiculo=self.id).count()
 
         return {
+            'id': self.id,
             'dominio': self.dominio,
             'marca': self.marca,
             'nombre': self.nombre,

@@ -23,7 +23,7 @@ def home(request):
 
 def signup(request):
     if request.method == 'GET':
-        return render(request, 'signup.html')
+        return render(request, 'auth/signup.html')
     else:
         print(request.POST)
         if request.POST['password1'] == request.POST['password2']:
@@ -83,7 +83,7 @@ def signup(request):
                 return render(request, 'signup.html', {
                     'error': "Ocurrio un error al registrar el usuario."
                 })
-        return render(request, 'signup.html', {
+        return render(request, 'auth/signup.html', {
             'error': "Las claves no coinciden"
         })
 
@@ -95,7 +95,7 @@ def validarUsername(cadena):
 
 def signin(request):
     if request.method == 'GET':
-        return render(request, 'signin.html', {
+        return render(request, 'auth/signin.html', {
             'form': AuthenticationForm
         })
     else:
@@ -104,7 +104,7 @@ def signin(request):
             request, username=request.POST['username'], password=request.POST['password'])
 
         if user is None:
-            return render(request, 'signin.html', {
+            return render(request, 'auth/signin.html', {
                 'form': AuthenticationForm,
                 'error': "El usuario o la contraseña son incorrectos"
             })
@@ -124,7 +124,7 @@ def signout(request):
 
 @login_required
 def solicitudes(request):
-    return render(request, 'solicitudes.html')
+    return render(request, 'solicitudes/solicitudes.html')
 
 
 def solicitudes_listado(request):
@@ -153,7 +153,7 @@ def solicitudes_listado(request):
 @login_required
 def solicitudes_crear(request):
     if request.method == 'GET':
-        return render(request, 'solicitudes_crear.html')
+        return render(request, 'solicitudes/solicitudes_crear.html')
     else:
         try:
             id_estado_solicitud = request.POST.get('id_estado_solicitud', None)
@@ -185,12 +185,12 @@ def solicitudes_crear(request):
         except Exception as e:
             if e == "Cliente matching query does not exist.":
                 print("Error en solicitudes_crear:", e)
-                return render(request, 'solicitudes_crear.html', {
+                return render(request, 'solicitudes/solicitudes_crear.html', {
                     'error': "Usted no se encuentra hablitado para crear una solicitud."
                 })
             else:
                 print("Error en solicitudes_crear:", e)
-                return render(request, 'solicitudes_crear.html', {
+                return render(request, 'solicitudes/solicitudes_crear.html', {
                     'error': "No ha sido posible guardar la solicitud."
                 })
 
@@ -213,7 +213,7 @@ def solicitud_detalle(request, solicitud_id):
         sel.id_vehiculo for sel in SolicitudesVehiculos.objects.filter(id_solicitud=solicitud_id)]
 
     if request.method == 'GET':
-        return render(request, 'solicitud_detalle.html', {
+        return render(request, 'solicitudes/solicitud_detalle.html', {
             'solicitud': solicitud,
             'estados': estados,
             'lista_empleados_disponibles': lista_empleados_disponibles,
@@ -254,7 +254,7 @@ def solicitud_detalle(request, solicitud_id):
             elif resultado_vehiculos is False:
                 error = "No se pudo actualizar la asignacion de vehiculos a la solicitud"
 
-            return render(request, 'solicitud_detalle.html', {
+            return render(request, 'solicitudes/solicitud_detalle.html', {
                 'solicitud': solicitud,
                 'estados': estados,
                 'lista_empleados_disponibles': lista_empleados_disponibles,
@@ -353,7 +353,7 @@ def solicitud_calificar(request, solicitud_id):
     solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
 
     if request.method == 'GET':
-        return render(request, 'solicitud_calificar.html', {
+        return render(request, 'solicitudes/solicitud_calificar.html', {
             'solicitud_id': solicitud_id
         })
     elif request.method == 'POST':
@@ -368,7 +368,7 @@ def solicitud_calificar(request, solicitud_id):
         else:
             error = "No se pudo guardar los datos"
 
-        return render(request, 'solicitud_calificar.html', {
+        return render(request, 'solicitudes/solicitud_calificar.html', {
             'solicitud': solicitud,
             'error': error
         })
@@ -378,7 +378,7 @@ def solicitud_calificar(request, solicitud_id):
 def solicitudes_reportes(request):
 
     if request.method == 'GET':
-        return render(request, 'solicitudes_reportes.html')
+        return render(request, 'solicitudes/solicitudes_reportes.html')
 
     elif request.method == 'POST':
 
@@ -412,7 +412,7 @@ def solicitudes_reportes(request):
 
 @login_required
 def empleados(request):
-    return render(request, 'empleados.html')
+    return render(request, 'empleados/empleados.html')
 
 
 def empleados_listado(request):
@@ -429,7 +429,7 @@ def empleados_listado(request):
 
     except Exception as e:
         print("Error en empleados:", e)
-        return render(request, 'empleados.html', {
+        return render(request, 'empleados/empleados.html', {
             'error': "Ha ocurrido un error al listar los empleados"
         })
 
@@ -437,34 +437,34 @@ def empleados_listado(request):
 @login_required
 def empleados_crear(request):
     if request.method == 'GET':
-        return render(request, 'empleados_crear.html')
+        return render(request, 'empleados/empleados_crear.html')
     else:
         try:
 
             # VALIDACIONES
             if validarUsername(request.POST['username']):
                 if Usuario.objects.filter(username=request.POST['username']):
-                    return render(request, 'signup.html', {
+                    return render(request, 'auth/signup.html', {
                         'error': "El nombre de usuario ya pertenece a una cuenta existente"
                     })
             else:
-                return render(request, 'signup.html', {
+                return render(request, 'auth/signup.html', {
                     'error': "El nombre de usuario puede contener solo numeros o letras"
                 })
 
             if Usuario.objects.filter(email=request.POST['email']):
-                return render(request, 'signup.html', {
+                return render(request, 'auth/signup.html', {
                     'error': "El correo electrónico ya pertenece a una cuenta existente"
                 })
 
             longitud = len(request.POST['dni'])
             if longitud <= 8:
                 if Usuario.objects.filter(dni=request.POST['dni']):
-                    return render(request, 'signup.html', {
+                    return render(request, 'auth/signup.html', {
                         'error': "El dni ya pertenece a una cuenta existente"
                     })
             else:
-                return render(request, 'signup.html', {
+                return render(request, 'auth/signup.html', {
                     'error': "El dni debe tener hasta 8 cifras"
                 })
 
@@ -494,7 +494,7 @@ def empleados_crear(request):
             return redirect('empleados')
         except Exception as e:
             print("Error en empleados_crear:", e)
-            return render(request, 'empleados_crear.html', {
+            return render(request, 'empleados/empleados_crear.html', {
                 'error': "Ocurrio un error al registrar el empleado."
             })
 
@@ -506,7 +506,7 @@ def empleado_detalle(request, empleado_id):
 
     if request.method == 'GET':
 
-        return render(request, 'empleado_detalle.html', {
+        return render(request, 'empleados/empleado_detalle.html', {
             'empleado': empleado,
             'estados': estados
         })
@@ -520,7 +520,7 @@ def empleado_detalle(request, empleado_id):
         if resultado:
             return redirect('empleados')
         else:
-            return redirect('empleado_detalle.html')
+            return redirect('empleados/empleado_detalle.html')
 
 
 def actualizar_empleado(r_post, empleado_id):
@@ -558,7 +558,7 @@ def empleado_eliminar(request, empleado_id):
 @login_required
 def empleados_reportes(request):
     if request.method == 'GET':
-        return render(request, 'empleados_reportes.html')
+        return render(request, 'empleados/empleados_reportes.html')
     elif request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -585,13 +585,13 @@ def empleados_reportes(request):
 
 @login_required
 def vehiculos(request):
-    return render(request, 'vehiculos.html')
+    return render(request, 'vehiculos/vehiculos.html')
 
 
 def vehiculos_listado(request):
 
     try:
-        objVehiculos = Vehiculos.objects.all()
+        objVehiculos = Vehiculo.objects.all()
         vehiculos_data = [vehiculo.to_dict() for vehiculo in objVehiculos]
 
         data = {
@@ -601,7 +601,7 @@ def vehiculos_listado(request):
         return JsonResponse(data, safe=False)
     except:
         print("Error en vehiculos:", e)
-        return render(request, 'vehiculos.html', {
+        return render(request, 'vehiculos/vehiculos.html', {
             'error': "Ha ocurrido un error al listar los vehiculos"
         })
 
@@ -610,7 +610,7 @@ def vehiculos_listado(request):
 def vehiculos_crear(request):
     vehiculo = ""
     if request.method == 'GET':
-        return render(request, 'vehiculos_crear.html')
+        return render(request, 'vehiculos/vehiculos_crear.html')
     else:
         try:
 
@@ -631,13 +631,13 @@ def vehiculos_crear(request):
         except Exception as e:  # revisar bug
             if e == "UNIQUE constraint failed: solicitudes_vehiculo.dominio":
                 print("Error en patente ", e)
-                return render(request, 'vehiculos_crear.html', {
+                return render(request, 'vehiculos/vehiculos_crear.html', {
                     'vehiculo': vehiculo,
                     'error': "El dominio ya pertenece a otro vehiculo registrado"
                 })
             else:
                 print("Error en vehiculos_crear: ", e)
-                return render(request, 'vehiculos_crear.html', {
+                return render(request, 'vehiculos/vehiculos_crear.html', {
                     'vehiculo': vehiculo,
                     'error': "No se pudo registrar el vehiculo"
                 })
@@ -649,7 +649,7 @@ def vehiculo_detalle(request, vehiculo_id):
         vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
         estados = EstadosVehiculo.objects.all()
 
-        return render(request, 'vehiculo_detalle.html', {
+        return render(request, 'vehiculos/vehiculo_detalle.html', {
             'vehiculo': vehiculo,
             'estados': estados
         })
@@ -662,7 +662,7 @@ def vehiculo_detalle(request, vehiculo_id):
         if resultado:
             return redirect('vehiculos')
         else:
-            return render(request, 'vehiculo_detalle.html', {
+            return render(request, 'vehiculos/vehiculo_detalle.html', {
                 'error': "Ha ocurrido un error al actualizar los datos del vehiculo"
             })
 
@@ -700,7 +700,7 @@ def vehiculo_eliminar(request, vehiculo_id):
 @login_required
 def vehiculos_reportes(request):
     if request.method == 'GET':
-        return render(request, 'vehiculos_reportes.html')
+        return render(request, 'vehiculos/vehiculos_reportes.html')
     elif request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -731,12 +731,12 @@ def clientes_crear(request):
 def clientes(request):
     clientes = Cliente.objects.all()
     try:
-        return render(request, 'clientes.html', {
+        return render(request, 'clientes/clientes.html', {
             'clientes': clientes
         })
     except Exception as e:
         print("Error en clientes: ", e)
-        return render(request, 'clientes.html', {
+        return render(request, 'clientes/clientes.html', {
             'error': "Ha ocurrido un error al listar los clientes"
         })
 
@@ -747,7 +747,7 @@ def cliente_detalle(request, cliente_id):
         cliente = get_object_or_404(Cliente, pk=cliente_id)
         estados = EstadosCliente.objects.all()
 
-        return render(request, 'cliente_detalle.html', {
+        return render(request, 'clientes/cliente_detalle.html', {
             'cliente': cliente,
             'estados': estados
         })
@@ -764,7 +764,7 @@ def cliente_detalle(request, cliente_id):
         if resultado:
             return redirect('clientes')
         else:
-            return render(request, 'cliente_detalle.html', {
+            return render(request, 'clientes/cliente_detalle.html', {
                 'error': "Ha ocurrido un error al actualizar los datos del cliente"
             })
 
