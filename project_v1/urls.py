@@ -48,7 +48,7 @@ urlpatterns = [
     path('vehiculos/crear/', views.vehiculos_crear, name='vehiculos_crear'),
     path('vehiculos/<int:vehiculo_id>/', views.vehiculo_detalle, name='vehiculo_detalle'),
     path('vehiculos/<int:vehiculo_id>/eliminar/', views.vehiculo_eliminar, name='vehiculo_eliminar'),
-    # path('vehiculos/reportes/', views.vehiculos_reportes, name='vehiculos_reportes'),
+    path('vehiculos/reportes/', views.vehiculos_reportes, name='vehiculos_reportes'),
 
     # rutas clientes
     path('clientes/', views.clientes, name='clientes'),

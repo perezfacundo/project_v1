@@ -2,8 +2,6 @@ let dataTable;
 let dataTableIsInitialized = false;
 const myChart = echarts.init(document.getElementById("chart"));
 
-const url ='http://127.0.0.1:8000/solicitudes/reportes/';
-
 let aEstados = []
 let aCantidades = []
 
@@ -21,7 +19,7 @@ let option = {
     'xAxis': [
         {
             'type': "category",
-            'data': aEstados,
+            'data': aVehiculos,
             'axisLabel': {
                 rotate: 30
             }
@@ -77,15 +75,31 @@ const listReportes = async () => {
             const fechaFin = $('#fechaFin').val();
             const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
+            const url ='http://127.0.0.1:8000/solicitudes/reportes/';
+
             const datos = {
                 fechaInicio: fechaInicio,
                 fechaFin: fechaFin,
-                csrfmiddlewaretoken: csrfToken
+                // csrfmiddlewaretoken: csrfToken -> para ajax
             };
+
+            const opciones = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            }
+
+            fetch(url, opciones)
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error))
+
 
             //intentar consulta con fetch para que funcione la tabla 
             $.ajax({
-                url: 'http://127.0.0.1:8000/solicitudes/reportes/',
+                url: 'http://127.0.0.1:8000/vehiculos/reportes/',
                 type: 'POST',
                 data: JSON.stringify(datos),
                 contentType: 'application/json',
@@ -97,15 +111,15 @@ const listReportes = async () => {
                     let content = '';
                     let total = 0;
 
-                    data.reporte.forEach((estado, index) => {
-                        total += estado.cantidad;
+                    data.reporte.forEach((vehiculo, index) => {
+                        total += vehiculo.cantidad;
                         content += `
                             <tr>
-                                <td>${estado.descripcion}</td>
-                                <td class="centered">${estado.cantidad}</td>
+                                <td>${vehiculo.estado}</td>
+                                <td class="centered">${vehiculo.cantidadViajes}</td>
                             </tr>
                         `;
-                        aEstados.push(estado.descripcion)
+                        aVehiculos.push(estado.descripcion)
                         aCantidades.push(estado.cantidad)
                     });
 

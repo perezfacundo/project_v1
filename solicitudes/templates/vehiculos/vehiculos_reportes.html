@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <div class="input-group">
+    <form id="formulario" method="POST" action="{% url 'vehiculos_reportes' %}">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col">
+          <input class="form-control" type="date" name="fechaInicio" id="fechaInicio">
+        </div>
+        <div class="col">
+          <input class="form-control" type="date" name="fechaFin" id="fechaFin">
+        </div>
+        <div class="col">
+          <button class="btn btn-primary" type="button" id="enviarButton">Enviar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6"> <!--TABLA -->
+      <div class="table-responsive">
+        <table id="datatable_Vehiculos" class="table table-hover">
+          <caption>Reporte de vehiculos</caption>
+          <thead>
+            <tr>
+              <th class="centered">Estado</th>
+              <th class="centered">Cantidad</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody_Vehiculos"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+      <div id="chart" style="width: 600px; height: 400px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Apache Echarts (requiere jQuery) -->
+<script src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src='{% static "js/vehiculos/vehiculos_reportes.js" %}'></script>
+
+{% endblock %}

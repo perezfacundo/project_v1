@@ -1,8 +1,8 @@
 let dataTable;
 let dataTableIsInitialized = false;
 
-let aEmpleados = []
-let aCantidades = []
+let EntidadX = []
+let CantidadesY = []
 
 let chart = {
     'tooltip': {
@@ -13,7 +13,7 @@ let chart = {
     'xAxis': [
         {
             'type': "category",
-            'data': aEmpleados
+            'data': EntidadX
         }
     ],
     'yAxis': [
@@ -23,7 +23,7 @@ let chart = {
     ],
     'series': [
         {
-            'data': aCantidades,
+            'data': CantidadesY,
             'type': "bar"
         }
     ]
@@ -58,11 +58,13 @@ const listReportes = async () => {
         $('#enviarButton').click(function () {
             const fechaInicio = $('#fechaInicio').val();
             const fechaFin = $('#fechaFin').val();
+            const listarPor = $('#listarPor').val();
             const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
             const datos = {
                 fechaInicio: fechaInicio,
                 fechaFin: fechaFin,
+                listarPor: listarPor,
                 csrfmiddlewaretoken: csrfToken
             };
 
@@ -75,36 +77,80 @@ const listReportes = async () => {
                     'X-CSRFToken': csrfToken
                 },
                 success: function (data) {
+
+                    console.log(data)
+                    
                     //Proceso de la informacion
                     let total = 0;
                     let content = '';
 
-                    data.empleados.forEach((empleado, index) => {
-                        total+= empleado.cantidadViajes
+                    if (listarPor === 'nombres') {
+
+                        headContent = `
+                            <tr>
+                                <th class="centered">Apellidos</th>
+                                <th class="centered">Nombres</th>
+                                <th class="centered">Viajes</th>
+                            </tr>
+                        `
+                        tablehead.innerHTML = headContent
+
+                        data.empleados.forEach((empleado, index) => {
+                            total += empleado.cantidadViajes
+                            content += `
+                                <tr>
+                                    <td>${empleado.last_name}</td>
+                                    <td>${empleado.first_name}</td>
+                                    <td class="centered">${empleado.cantidadViajes}</td>
+                                </tr>
+                            `;
+                            EntidadX.push(empleado.last_name)
+                            CantidadesY.push(empleado.cantidadViajes)
+                        });
+
                         content += `
                             <tr>
-                                <td>${empleado.last_name}</td>
-                                <td>${empleado.first_name}</td>
-                                <td class="centered">${empleado.cantidadViajes}</td>
+                                <td><strong>Total</strong></td>
+                                <td></td>
+                                <td class="centered">${total}</td>
                             </tr>
-                        `;
-                        aEmpleados.push(empleado.last_name)
-                        aCantidades.push(empleado.cantidadViajes)
-                    });
-                    
-                    content += `
-                        <tr>
-                            <td><strong>Total</strong></td>
-                            <td></td>
-                            <td class="centered">${total}</td>
-                        </tr>
-                    `
+                        `
+
+                    } else { //listar por estados
+
+                        headContent = `
+                            <tr>
+                                <th class="centered">Estado</th>
+                                <th class="centered">Cantidad de empleados</th>
+                            </tr>
+                        `
+                        tablehead.innerHTML = headContent
+
+                        data.estados.forEach((empleado, index) => {
+                            total += estado.cantidadEmpleados
+                            content += `
+                                <tr>
+                                    <td>${estado.descripcion}</td>
+                                    <td class="centered">${estado.cantidadEmpleados}</td>
+                                </tr>
+                            `;
+                            EntidadX.push(empleado.last_name)
+                            CantidadesY.push(empleado.cantidadViajes)
+                        });
+
+                        content += `
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td></td>
+                                <td class="centered">${total}</td>
+                            </tr>
+                        `
+                    }
 
                     tablebody.innerHTML = content;
 
-                    console.log(aEmpleados, aCantidades)
+                    console.log(EntidadX, CantidadesY)
 
-                    
                     const myChart = echarts.init(document.getElementById("chart"));
                     myChart.setOption(chart);
                     myChart.resize();
@@ -113,6 +159,14 @@ const listReportes = async () => {
                     console.log('Error: ', error)
                 }
             });
+
+            if (listarPor === 'estados') {
+
+            }
+            else {
+
+            }
+
         });
     } catch (ex) {
         alert(ex);

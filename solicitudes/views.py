@@ -388,9 +388,6 @@ def solicitudes_reportes(request):
             fecha_inicio = data.get('fechaInicio', None)
             fecha_fin = data.get('fechaFin', None)
 
-            solicitudes = Solicitud.objects.filter(
-                fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin)
-
             estados = EstadosSolicitud.objects.all()
 
             reporte = []
@@ -561,18 +558,48 @@ def empleados_reportes(request):
         return render(request, 'empleados/empleados_reportes.html')
     elif request.method == 'POST':
         try:
+            print("hola")
             data = json.loads(request.body)
 
             fecha_inicio = data.get('fechaInicio', None)
-
             fecha_fin = data.get('fechaFin', None)
+            listar_por = data.get('listarPor', None)
+            print("hola")
+            
+            if listar_por == 'nombres':
+                reporte = []
+                objEmpleados = Empleado.objects.all()
+                try:
+                    for objEmpleado in objEmpleados:
+                        cantidad_solicitudes = SolicitudesEmpleados.objects.filter(
+                            id_empleado=objEmpleado)
+                        cantidad_solicitudes = cantidad_solicitudes.filter(
+                            fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin)
+                        reporte.append({'nombre':objEmpleado.last_name + objEmpleado.first_name,
+                                        'cantidad_solicitudes': cantidad_solicitudes})
+                
+                except Exception as e:
+                    print("Error en reporte por nombres:", e)
 
-            objEmpleados = Empleado.objects.all()
-            empleados_data = [empleado.to_dict() for empleado in objEmpleados]
+                data = {
+                    'empleados': reporte
+                }
+            else:
+                estados = EstadosEmpleado.objects.all()
+                reporte = []
+                try:
+                    for estado in estados:
+                        cantidad_empleados = Empleado.objects.filter(
+                            id_estado_empleado=estado).count()
+                        reporte.append({'descripcion': estado.descripcion,
+                                        'cantidad': cantidad_empleados})
+                except Exception as e:
+                    print("Error en reporte por estados:", e)
 
-            data = {
-                'empleados': empleados_data
-            }
+                data = {
+                    'estados': reporte
+                }
+            print("hola")
 
             return JsonResponse(data, safe=False)
         except:

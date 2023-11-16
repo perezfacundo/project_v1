@@ -16,6 +16,12 @@
           <input class="form-control" type="date" name="fechaFin" id="fechaFin">
         </div>
         <div class="col">
+          <select class="form-select" name="listarPor" id="listarPor" aria-label="Default" style="width:auto">
+            <option selected value="estados">Estados</option>
+            <option value="nombres">Nombres</option>
+          </select>
+        </div>
+        <div class="col">
           <button class="btn btn-primary" type="button" id="enviarButton">Enviar</button>
         </div>
       </div>
@@ -27,13 +33,7 @@
       <div class="table-responsive">
         <table id="table" class="table table-hover">
           <caption>Reporte de empleados</caption>
-          <thead>
-            <tr>
-              <th class="centered">Apellidos</th>
-              <th class="centered">Nombres</th>
-              <th class="centered">Viajes</th>
-            </tr>
-          </thead>
+          <thead id="tablehead"></thead>
           <tbody id="tablebody"></tbody>
         </table>
       </div>
