@@ -745,11 +745,11 @@ def vehiculos_reportes(request):
                         cantidad_vehiculos = Vehiculo.objects.filter(
                             id_estado_vehiculo=estado).count()
                         reporte.append({'descripcion': estado.descripcion,
-                                        'cantidad': cantidad_vehiculos})
+                                        'cantidadVehiculos': cantidad_vehiculos})
 
                     print(reporte)
                     data = {
-                        'vehiculos': reporte
+                        'estados': reporte
                     }
 
                     return JsonResponse(data, safe=False)

@@ -20,8 +20,8 @@
         <div class="col-auto">
           <div class="form-floating">
             <select class="form-select form-select-sm" name="listarPor" id="listarPor" style="width: auto;">
-              <option selected value="estados">Estados</option>
-              <option value="vehiculos">Vehiculos</option>
+              <option selected value="vehiculos">Vehiculos</option>
+              <option value="estados">Estados</option>
             </select>
             <label for="listarPor">Listar por</label>
           </div>
@@ -37,15 +37,9 @@
   <div class="row mt-5">
     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6"> <!--TABLA -->
       <div class="table-responsive">
-        <table id="datatable_Vehiculos" class="table table-hover">
-          <caption>Reporte de vehiculos</caption>
-          <thead>
-            <tr>
-              <th class="centered">Estado</th>
-              <th class="centered">Cantidad</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody_Vehiculos"></tbody>
+        <table id="tableVehiculos" class="table table-hover">
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
         </table>
       </div>
     </div>

@@ -1,9 +1,10 @@
 let dataTable;
 let dataTableIsInitialized = false;
-const myChart = echarts.init(document.getElementById("chart"));
 
-let aVehiculos = []
-let aCantidades = []
+var myChart = echarts.init(document.getElementById("chart"));
+
+let arrayEjeX = []
+let arrayEjeY = []
 
 let option = {
     'tooltip': {
@@ -13,13 +14,13 @@ let option = {
     },
     'toolbox': {
         'feature': {
-          'saveAsImage': { show: true }
+            'saveAsImage': { show: true }
         }
     },
     'xAxis': [
         {
             'type': "category",
-            'data': aVehiculos,
+            'data': arrayEjeX,
             'axisLabel': {
                 rotate: 30
             }
@@ -32,7 +33,7 @@ let option = {
     ],
     'series': [
         {
-            'data': aCantidades,
+            'data': arrayEjeY,
             'type': "bar"
         }
     ]
@@ -71,20 +72,19 @@ const initDataTable = async () => {
 const listReportes = async () => {
     try {
         $('#enviarButton').click(function () {
+
             const fechaInicio = $('#fechaInicio').val();
             const fechaFin = $('#fechaFin').val();
             const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
             const listarPor = $('#listarPor').val()
 
-            const url ='http://127.0.0.1:8000/vehiculos/reportes/';
+            const url = 'http://127.0.0.1:8000/vehiculos/reportes/';
 
             const datos = {
                 fechaInicio: fechaInicio,
                 fechaFin: fechaFin,
                 listarPor: listarPor
             };
-
-            console.log(datos)
 
             const opciones = {
                 method: 'POST',
@@ -98,8 +98,77 @@ const listReportes = async () => {
             fetch(url, opciones)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data.vehiculos)
+                    let headContent = "";
+                    let bodyContent = "";
+                    let total = 0;
 
+                    myChart.clear()
+
+                    if (listarPor === 'vehiculos') {
+                        headContent = `
+                            <tr>
+                                <th class="centered">Vehiculo</th>
+                                <th class="centered">Cantidad</th>
+                            </tr>
+                        `
+                        tableHead.innerHTML = headContent;
+
+                        data.vehiculos.forEach((vehiculo) => {
+                            total += vehiculo.cantidadViajes;
+
+                            console.log(vehiculo.nombreModelo)
+                            console.log(vehiculo.cantidadViajes)
+
+                            bodyContent += `
+                                <tr>
+                                    <td>${vehiculo.nombreModelo}</td>
+                                    <td class="centered">${vehiculo.cantidadViajes}</td>
+                                </tr>
+                            `;
+
+                            arrayEjeX.push(vehiculo.nombreModelo)
+                            arrayEjeY.push(vehiculo.cantidadViajes)
+                        });
+
+                    } else if (listarPor === 'estados') {
+
+                        headContent = `
+                            <tr>
+                                <th class="centered">Estado</th>
+                                <th class="centered">Cantidad</th>
+                            </tr>
+                        `
+                        tableHead.innerHTML = headContent;
+
+                        data.estados.forEach((estado) => {
+                            total += estado.cantidadVehiculos;
+
+                            console.log(estado.Descripcion)
+                            console.log(estado.cantidadVehiculos)
+
+                            bodyContent += `
+                                <tr>
+                                    <td>${estado.descripcion}</td>
+                                    <td class="centered">${estado.cantidadVehiculos}</td>
+                                </tr>
+                            `;
+
+                            arrayEjeX.push(estado.descripcion)
+                            arrayEjeY.push(estado.cantidadVehiculos)
+                        });
+                    }
+
+                    bodyContent += `
+                            <tr>
+                                <td><strong>Total</strong></td>
+                                <td class="centered">${total}</td>
+                            </tr>
+                        `
+                    tableBody.innerHTML = bodyContent;
+
+                    
+                    myChart.setOption(option);
+                    myChart.resize();
                 })
                 .catch(error => console.error('Error:', error))
         });

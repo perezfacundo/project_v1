@@ -95,7 +95,7 @@ const listReportes = async () => {
                     let content = '';
                     let total = 0;
 
-                    data.reporte.forEach((estado, index) => {
+                    data.reporte.forEach((estado) => {
                         total += estado.cantidad;
                         content += `
                             <tr>
