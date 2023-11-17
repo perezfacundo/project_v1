@@ -2,7 +2,7 @@ let dataTable;
 let dataTableIsInitialized = false;
 const myChart = echarts.init(document.getElementById("chart"));
 
-let aEstados = []
+let aVehiculos = []
 let aCantidades = []
 
 let option = {
@@ -74,18 +74,22 @@ const listReportes = async () => {
             const fechaInicio = $('#fechaInicio').val();
             const fechaFin = $('#fechaFin').val();
             const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+            const listarPor = $('#listarPor').val()
 
-            const url ='http://127.0.0.1:8000/solicitudes/reportes/';
+            const url ='http://127.0.0.1:8000/vehiculos/reportes/';
 
             const datos = {
                 fechaInicio: fechaInicio,
                 fechaFin: fechaFin,
-                // csrfmiddlewaretoken: csrfToken -> para ajax
+                listarPor: listarPor
             };
+
+            console.log(datos)
 
             const opciones = {
                 method: 'POST',
                 headers: {
+                    'X-CSRFToken': csrfToken,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(datos)
@@ -93,52 +97,11 @@ const listReportes = async () => {
 
             fetch(url, opciones)
                 .then(response => response.json())
-                .then(data => console.log(data))
+                .then(data => {
+                    console.log(data.vehiculos)
+
+                })
                 .catch(error => console.error('Error:', error))
-
-
-            //intentar consulta con fetch para que funcione la tabla 
-            $.ajax({
-                url: 'http://127.0.0.1:8000/vehiculos/reportes/',
-                type: 'POST',
-                data: JSON.stringify(datos),
-                contentType: 'application/json',
-                headers: {
-                    'X-CSRFToken': csrfToken
-                },
-                success: function (data) {
-
-                    let content = '';
-                    let total = 0;
-
-                    data.reporte.forEach((vehiculo, index) => {
-                        total += vehiculo.cantidad;
-                        content += `
-                            <tr>
-                                <td>${vehiculo.estado}</td>
-                                <td class="centered">${vehiculo.cantidadViajes}</td>
-                            </tr>
-                        `;
-                        aVehiculos.push(estado.descripcion)
-                        aCantidades.push(estado.cantidad)
-                    });
-
-                    content += `
-                        <tr>
-                            <td><strong>Total</strong></td>
-                            <td class="centered">${total}</td>
-                        </tr>
-                    `
-
-                    tableBody_Solicitudes.innerHTML = content;
-
-                    myChart.setOption(option);
-                    myChart.resize();
-                },
-                error: function (error) {
-                    console.log('Error: ', error)
-                }
-            });
         });
     } catch (ex) {
         alert(ex);

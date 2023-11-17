@@ -12,6 +12,7 @@ from datetime import datetime
 from django.core import serializers
 from django.forms.models import model_to_dict
 import json
+from django.db.models import Q, Count
 
 # VISTAS AUTENTICACION
 
@@ -565,7 +566,7 @@ def empleados_reportes(request):
             fecha_fin = data.get('fechaFin', None)
             listar_por = data.get('listarPor', None)
             print("hola")
-            
+
             if listar_por == 'nombres':
                 reporte = []
                 objEmpleados = Empleado.objects.all()
@@ -575,9 +576,9 @@ def empleados_reportes(request):
                             id_empleado=objEmpleado)
                         cantidad_solicitudes = cantidad_solicitudes.filter(
                             fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin)
-                        reporte.append({'nombre':objEmpleado.last_name + objEmpleado.first_name,
+                        reporte.append({'nombre': objEmpleado.last_name + objEmpleado.first_name,
                                         'cantidad_solicitudes': cantidad_solicitudes})
-                
+
                 except Exception as e:
                     print("Error en reporte por nombres:", e)
 
@@ -733,21 +734,52 @@ def vehiculos_reportes(request):
             data = json.loads(request.body)
             fecha_inicio = data.get('fechaInicio', None)
             fecha_fin = data.get('fechaFin', None)
+            listar_por = data.get('listarPor', None)
+            reporte = []
 
-            objVehiculos = Vehiculo.objects.all()
-            vehiculos_data = [vehiculos.to_dict() for vehiculo in objVehiculos]
+            if listar_por == 'estados':
+                estados = EstadosVehiculo.objects.all()
 
-            data = {
-                'vehiculos': vehiculos_data
-            }
+                try:
+                    for estado in estados:
+                        cantidad_vehiculos = Vehiculo.objects.filter(
+                            id_estado_vehiculo=estado).count()
+                        reporte.append({'descripcion': estado.descripcion,
+                                        'cantidad': cantidad_vehiculos})
 
+                    print(reporte)
+                    data = {
+                        'vehiculos': reporte
+                    }
+
+                    return JsonResponse(data, safe=False)
+
+                except Exception as e:
+                    print("Error en reporte de vehiculos por estados:", e)
+
+            elif listar_por == 'vehiculos':
+                try:
+                    viajes_por_vehiculo = Vehiculo.objects.annotate(
+                    cantidad_viajes=Count('solicitudesvehiculos__id_solicitud__fecha_trabajo', 
+                        filter=Q(solicitudesvehiculos__id_solicitud__fecha_trabajo__range=(fecha_inicio, fecha_fin))))
+                    for vehiculo in viajes_por_vehiculo:
+                        reporte.append({'nombreModelo': f"{vehiculo.nombre} {vehiculo.modelo}",
+                                        'cantidadViajes': vehiculo.cantidad_viajes})
+
+                    data = {
+                        'vehiculos': reporte
+                    }
+                except Exception as e:
+                    print("Error en reporte de vehiculos por cantidades:", e)
+            print(data)
             return JsonResponse(data, safe=False)
         except:
             return JsonResponse({
                 'error': 'Error en los datos JSON'
             }, status=400)
-# VISTAS CLIENTES
 
+
+# VISTAS CLIENTES
 
 @login_required
 def clientes_crear(request):

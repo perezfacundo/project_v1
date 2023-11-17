@@ -174,6 +174,17 @@ class EstadosSolicitud(models.Model):
 
 
 class Solicitud(models.Model):
+    def validar_dia_habil(value):
+        if value < datetime.date.today():
+            raise models.ValidationError(
+                "La fecha debe ser posterior al día de hoy.")
+
+        # Verificar si la fecha seleccionada es un día hábil (diferente de sábado y domingo)
+        weekday = value.weekday()
+        if weekday >= 5:
+            raise models.ValidationError(
+                "La fecha seleccionada debe ser un día hábil (de lunes a viernes).")
+        pass
 
     objetos_a_transportar = models.TextField(max_length=255, null=True)
     detalles = models.TextField(max_length=255, null=True)
@@ -193,19 +204,6 @@ class Solicitud(models.Model):
         EstadosSolicitud, on_delete=models.CASCADE)
     cliente_id = models.ForeignKey(
         Cliente, on_delete=models.CASCADE, default=1)
-
-    def validar_dia_habil(value):
-        if value < datetime.date.today():
-            raise models.ValidationError(
-                "La fecha debe ser posterior al día de hoy.")
-
-        # Verificar si la fecha seleccionada es un día hábil (diferente de sábado y domingo)
-        weekday = value.weekday()
-        if weekday >= 5:
-            raise models.ValidationError(
-                "La fecha seleccionada debe ser un día hábil (de lunes a viernes).")
-        pass
-
     fecha_trabajo = models.DateField(
         blank=False, validators=[validar_dia_habil])
 

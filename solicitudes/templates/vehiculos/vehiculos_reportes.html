@@ -9,13 +9,25 @@
     <form id="formulario" method="POST" action="{% url 'vehiculos_reportes' %}">
       {% csrf_token %}
       <div class="row">
-        <div class="col">
+        <div class="col-auto">
           <input class="form-control" type="date" name="fechaInicio" id="fechaInicio">
         </div>
-        <div class="col">
+
+        <div class="col-auto">
           <input class="form-control" type="date" name="fechaFin" id="fechaFin">
         </div>
-        <div class="col">
+
+        <div class="col-auto">
+          <div class="form-floating">
+            <select class="form-select form-select-sm" name="listarPor" id="listarPor" style="width: auto;">
+              <option selected value="estados">Estados</option>
+              <option value="vehiculos">Vehiculos</option>
+            </select>
+            <label for="listarPor">Listar por</label>
+          </div>
+        </div>
+
+        <div class="col-auto">
           <button class="btn btn-primary" type="button" id="enviarButton">Enviar</button>
         </div>
       </div>
