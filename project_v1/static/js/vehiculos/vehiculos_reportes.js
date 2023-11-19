@@ -169,6 +169,7 @@ const listReportes = async () => {
                     
                     myChart.setOption(option);
                     myChart.resize();
+                    
                 })
                 .catch(error => console.error('Error:', error))
         });
