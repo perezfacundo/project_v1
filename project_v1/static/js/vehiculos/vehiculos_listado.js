@@ -69,7 +69,6 @@ const listSolicitudes = async () => {
     }
 };
 
-
 // Escucha del evento load
 window.addEventListener('load', async () => {
     await initDataTable();

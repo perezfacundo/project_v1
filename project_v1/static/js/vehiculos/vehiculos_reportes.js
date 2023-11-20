@@ -1,8 +1,6 @@
 let dataTable;
 let dataTableIsInitialized = false;
 
-var myChart = echarts.init(document.getElementById("chart"));
-
 let arrayEjeX = []
 let arrayEjeY = []
 
@@ -41,7 +39,8 @@ let option = {
 
 const dataTableOptions = {
     columnDefs: [
-        { orderable: false, targets: [1] },
+        { className: "centered", targets: [0, 1] },
+        { orderable: true, targets: [1] }
     ],
     "searching": false,
     dom: 'Bfrtip',
@@ -61,7 +60,7 @@ const initDataTable = async () => {
     await listReportes();
 
     try {
-        dataTable = $('#datatable_Solicitudes').DataTable(dataTableOptions);
+        dataTable = $('#tableVehiculos').DataTable(dataTableOptions);
     } catch (error) {
         alert(ex)
     }
@@ -75,8 +74,8 @@ const listReportes = async () => {
 
             const fechaInicio = $('#fechaInicio').val();
             const fechaFin = $('#fechaFin').val();
+            const listarPor = $('#listarPor').val();
             const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-            const listarPor = $('#listarPor').val()
 
             const url = 'http://127.0.0.1:8000/vehiculos/reportes/';
 
@@ -86,7 +85,7 @@ const listReportes = async () => {
                 listarPor: listarPor
             };
 
-            const opciones = {
+            const config = {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrfToken,
@@ -95,36 +94,31 @@ const listReportes = async () => {
                 body: JSON.stringify(datos)
             }
 
-            fetch(url, opciones)
+            fetch(url, config)
                 .then(response => response.json())
                 .then(data => {
                     let headContent = "";
                     let bodyContent = "";
                     let total = 0;
 
-                    myChart.clear()
-
                     if (listarPor === 'vehiculos') {
                         headContent = `
-                            <tr>
-                                <th class="centered">Vehiculo</th>
-                                <th class="centered">Cantidad</th>
-                            </tr>
-                        `
+                        <tr>
+                            <th class="centered">Vehiculo</th>
+                            <th class="centered">Cantidad</th>
+                        </tr>
+                    `
                         tableHead.innerHTML = headContent;
 
                         data.vehiculos.forEach((vehiculo) => {
                             total += vehiculo.cantidadViajes;
 
-                            console.log(vehiculo.nombreModelo)
-                            console.log(vehiculo.cantidadViajes)
-
                             bodyContent += `
-                                <tr>
-                                    <td>${vehiculo.nombreModelo}</td>
-                                    <td class="centered">${vehiculo.cantidadViajes}</td>
-                                </tr>
-                            `;
+                            <tr>
+                                <td>${vehiculo.nombreModelo}</td>
+                                <td class="centered">${vehiculo.cantidadViajes}</td>
+                            </tr>
+                        `;
 
                             arrayEjeX.push(vehiculo.nombreModelo)
                             arrayEjeY.push(vehiculo.cantidadViajes)
@@ -133,25 +127,22 @@ const listReportes = async () => {
                     } else if (listarPor === 'estados') {
 
                         headContent = `
-                            <tr>
-                                <th class="centered">Estado</th>
-                                <th class="centered">Cantidad</th>
-                            </tr>
-                        `
+                        <tr>
+                            <th class="centered">Estado</th>
+                            <th class="centered">Cantidad</th>
+                        </tr>
+                    `
                         tableHead.innerHTML = headContent;
 
                         data.estados.forEach((estado) => {
                             total += estado.cantidadVehiculos;
 
-                            console.log(estado.Descripcion)
-                            console.log(estado.cantidadVehiculos)
-
                             bodyContent += `
-                                <tr>
-                                    <td>${estado.descripcion}</td>
-                                    <td class="centered">${estado.cantidadVehiculos}</td>
-                                </tr>
-                            `;
+                            <tr>
+                                <td>${estado.descripcion}</td>
+                                <td class="centered">${estado.cantidadVehiculos}</td>
+                            </tr>
+                        `;
 
                             arrayEjeX.push(estado.descripcion)
                             arrayEjeY.push(estado.cantidadVehiculos)
@@ -159,17 +150,16 @@ const listReportes = async () => {
                     }
 
                     bodyContent += `
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                <td class="centered">${total}</td>
-                            </tr>
-                        `
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td class="centered">${total}</td>
+                        </tr>
+                    `
                     tableBody.innerHTML = bodyContent;
 
-                    
-                    myChart.setOption(option);
-                    myChart.resize();
-                    
+                    initChart();
+
+                    reiniciarOption();
                 })
                 .catch(error => console.error('Error:', error))
         });
@@ -182,3 +172,13 @@ const listReportes = async () => {
 window.addEventListener("load", async () => {
     await initDataTable();
 });
+
+const initChart = () => {
+    let myChart = echarts.init(document.getElementById("chart"));
+    myChart.setOption(option);
+}
+
+function reiniciarOption() {
+    arrayEjeX.splice(0, arrayEjeX.length);
+    arrayEjeY.splice(0, arrayEjeY.length);
+}

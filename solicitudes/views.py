@@ -399,7 +399,7 @@ def solicitudes_reportes(request):
                                'cantidad': cantidad_solicitudes})
 
             data = {
-                'reporte': reporte
+                'estados': reporte
             }
             return JsonResponse(data, safe=False)
         except json.JSONDecodeError as e:
@@ -559,13 +559,12 @@ def empleados_reportes(request):
         return render(request, 'empleados/empleados_reportes.html')
     elif request.method == 'POST':
         try:
-            print("hola")
+
             data = json.loads(request.body)
 
             fecha_inicio = data.get('fechaInicio', None)
             fecha_fin = data.get('fechaFin', None)
             listar_por = data.get('listarPor', None)
-            print("hola")
 
             if listar_por == 'nombres':
                 reporte = []
@@ -577,13 +576,15 @@ def empleados_reportes(request):
                         cantidad_solicitudes = cantidad_solicitudes.filter(
                             fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin)
                         reporte.append({'nombre': objEmpleado.last_name + objEmpleado.first_name,
-                                        'cantidad_solicitudes': cantidad_solicitudes})
+                                        'cantidadSolicitudes': cantidad_solicitudes})
 
                 except Exception as e:
                     print("Error en reporte por nombres:", e)
 
                 data = {
                     'empleados': reporte
+                    #empleados.nombre
+                    #empleados.cantidadSolicitudes
                 }
             else:
                 estados = EstadosEmpleado.objects.all()
@@ -599,8 +600,9 @@ def empleados_reportes(request):
 
                 data = {
                     'estados': reporte
+                    # estados.descripcion
+                    # estados.cantidad
                 }
-            print("hola")
 
             return JsonResponse(data, safe=False)
         except:
@@ -747,7 +749,6 @@ def vehiculos_reportes(request):
                         reporte.append({'descripcion': estado.descripcion,
                                         'cantidadVehiculos': cantidad_vehiculos})
 
-                    print(reporte)
                     data = {
                         'estados': reporte
                     }
@@ -771,7 +772,7 @@ def vehiculos_reportes(request):
                     }
                 except Exception as e:
                     print("Error en reporte de vehiculos por cantidades:", e)
-            print(data)
+
             return JsonResponse(data, safe=False)
         except:
             return JsonResponse({

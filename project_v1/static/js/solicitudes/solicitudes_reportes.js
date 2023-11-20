@@ -1,9 +1,8 @@
 let dataTable;
 let dataTableIsInitialized = false;
-const myChart = echarts.init(document.getElementById("chart"));
 
-let aEstados = []
-let aCantidades = []
+let arrayEjeX = []
+let arrayEjeY = []
 
 let option = {
     'tooltip': {
@@ -19,7 +18,7 @@ let option = {
     'xAxis': [
         {
             'type': "category",
-            'data': aEstados,
+            'data': arrayEjeX,
             'axisLabel': {
                 rotate: 30
             }
@@ -32,7 +31,7 @@ let option = {
     ],
     'series': [
         {
-            'data': aCantidades,
+            'data': arrayEjeY,
             'type': "bar"
         }
     ]
@@ -60,7 +59,7 @@ const initDataTable = async () => {
     await listReportes();
 
     try {
-        dataTable = $('#datatable_Solicitudes').DataTable(dataTableOptions);
+        dataTable = $('#tableSolicitudes').DataTable(dataTableOptions)
     } catch (error) {
         alert(ex)
     }
@@ -75,54 +74,57 @@ const listReportes = async () => {
             const fechaFin = $('#fechaFin').val();
             const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
+            const url = 'http://127.0.0.1:8000/solicitudes/reportes/'
+
             const datos = {
                 fechaInicio: fechaInicio,
                 fechaFin: fechaFin,
-                csrfmiddlewaretoken: csrfToken
+                // csrfmiddlewaretoken: csrfToken
             };
 
-            //intentar consulta con fetch para que funcione la tabla 
-            $.ajax({
-                url: 'http://127.0.0.1:8000/solicitudes/reportes/',
-                type: 'POST',
-                data: JSON.stringify(datos),
-                contentType: 'application/json',
+            const config = {
+                method: 'POST',
                 headers: {
-                    'X-CSRFToken': csrfToken
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
                 },
-                success: function (data) {
+                body: JSON.stringify(datos)
+            }
 
-                    let content = '';
+            fetch(url, config)
+                .then(response => response.json())
+                .then(data => {
+                    let bodyContent = "";
                     let total = 0;
 
-                    data.reporte.forEach((estado) => {
-                        total += estado.cantidad;
-                        content += `
+                    data.estados.forEach((estado) => {
+                        total += estado.cantidad
+
+                        bodyContent += `
                             <tr>
                                 <td>${estado.descripcion}</td>
-                                <td class="centered">${estado.cantidad}</td>
+                                <td>${estado.cantidad}</td>
                             </tr>
                         `;
-                        aEstados.push(estado.descripcion)
-                        aCantidades.push(estado.cantidad)
-                    });
 
-                    content += `
+                        arrayEjeX.push(estado.descripcion)
+                        arrayEjeY.push(estado.cantidad)
+                    })
+
+                    bodyContent += `
                         <tr>
                             <td><strong>Total</strong></td>
-                            <td class="centered">${total}</td>
+                            <td>${total}</td>
                         </tr>
                     `
 
-                    tableBody_Solicitudes.innerHTML = content;
+                    tableBody.innerHTML = bodyContent;
 
-                    myChart.setOption(option);
-                    myChart.resize();
-                },
-                error: function (error) {
-                    console.log('Error: ', error)
-                }
-            });
+                    initChart();
+
+                    reiniciarOption();
+                })
+                .catch(error => console.error('Error:', error))
         });
     } catch (ex) {
         alert(ex);
@@ -133,3 +135,14 @@ const listReportes = async () => {
 window.addEventListener("load", async () => {
     await initDataTable();
 });
+
+const initChart = () => {
+    let myChart = echarts.init(document.getElementById("chart"));
+    myChart.clear();
+    myChart.setOption(option);
+}
+
+function reiniciarOption() {
+    arrayEjeX.splice(0, arrayEjeX.length);
+    arrayEjeY.splice(0, arrayEjeY.length);
+}

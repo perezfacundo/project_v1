@@ -1,10 +1,10 @@
 let dataTable;
 let dataTableIsInitialized = false;
 
-let EntidadX = []
-let CantidadesY = []
+let arrayEjeX = []
+let arrayEjeY = []
 
-let chart = {
+let option = {
     'tooltip': {
         'show': true,
         'trigger': "axis",
@@ -13,7 +13,7 @@ let chart = {
     'xAxis': [
         {
             'type': "category",
-            'data': EntidadX
+            'data': arrayEjeX
         }
     ],
     'yAxis': [
@@ -23,7 +23,7 @@ let chart = {
     ],
     'series': [
         {
-            'data': CantidadesY,
+            'data': arrayEjeY,
             'type': "bar"
         }
     ]
@@ -48,7 +48,7 @@ const initDataTable = async () => {
 
     await listReportes();
 
-    dataTable = $('#table').DataTable(dataTableOptions);
+    dataTable = $('#tableEmpleados').DataTable(dataTableOptions);
 
     dataTableIsInitialized = true;
 };
@@ -61,28 +61,31 @@ const listReportes = async () => {
             const listarPor = $('#listarPor').val();
             const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
+            const url = 'http://127.0.0.1:8000/empleados/reportes/'
+
             const datos = {
                 fechaInicio: fechaInicio,
                 fechaFin: fechaFin,
                 listarPor: listarPor,
-                csrfmiddlewaretoken: csrfToken
             };
 
-            $.ajax({
-                url: 'http://127.0.0.1:8000/empleados/reportes/',
-                type: 'POST',
-                data: JSON.stringify(datos),
-                contentType: 'application/json',
+            const config = {
+                method: 'POST',
                 headers: {
-                    'X-CSRFToken': csrfToken
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
                 },
-                success: function (data) {
+                body: JSON.stringify(datos)
+            }
 
-                    console.log(data)
+            fetch(url, config)
+                .then(response => response.json())
+                .then(data => {
                     
                     //Proceso de la informacion
                     let total = 0;
-                    let content = '';
+                    let headContent = '';
+                    let bodyContent = '';
 
                     if (listarPor === 'nombres') {
 
@@ -92,11 +95,12 @@ const listReportes = async () => {
                                 <th class="centered">Nombres</th>
                                 <th class="centered">Viajes</th>
                             </tr>
-                        `
-                        tablehead.innerHTML = headContent
+                        `;
+                        tableHead.innerHTML = headContent;
 
                         data.empleados.forEach((empleado, index) => {
-                            total += empleado.cantidadViajes
+                            total += empleado.cantidadViajes;
+
                             content += `
                                 <tr>
                                     <td>${empleado.last_name}</td>
@@ -104,17 +108,17 @@ const listReportes = async () => {
                                     <td class="centered">${empleado.cantidadViajes}</td>
                                 </tr>
                             `;
-                            EntidadX.push(empleado.last_name)
-                            CantidadesY.push(empleado.cantidadViajes)
+                            arrayEjeX.push(empleado.last_name);
+                            arrayEjeY.push(empleado.cantidadViajes);
                         });
 
-                        content += `
+                        bodyContent += `
                             <tr>
                                 <td><strong>Total</strong></td>
                                 <td></td>
                                 <td class="centered">${total}</td>
                             </tr>
-                        `
+                        `;
 
                     } else { //listar por estados
 
@@ -123,8 +127,8 @@ const listReportes = async () => {
                                 <th class="centered">Estado</th>
                                 <th class="centered">Cantidad de empleados</th>
                             </tr>
-                        `
-                        tablehead.innerHTML = headContent
+                        `;
+                        tableHead.innerHTML = headContent;
 
                         data.estados.forEach((empleado, index) => {
                             total += estado.cantidadEmpleados
@@ -134,38 +138,25 @@ const listReportes = async () => {
                                     <td class="centered">${estado.cantidadEmpleados}</td>
                                 </tr>
                             `;
-                            EntidadX.push(empleado.last_name)
-                            CantidadesY.push(empleado.cantidadViajes)
+                            arrayEjeX.push(empleado.last_name);
+                            arrayEjeY.push(empleado.cantidadViajes);
                         });
 
-                        content += `
+                        bodyContent += `
                             <tr>
                                 <td><strong>Total</strong></td>
                                 <td></td>
                                 <td class="centered">${total}</td>
                             </tr>
-                        `
+                        `;
                     }
 
-                    tablebody.innerHTML = content;
+                    tableBody.innerHTML = content;
 
-                    console.log(EntidadX, CantidadesY)
+                    initChart();
 
-                    const myChart = echarts.init(document.getElementById("chart"));
-                    myChart.setOption(chart);
-                    myChart.resize();
-                },
-                error: function (error) {
-                    console.log('Error: ', error)
-                }
-            });
-
-            if (listarPor === 'estados') {
-
-            }
-            else {
-
-            }
+                    reiniciarOption();
+                })
 
         });
     } catch (ex) {
@@ -177,3 +168,13 @@ const listReportes = async () => {
 window.addEventListener("load", async () => {
     await initDataTable();
 });
+
+const initChart = () => {
+    let myChart = echarts.init(document.getElementById("chart"));
+    myChart.setOption(option);
+}
+
+function reiniciarOption() {
+    arrayEjeX.splice(0, arrayEjeX.length);
+    arrayEjeY.splice(0, arrayEjeY.length);
+}
