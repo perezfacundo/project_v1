@@ -254,9 +254,6 @@ class Vehiculo(models.Model):
         return f"ID:{self.id}"
 
     def to_dict(self):
-        cantidadViajes = 0
-        cantidadViajes = SolicitudesVehiculos.objects.filter(id_vehiculo=self.id).count()
-
         return {
             'id': self.id,
             'dominio': self.dominio,
@@ -265,7 +262,6 @@ class Vehiculo(models.Model):
             'modelo': self.modelo,
             'capacidad': self.capacidad,
             'estado': self.id_estado_vehiculo.descripcion,
-            'cantidadViajes': cantidadViajes
         }
 
     class Meta:

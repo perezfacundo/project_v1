@@ -569,22 +569,25 @@ def empleados_reportes(request):
             if listar_por == 'nombres':
                 reporte = []
                 objEmpleados = Empleado.objects.all()
-                try:
-                    for objEmpleado in objEmpleados:
-                        cantidad_solicitudes = SolicitudesEmpleados.objects.filter(
-                            id_empleado=objEmpleado)
-                        cantidad_solicitudes = cantidad_solicitudes.filter(
-                            fecha_trabajo__gte=fecha_inicio, fecha_trabajo__lte=fecha_fin)
-                        reporte.append({'nombre': objEmpleado.last_name + objEmpleado.first_name,
-                                        'cantidadSolicitudes': cantidad_solicitudes})
 
-                except Exception as e:
-                    print("Error en reporte por nombres:", e)
+                viajes_por_empleado = Empleado.objects.annotate(
+                    cantidad_viajes=Count('solicitudesempleados__id_solicitud__fecha_trabajo',
+                    filter=Q(solicitudesempleados__id_solicitud__fecha_trabajo__range=(fecha_inicio, fecha_fin)))
+                )
+
+                # Ahora puedes acceder a la cantidad de viajes para cada empleado
+                reporte = []
+                for empleado in viajes_por_empleado:
+                    cantidad_solicitudes = empleado.cantidad_viajes
+                    reporte.append({
+                        'nombre': f"{empleado.last_name} {empleado.first_name}",
+                        'cantidadSolicitudes': cantidad_solicitudes
+                    })
 
                 data = {
                     'empleados': reporte
-                    #empleados.nombre
-                    #empleados.cantidadSolicitudes
+                    # empleados.nombre
+                    # empleados.cantidadSolicitudes
                 }
             else:
                 estados = EstadosEmpleado.objects.all()
@@ -594,7 +597,7 @@ def empleados_reportes(request):
                         cantidad_empleados = Empleado.objects.filter(
                             id_estado_empleado=estado).count()
                         reporte.append({'descripcion': estado.descripcion,
-                                        'cantidad': cantidad_empleados})
+                                        'cantidadEmpleados': cantidad_empleados})
                 except Exception as e:
                     print("Error en reporte por estados:", e)
 
@@ -604,6 +607,7 @@ def empleados_reportes(request):
                     # estados.cantidad
                 }
 
+            print(data)
             return JsonResponse(data, safe=False)
         except:
             return JsonResponse({
@@ -760,12 +764,12 @@ def vehiculos_reportes(request):
 
             elif listar_por == 'vehiculos':
                 try:
-                    viajes_por_vehiculo = Vehiculo.objects.annotate(
-                    cantidad_viajes=Count('solicitudesvehiculos__id_solicitud__fecha_trabajo', 
-                        filter=Q(solicitudesvehiculos__id_solicitud__fecha_trabajo__range=(fecha_inicio, fecha_fin))))
+                    qSolicitudesVehiculos = Vehiculo.objects.annotate(
+                        cantidad_viajes=Count('solicitudesvehiculos__id_solicitud__fecha_trabajo',
+                                              filter=Q(solicitudesvehiculos__id_solicitud__fecha_trabajo__range=(fecha_inicio, fecha_fin))))
                     for vehiculo in viajes_por_vehiculo:
-                        reporte.append({'nombreModelo': f"{vehiculo.nombre} {vehiculo.modelo}",
-                                        'cantidadViajes': vehiculo.cantidad_viajes})
+                        reporte.append({'nombreModelo': f"{qViajesVehiculos.nombre} {qViajesVehiculos.modelo}",
+                                        'cantidadViajes': qViajesVehiculos.cantidad_viajes})
 
                     data = {
                         'vehiculos': reporte

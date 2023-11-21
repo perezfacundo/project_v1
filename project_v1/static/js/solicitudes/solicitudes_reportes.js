@@ -19,9 +19,7 @@ let option = {
         {
             'type': "category",
             'data': arrayEjeX,
-            'axisLabel': {
-                rotate: 30
-            }
+            'axisLabel': { rotate: 30}
         }
     ],
     'yAxis': [

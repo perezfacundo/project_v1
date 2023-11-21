@@ -13,7 +13,8 @@ let option = {
     'xAxis': [
         {
             'type': "category",
-            'data': arrayEjeX
+            'data': arrayEjeX,
+            'axisLabel': { rotate: 30 }
         }
     ],
     'yAxis': [
@@ -81,7 +82,9 @@ const listReportes = async () => {
             fetch(url, config)
                 .then(response => response.json())
                 .then(data => {
-                    
+
+                    console.log(data)
+
                     //Proceso de la informacion
                     let total = 0;
                     let headContent = '';
@@ -91,31 +94,31 @@ const listReportes = async () => {
 
                         headContent = `
                             <tr>
-                                <th class="centered">Apellidos</th>
                                 <th class="centered">Nombres</th>
                                 <th class="centered">Viajes</th>
                             </tr>
                         `;
                         tableHead.innerHTML = headContent;
 
-                        data.empleados.forEach((empleado, index) => {
-                            total += empleado.cantidadViajes;
+                        data.empleados.forEach((empleado) => {
+                            total += empleado.cantidadSolicitudes
+                            console.log(total)
 
-                            content += `
+                            bodyContent += `
                                 <tr>
-                                    <td>${empleado.last_name}</td>
-                                    <td>${empleado.first_name}</td>
-                                    <td class="centered">${empleado.cantidadViajes}</td>
+                                    <td>${empleado.nombre}</td>
+                                    <td class="centered">${empleado.cantidadSolicitudes}</td>
                                 </tr>
                             `;
-                            arrayEjeX.push(empleado.last_name);
-                            arrayEjeY.push(empleado.cantidadViajes);
+                            arrayEjeX.push(empleado.nombre);
+                            arrayEjeY.push(empleado.cantidadSolicitudes);
                         });
+
+                        console.log(total)
 
                         bodyContent += `
                             <tr>
                                 <td><strong>Total</strong></td>
-                                <td></td>
                                 <td class="centered">${total}</td>
                             </tr>
                         `;
@@ -130,28 +133,28 @@ const listReportes = async () => {
                         `;
                         tableHead.innerHTML = headContent;
 
-                        data.estados.forEach((empleado, index) => {
+                        data.estados.forEach((estado) => {
                             total += estado.cantidadEmpleados
-                            content += `
+
+                            bodyContent += `
                                 <tr>
                                     <td>${estado.descripcion}</td>
                                     <td class="centered">${estado.cantidadEmpleados}</td>
                                 </tr>
                             `;
-                            arrayEjeX.push(empleado.last_name);
-                            arrayEjeY.push(empleado.cantidadViajes);
+                            arrayEjeX.push(estado.descripcion);
+                            arrayEjeY.push(estado.cantidadEmpleados);
                         });
 
                         bodyContent += `
                             <tr>
                                 <td><strong>Total</strong></td>
-                                <td></td>
                                 <td class="centered">${total}</td>
                             </tr>
                         `;
                     }
 
-                    tableBody.innerHTML = content;
+                    tableBody.innerHTML = bodyContent;
 
                     initChart();
 
