@@ -4,9 +4,9 @@ let dataTableIsInitialized = false;
 // Configuracion de la datatable
 const dataTableOptions = {
     columnDefs: [
-        { className: 'centered', targets: [0, 1, 2, 3, 4, 5, 6] },
-        { orderable: false, targets: [4, 5, 6] },
-        { searchable: false, targets: [4, 5, 6] }
+        { className: 'centered', targets: [0, 1, 2, 3, 4, 5, 6, 7] },
+        { orderable: false, targets: [5, 6, 7] },
+        { searchable: false, targets: [5, 6, 7] }
     ],
     destroy: true,
     dom: 'Bfrtip',
@@ -25,7 +25,7 @@ const initDataTable = async () => {
     await listSolicitudes();
 
     try {
-        dataTable = $('#datatable_Solicitudes').DataTable(dataTableOptions);
+        dataTable = $('#tableSolicitudes').DataTable(dataTableOptions);
     } catch (ex) {
         alert(ex)
     }
@@ -41,21 +41,20 @@ const listSolicitudes = async () => {
         const estados = data.estados
         const usuario = data.usuario
 
-        console.log(data.usuario)
-
-        let content = '';
+        let bodyContent = '';
         let btnCalificar = '';
         let btnDetalles = '';
         let btnEliminar = '';
 
-        data.solicitudes.forEach((solicitud, index) => {
+        data.solicitudes.forEach((solicitud) => {
             btnCalificar = `<a class="btn btn-sm " style="background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;
             btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/solicitudes/${solicitud.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
             btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/solicitudes/eliminar/${solicitud.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
             
-            content += `
+            bodyContent += `
                 <tr>
                     <td>${solicitud.id}</td>
+                    <td>${solicitud.cliente}</td>
                     <td>${solicitud.direccion_desde}</td>
                     <td>${solicitud.direccion_hasta}</td>
                     <td>${solicitud.fecha_trabajo}</td>
@@ -64,21 +63,21 @@ const listSolicitudes = async () => {
 
             if (solicitud.estado == "Entregado") {
                 if (usuario.tipo_usuario == "Cliente") {
-                    content += `${btnCalificar}`
+                    bodyContent += `${btnCalificar}`
                 }
             }
 
-            content += `</td><td>`;
+            bodyContent += `</td><td>`;
             if (solicitud.calificacion != null) {
                 for (var i = 1; i <= solicitud.calificacion; i++) {
-                    content += `
+                    bodyContent += `
                         <i class="bi bi-star-fill" style="color:#F8DA62;"></i>
                     `
                 }
-            } else { content += `sin calificar` } content += `</td></tr>`
+            } else { bodyContent += `sin calificar` } bodyContent += `</td></tr>`
         });
 
-        tableBody_Solicitudes.innerHTML = content;
+        tableBody.innerHTML = bodyContent;
     } catch (ex) {
         alert(ex);
     }

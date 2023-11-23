@@ -52,10 +52,10 @@ urlpatterns = [
 
     # rutas clientes
     path('clientes/', views.clientes, name='clientes'),
-    path('clientes/crear/', views.clientes_crear, name='clientes_crear'),
+    path('clientes_listado/', views.clientes_listado, name='clientes_listado'),
     path('clientes/<int:cliente_id>/', views.cliente_detalle, name='cliente_detalle'),
     path('clientes/<int:cliente_id>/eliminar/', views.cliente_eliminar, name='cliente_eliminar'),
-    # path('vehiculos/reportes/', views.vehiculos_reportes, name='vehiculos_reportes'),
+    path('clientes/reportes/', views.clientes_reportes, name='clientes_reportes'),
 
     # rutas authenticate
     path('signup/', views.signup, name='signup'),

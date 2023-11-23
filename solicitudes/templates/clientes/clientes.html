@@ -12,23 +12,23 @@
                     <caption>
                             Clientes
                     </caption>
-                    <thead>
+                    <thead id="tableHead">
                         <tr>
-                            <th class="centered">#</th>
-                            <th class="centered">Desde</th>
-                            <th class="centered">Hasta</th>
-                            <th class="centered">A realizar el</th>
+                            <th class="centered">DNI</th>
+                            <th class="centered">Apellidos</th>
+                            <th class="centered">Nombres</th>
+                            <th class="centered">Telefono</th>
+                            <th class="centered">Correo</th>
                             <th class="centered">Estado</th>
                             <th class="centered">Acciones</th>
-                            <th class="centered">Calificacion</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody_Solicitudes"></tbody>
+                    <tbody id="tableBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-<script src='{% static "js/solicitudes/solicitudes_listado.js" %}'></script>
+<script src='{% static "js/clientes/clientes_listado.js" %}'></script>
 {% endblock %}

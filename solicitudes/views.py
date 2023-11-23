@@ -416,8 +416,8 @@ def empleados(request):
 def empleados_listado(request):
 
     try:
-        ObjEmpleados = Empleado.objects.all()
-        empleados_data = [empleado.to_dict() for empleado in ObjEmpleados]
+        empleados = Empleado.objects.all()
+        empleados_data = [empleado.to_dict() for empleado in empleados]
 
         data = {
             'empleados': empleados_data
@@ -572,7 +572,7 @@ def empleados_reportes(request):
 
                 viajes_por_empleado = Empleado.objects.annotate(
                     cantidad_viajes=Count('solicitudesempleados__id_solicitud__fecha_trabajo',
-                    filter=Q(solicitudesempleados__id_solicitud__fecha_trabajo__range=(fecha_inicio, fecha_fin)))
+                                          filter=Q(solicitudesempleados__id_solicitud__fecha_trabajo__range=(fecha_inicio, fecha_fin)))
                 )
 
                 # Ahora puedes acceder a la cantidad de viajes para cada empleado
@@ -592,14 +592,11 @@ def empleados_reportes(request):
             else:
                 estados = EstadosEmpleado.objects.all()
                 reporte = []
-                try:
-                    for estado in estados:
-                        cantidad_empleados = Empleado.objects.filter(
-                            id_estado_empleado=estado).count()
-                        reporte.append({'descripcion': estado.descripcion,
-                                        'cantidadEmpleados': cantidad_empleados})
-                except Exception as e:
-                    print("Error en reporte por estados:", e)
+                for estado in estados:
+                    cantidad_empleados = Empleado.objects.filter(
+                        id_estado_empleado=estado).count()
+                    reporte.append({'descripcion': estado.descripcion,
+                                    'cantidadEmpleados': cantidad_empleados})
 
                 data = {
                     'estados': reporte
@@ -625,8 +622,8 @@ def vehiculos(request):
 def vehiculos_listado(request):
 
     try:
-        objVehiculos = Vehiculo.objects.all()
-        vehiculos_data = [vehiculo.to_dict() for vehiculo in objVehiculos]
+        vehiculos = Vehiculo.objects.all()
+        vehiculos_data = [vehiculo.to_dict() for vehiculo in vehiculos]
 
         data = {
             'vehiculos': vehiculos_data
@@ -787,19 +784,21 @@ def vehiculos_reportes(request):
 # VISTAS CLIENTES
 
 @login_required
-def clientes_crear(request):
-    print("hola")
-
-
-@login_required
 def clientes(request):
-    clientes = Cliente.objects.all()
+    return render(request, 'clientes/clientes.html')
+
+
+def clientes_listado(request):
     try:
-        return render(request, 'clientes/clientes.html', {
-            'clientes': clientes
-        })
+        clientes = Cliente.objects.all()
+        clientes_data = [cliente.to_dict() for cliente in clientes]
+
+        data = {
+            'clientes': clientes_data
+        }
+        return JsonResponse(data, safe=False)
     except Exception as e:
-        print("Error en clientes: ", e)
+        print("Error en empleados:", e)
         return render(request, 'clientes/clientes.html', {
             'error': "Ha ocurrido un error al listar los clientes"
         })
@@ -816,14 +815,10 @@ def cliente_detalle(request, cliente_id):
             'estados': estados
         })
     else:
-        print(request)
-        r_post = request.POST.copy()
-        print(r_post)
-        r_post.pop('csrfmiddlewaretoken', None)
-        print(r_post)
 
+        r_post = request.POST.copy()
+        r_post.pop('csrfmiddlewaretoken', None)
         resultado = actualizar_cliente(r_post, cliente_id)
-        print(resultado)
 
         if resultado:
             return redirect('clientes')
@@ -863,17 +858,56 @@ def cliente_eliminar(request, cliente_id):
     return redirect('clientes')
 
 
-def objetos_a_json(objeto_o_lista):
-    if isinstance(objeto_o_lista, list):
-        json_resultado = [objeto.__dict__ for objeto in objeto_o_lista]
-    else:
-        json_resultado = objeto_o_lista.__dict__
+@login_required
+def clientes_reportes(request):
+    if request.method == 'GET':
+        return render(request, 'clientes/clientes_reportes.html')
+    elif request.method == 'POST':
+        try:
+            data = json.loads(request.body)
 
-    return json.dumps(json_resultado, indent=4)
+            print(data)
+
+            fecha_inicio = data.get('fechaInicio', None)
+            fecha_fin = data.get('fechaFin', None)
+            listar_por = data.get('listarPor', None)
+            reporte = []
+
+            if listar_por == 'estados':
+                estados = EstadosCliente.objects.all()
+                for estado in estados:
+                    cantidad_clientes = Cliente.objects.filter(
+                        id_estado_cliente=id_cliente).count()
+                    reporte.append({'descripcion': estado.descripcion,
+                                    'cantidadClientes': cantidad_clientes})
+
+                print(reporte)
+
+                data = {'estados': reporte}
+
+            elif listar_por == 'nombres':
+                viajes_por_cliente = Cliente.objects.annotate(
+                    cantidad_viajes=Count('solicitud__id', filter=Q(
+                        solicitud__fecha_trabajo__range = (fecha_inicio, fecha_fin)))
+                )
+                for cliente in viajes_por_cliente:
+                    reporte.append({'nombre': f"{cliente.last_name} {cliente.first_name}",
+                                    'cantidadViajes': cliente.cantidad_viajes})
+
+                print(reporte)
+
+                data = {'clientes': reporte}
+
+            print(data)
+
+            return JsonResponse(data, safe=False)
+        except Exception as e:
+            return JsonResponse({
+                'error': e
+            }, status=400)
+
 
 # VISTAS DE ERROR
-
-
 def error_view_500(request):
     error_message = "Se ha producido un error interno en el servidor."
     error_details = "Missing staticfiles manifest entry for 'css/styles.css'"

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+  <div class="input-group">
+    <form id="formulario" method="POST" action="{% url 'clientes_reportes' %}">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col">
+          <input class="form-control" type="date" name="fechaInicio" id="fechaInicio">
+        </div>
+        <div class="col">
+          <input class="form-control" type="date" name="fechaFin" id="fechaFin">
+        </div>
+        <div class="col">
+          <select class="form-select" name="listarPor" id="listarPor" aria-label="Default" style="width:auto">
+            <option selected value="estados">Estados</option>
+            <option value="nombres">Nombres</option>
+          </select>
+        </div>
+        <div class="col">
+          <button class="btn btn-primary" type="button" id="enviarButton">Enviar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6"> <!--TABLA -->
+      <div class="table-responsive">
+        <table id="tableClientes" class="table table-hover">
+          <caption>Reporte de clientes</caption>
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+      <div id="chart" style="width: 600px; height: 400px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Apache Echarts (requiere jQuery) -->
+<script src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src='{% static "js/clientes/clientes_reportes.js" %}'></script>
+
+{% endblock %}

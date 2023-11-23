@@ -81,6 +81,9 @@ class Cliente(Usuario):
     # is_staff boolean //0 = no es empleado
     # is_active boolean
     # date_joined datetime
+    # dni = charField
+    # telefono = charField
+    # id_tipo_usuario
     fecha_nac = models.DateField(null=True)
     puntos = models.IntegerField()
     id_estado_cliente = models.ForeignKey(
@@ -92,8 +95,21 @@ class Cliente(Usuario):
         return f"{self.last_name} {self.first_name} "
 
     def to_dict(self):
+
+        fUltLogin = None
+        if self.last_login:
+            fUltLogin = self.last_login.strftime("%d/%m/%Y %H:%M:%S")
+        else:
+            fUltLogin = "no inició"
+
         return {
-            "id_estado_cliente": self.id_estado_cliente.descripcion
+            'id': self.id,
+            'dni': self.dni,
+            'last_name': self.last_name,
+            'first_name': self.first_name,
+            'telefono': self.telefono,
+            'email': self.email,
+            'estado': self.id_estado_cliente.descripcion,
         }
 
     class Meta:
@@ -213,6 +229,7 @@ class Solicitud(models.Model):
     def to_dict(self):
         return {
             "id": self.id,
+            "cliente": f"{self.cliente_id.last_name} {self.cliente_id.first_name}",
             "direccion_desde": self.direccion_desde,
             "direccion_hasta": self.direccion_hasta,
             "fecha_solicitud": self.fecha_solicitud.strftime("%d-%m-%Y"),

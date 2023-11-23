@@ -102,7 +102,6 @@ const listReportes = async () => {
 
                         data.empleados.forEach((empleado) => {
                             total += empleado.cantidadSolicitudes
-                            console.log(total)
 
                             bodyContent += `
                                 <tr>
@@ -113,8 +112,6 @@ const listReportes = async () => {
                             arrayEjeX.push(empleado.nombre);
                             arrayEjeY.push(empleado.cantidadSolicitudes);
                         });
-
-                        console.log(total)
 
                         bodyContent += `
                             <tr>
