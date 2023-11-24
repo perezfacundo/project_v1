@@ -50,6 +50,24 @@
   </div>
 </div>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    //Obtener la fecha de hoy
+    var fechaHoy = new Date();
+
+    // Establecer el valor del campo de la fecha de hoy
+    var fechaHoyInput = document.getElementById("fechaFin");
+    fechaHoyInput.valueAsDate = fechaHoy;
+
+    //Obtener el primer dia del mes
+    var primerDiaMes = new Date(fechaHoy.getFullYear(), fechaHoy.getMonth(), 1);
+
+    //Establecer el valor del campo del primer dia del mes
+    var primerDiaMesInput = document.getElementById("fechaInicio");
+    primerDiaMesInput.valueAsDate = primerDiaMes;
+  });
+</script>
+
 <!-- Apache Echarts (requiere jQuery) -->
 <script src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script src='{% static "js/vehiculos/vehiculos_reportes.js" %}'></script>

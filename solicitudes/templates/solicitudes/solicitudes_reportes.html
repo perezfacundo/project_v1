@@ -1,32 +1,47 @@
-{% extends 'base.html' %}
-
-{% load static %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 
 <div class="container mt-4">
   <div class="input-group">
-    <form id="formulario" method="POST" action="{% url 'solicitudes_reportes' %}">
+    <form
+      id="formulario"
+      method="POST"
+      action="{% url 'solicitudes_reportes' %}"
+    >
       {% csrf_token %}
       <div class="row">
         <div class="col">
-          <input class="form-control" type="date" name="fechaInicio" id="fechaInicio">
+          <input
+            class="form-control"
+            type="date"
+            name="fechaInicio"
+            id="fechaInicio"
+          />
         </div>
         <div class="col">
-          <input class="form-control" type="date" name="fechaFin" id="fechaFin">
+          <input
+            class="form-control"
+            type="date"
+            name="fechaFin"
+            id="fechaFin"
+          />
         </div>
         <div class="col">
-          <button class="btn btn-primary" type="button" id="enviarButton">Enviar</button>
+          <button class="btn btn-primary" type="button" id="enviarButton">
+            Enviar
+          </button>
         </div>
       </div>
     </form>
   </div>
 
   <div class="row mt-5">
-    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6"> <!--TABLA -->
+    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+      <!--TABLA -->
       <div class="table-responsive">
         <table id="tableSolicitudes" class="table table-hover">
-          <caption>Reporte de solicitudes</caption>
+          <caption>
+            Reporte de solicitudes
+          </caption>
           <thead id="tableHead">
             <tr>
               <th class="centered">Estado</th>
@@ -39,7 +54,7 @@
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-      <div id="chart" style="width: 600px; height: 400px;"></div>
+      <div id="chart" style="width: 600px; height: 400px"></div>
     </div>
   </div>
 </div>
