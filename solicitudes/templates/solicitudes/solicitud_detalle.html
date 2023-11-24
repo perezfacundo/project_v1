@@ -28,7 +28,7 @@
                     <div class="col">
                         <label for="fecha_trabajo">Fecha del trabajo</label>
                         <input type="date" name="fecha_trabajo" id="fecha_trabajo" class="form-control"
-                            value="{{solicitud.fecha_trabajo | date:'Y-m-d'}}">
+                            value="{{solicitud.fecha_trabajo | date:'Y-m-d'}}" disabled readonly>
                     </div>
                     <div class="col">
                         <label for="fecha_solicitud">Fecha de la solicitud</label>
@@ -42,26 +42,26 @@
                     <div class="col">
                         <label for="direccion_desde">Desde</label>
                         <input type="text" name="direccion_desde" id="direccion_desde" class="form-control"
-                            value="{{solicitud.direccion_desde}}">
+                            value="{{solicitud.direccion_desde}}" disabled readonly>
                     </div>
 
                     <div class="col">
                         <label for="direccion_hasta">Hasta</label>
                         <input type="text" name="direccion_hasta" id="direccion_hasta" class="form-control"
-                            value="{{solicitud.direccion_hasta}}">
+                            value="{{solicitud.direccion_hasta}}" disabled readonly>
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="detalles">Detalles</label>
                     <textarea name="detalles" id="detalles" cols="30" rows="3"
-                        class="form-control">{{solicitud.detalles}}</textarea>
+                        class="form-control" disabled readonly>{{solicitud.detalles}}</textarea>
                 </div>
 
                 <div class="mb-3">
                     <label for="objetos_a_transportar">Objetos a transportar</label>
                     <textarea name="objetos_a_transportar" id="objetos_a_transportar" cols="30" rows="3"
-                        class="form-control">{{solicitud.objetos_a_transportar}}</textarea>
+                        class="form-control" disabled readonly>{{solicitud.objetos_a_transportar}}</textarea>
                 </div>
 
                 {% if user.is_staff %}
