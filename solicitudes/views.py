@@ -33,27 +33,27 @@ def signup(request):
 
                 if validarUsername(request.POST['username']):
                     if Usuario.objects.filter(username=request.POST['username']):
-                        return render(request, 'signup.html', {
+                        return render(request, 'auth/signup.html', {
                             'error': "El nombre de usuario ya pertenece a una cuenta existente"
                         })
                 else:
-                    return render(request, 'signup.html', {
+                    return render(request, 'auth/signup.html', {
                         'error': "El nombre de usuario puede contener solo numeros o letras"
                     })
 
                 if Usuario.objects.filter(email=request.POST['email']):
-                    return render(request, 'signup.html', {
+                    return render(request, 'auth/signup.html', {
                         'error': "El correo electrónico ya pertenece a una cuenta existente"
                     })
 
                 longitud = len(request.POST['dni'])
                 if longitud <= 8:
                     if Usuario.objects.filter(dni=request.POST['dni']):
-                        return render(request, 'signup.html', {
+                        return render(request, 'auth/signup.html', {
                             'error': "El dni ya pertenece a una cuenta existente"
                         })
                 else:
-                    return render(request, 'signup.html', {
+                    return render(request, 'auth/signup.html', {
                         'error': "El dni debe tener hasta 8 cifras"
                     })
 
@@ -81,7 +81,7 @@ def signup(request):
                 return redirect('solicitudes')
             except Exception as e:
                 print("Error en signup:", e)
-                return render(request, 'signup.html', {
+                return render(request, 'auth/signup.html', {
                     'error': "Ocurrio un error al registrar el usuario."
                 })
         return render(request, 'auth/signup.html', {
@@ -416,11 +416,15 @@ def empleados(request):
 def empleados_listado(request):
 
     try:
+        objUsuario = Usuario.objects.get(username=request.session["username"])
+        usuario_data = objUsuario.to_dict()
+
         empleados = Empleado.objects.all()
         empleados_data = [empleado.to_dict() for empleado in empleados]
 
         data = {
-            'empleados': empleados_data
+            'empleados': empleados_data,
+            'usuario': usuario_data
         }
 
         return JsonResponse(data, safe=False)

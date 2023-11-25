@@ -48,7 +48,10 @@ const listSolicitudes = async () => {
 
             btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/clientes/${cliente.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
 
-            btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/clientes/${cliente.id}/eliminar/"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
+            btnEliminar = `
+            <a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/clientes/${cliente.id}/eliminar/"/>
+                <i class="bi bi-trash-fill" style="color:#FFFFFF"></i>
+            </a>`;
 
             bodyContent += `
                 <tr>

@@ -39,8 +39,10 @@ const listEmpleados = async () => {
         const response = await fetch('http://127.0.0.1:8000/empleados_listado/');
         const data = await response.json();
         const empleados = data.empleados
+        const usuario = data.usuario
 
         console.log(empleados)
+        console.log(usuario)
 
         let content = '';
 
