@@ -572,14 +572,12 @@ def empleados_reportes(request):
 
             if listar_por == 'nombres':
                 reporte = []
-                objEmpleados = Empleado.objects.all()
 
                 viajes_por_empleado = Empleado.objects.annotate(
                     cantidad_viajes=Count('solicitudesempleados__id_solicitud__fecha_trabajo',
                                           filter=Q(solicitudesempleados__id_solicitud__fecha_trabajo__range=(fecha_inicio, fecha_fin)))
                 )
 
-                # Ahora puedes acceder a la cantidad de viajes para cada empleado
                 reporte = []
                 for empleado in viajes_por_empleado:
                     cantidad_solicitudes = empleado.cantidad_viajes
@@ -593,7 +591,7 @@ def empleados_reportes(request):
                     # empleados.nombre
                     # empleados.cantidadSolicitudes
                 }
-            else:
+            elif listar_por == 'estados':
                 estados = EstadosEmpleado.objects.all()
                 reporte = []
                 for estado in estados:
@@ -634,7 +632,7 @@ def vehiculos_listado(request):
         }
 
         return JsonResponse(data, safe=False)
-    except:
+    except Exception as e:
         print("Error en vehiculos:", e)
         return render(request, 'vehiculos/vehiculos.html', {
             'error': "Ha ocurrido un error al listar los vehiculos"
@@ -768,9 +766,9 @@ def vehiculos_reportes(request):
                     qSolicitudesVehiculos = Vehiculo.objects.annotate(
                         cantidad_viajes=Count('solicitudesvehiculos__id_solicitud__fecha_trabajo',
                                               filter=Q(solicitudesvehiculos__id_solicitud__fecha_trabajo__range=(fecha_inicio, fecha_fin))))
-                    for vehiculo in viajes_por_vehiculo:
-                        reporte.append({'nombreModelo': f"{qViajesVehiculos.nombre} {qViajesVehiculos.modelo}",
-                                        'cantidadViajes': qViajesVehiculos.cantidad_viajes})
+                    for vehiculo in qSolicitudesVehiculos:
+                        reporte.append({'nombreModelo': f"{vehiculo.nombre} {vehiculo.modelo}",
+                                        'cantidadViajes': vehiculo.cantidad_viajes})
 
                     data = {
                         'vehiculos': reporte
@@ -881,11 +879,9 @@ def clientes_reportes(request):
                 estados = EstadosCliente.objects.all()
                 for estado in estados:
                     cantidad_clientes = Cliente.objects.filter(
-                        id_estado_cliente=id_cliente).count()
+                        id_estado_cliente=estado).count()
                     reporte.append({'descripcion': estado.descripcion,
                                     'cantidadClientes': cantidad_clientes})
-
-                print(reporte)
 
                 data = {'estados': reporte}
 

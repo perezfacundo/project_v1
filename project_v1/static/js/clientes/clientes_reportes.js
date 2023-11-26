@@ -83,18 +83,16 @@ const listReportes = async () => {
                 .then(response => response.json())
                 .then(data => {
 
-                    console.log(data)
-
-                    //Proceso de la informacion
                     let total = 0;
                     let headContent = '';
                     let bodyContent = '';
 
                     if (listarPor === 'estados') {
+                        
                         headContent += `
                             <tr>
-                                <th class="centered>Estado</th>
-                                <th class="centered>Cantidad de clientes</th>
+                                <th class="centered">Estado</th>
+                                <th class="centered">Cantidad de clientes</th>
                             </tr>
                         `;
                         tableHead.innerHTML = headContent;

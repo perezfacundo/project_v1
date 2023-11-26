@@ -138,6 +138,7 @@ class Empleado(Usuario):
     # is_staff boolean //0 = no es empleado
     # is_active boolean
     # date_joined datetime
+    # cargo = CharField
     fecha_nac = models.DateField(null=True)
     tipo_carnet = models.CharField(max_length=2)
     ausencias = models.IntegerField()

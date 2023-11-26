@@ -59,9 +59,10 @@ const listEmpleados = async () => {
                     <td>${empleado.telefono}</td>
                     <td>${empleado.ausencias}</td>
                     <td>${empleado.estado}</td>
-                    <td>${btnDetalles} ${btnEliminar}</td>
-                </tr>
+                    <td>${btnDetalles}
             `
+
+            // if(usuario.)
         });
 
         tableBody_Empleados.innerHTML = content;
