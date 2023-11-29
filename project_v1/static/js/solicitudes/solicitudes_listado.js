@@ -36,7 +36,6 @@ const listSolicitudes = async () => {
   try {
     const response = await fetch("http://127.0.0.1:8000/solicitudes_listado/");
     const data = await response.json();
-    const estados = data.estados;
     const usuario = data.usuario;
 
     let bodyContent = "";

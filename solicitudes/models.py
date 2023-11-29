@@ -138,7 +138,7 @@ class Empleado(Usuario):
     # is_staff boolean //0 = no es empleado
     # is_active boolean
     # date_joined datetime
-    # cargo = CharField
+    administrativo = models.BooleanField(default=False, null=True)
     fecha_nac = models.DateField(null=True)
     tipo_carnet = models.CharField(max_length=2)
     ausencias = models.IntegerField()
@@ -191,18 +191,6 @@ class EstadosSolicitud(models.Model):
 
 
 class Solicitud(models.Model):
-    def validar_dia_habil(value):
-        if value < datetime.date.today():
-            raise models.ValidationError(
-                "La fecha debe ser posterior al día de hoy.")
-
-        # Verificar si la fecha seleccionada es un día hábil (diferente de sábado y domingo)
-        weekday = value.weekday()
-        if weekday >= 5:
-            raise models.ValidationError(
-                "La fecha seleccionada debe ser un día hábil (de lunes a viernes).")
-        pass
-
     objetos_a_transportar = models.TextField(max_length=255, null=True)
     detalles = models.TextField(max_length=255, null=True)
     direccion_desde = models.CharField(max_length=255, null=True)
@@ -212,6 +200,7 @@ class Solicitud(models.Model):
     latitud_hasta = models. CharField(max_length=13, null=True)
     longitud_hasta = models.CharField(max_length=13, null=True)
     fecha_solicitud = models.DateField(auto_now_add=True)
+    fecha_trabajo = models.DateField(null=True)
     presupuesto = models.IntegerField(null=True)
     ha_pagado = models.IntegerField(validators=[MinValueValidator(0)])
     calificacion = models.IntegerField(validators=[MinValueValidator(
@@ -221,8 +210,6 @@ class Solicitud(models.Model):
         EstadosSolicitud, on_delete=models.CASCADE)
     cliente_id = models.ForeignKey(
         Cliente, on_delete=models.CASCADE, default=1)
-    fecha_trabajo = models.DateField(
-        blank=False, validators=[validar_dia_habil])
 
     def __str__(self):
         return f"ID:{self.id}- Desde:{self.direccion_desde}- Hasta:{self.direccion_hasta}"

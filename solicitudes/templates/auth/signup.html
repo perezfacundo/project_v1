@@ -13,14 +13,14 @@
         <div class="row g-3">
           <div class="col-sm-6">
             <label for="first_name" class="form-label">Nombre</label>
-            <input type="text" class="form-control" id="first_name" name="first_name" required>
+            <input type="text" class="form-control" id="first_name" name="first_name" autocomplete="given-name" required>
             <div class="valid-feedback">¡Se ve bien!</div>
             <div class="invalid-feedback">Tu nombre es un campo obligatorio</div>
           </div>
   
           <div class="col-sm-6">
             <label for="last_name" class="form-label">Apellido</label>
-            <input type="text" class="form-control" id="last-name" name="last_name" required>
+            <input type="text" class="form-control" id="last-name" name="last_name" autocomplete="family-name" required>
             <div class="valid-feedback">Perfecto!</div>
             <div class="invalid-feedback">Tu apellido es un campo obligatorio</div>
           </div>
@@ -29,7 +29,7 @@
             <label for="username" class="form-label">Nombre de usuario</label>
             <div class="input-group has-validation">
               <span class="input-group-text" id="inputGroupPrepend">@</span>
-              <input type="text" class="form-control" id="username" name="username" aria-describedby="inputGroupPrepend" required>
+              <input type="text" class="form-control" id="username" name="username" aria-describedby="inputGroupPrepend" autocomplete="new-username" required>
               <div class="invalid-feedback">Por favor, elije un nombre de usuario</div>
               <div class="valid-feedback">Se ve muy bien!</div>
             </div>
@@ -37,7 +37,7 @@
 
           <div class="col-sm-6">
             <label for="email" class="form-label">Correo electrónico</label>
-            <input type="email" class="form-control" id="email" name="email" required>
+            <input type="email" class="form-control" id="email" name="email" autocomplete="on" required>
             <div class="invalid-feedback">Escibe tu correo electrónico</div>
             <div class="valid-feedback">Excelente!</div>
           </div>
@@ -65,14 +65,16 @@
   
           <div class="mb-2">
             <label for="password1" class="form-label">Contraseña:</label>
-            <input type="password" class="form-control" name="password1" id="password1" required>
+            <input type="password" class="form-control" name="password1" id="password1" autocomplete="new-password" required>
+            <div class="form-text" id="basic-addon4">(Desde 8 hasta 16 letras y/o numeros)
+            </div>
             <div class="invalid-feedback">Por favor, escribe tu contraseña</div>
             <div class="valid-feedback">Perfecto!</div>
           </div>
   
           <div class="mb-2">
             <label for="password2" class="form-label">Confirme su contraseña:</label>
-            <input type="password" class="form-control" name="password2" id="password2" required>
+            <input type="password" class="form-control" name="password2" id="password2" autocomplete="new-password" required>
             <div class="invalid-feedback">Por favor, confirma tu contraseña</div>
             <div class="valid-feedback">Perfecto!</div>
           </div>

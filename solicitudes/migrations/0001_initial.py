@@ -92,7 +92,7 @@ class Migration(migrations.Migration):
                 ('pagoFaltante', models.IntegerField(validators=[django.core.validators.MinValueValidator(0)])),
                 ('calificacion', models.IntegerField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(5)])),
                 ('devolucion', models.TextField(max_length=200)),
-                ('fechaTrabajo', models.DateField(validators=[solicitudes.models.Solicitud.validar_dia_habil])),
+                ('fechaTrabajo', models.DateField(null=True)),
                 ('idEstadoSolicitud', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='solicitudes.estadossolicitud')),
             ],
         ),

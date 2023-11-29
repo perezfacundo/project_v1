@@ -4,9 +4,6 @@ let dataTableIsInitialized = false;
 let arrayEjeX = [];
 let arrayEjeY = [];
 
-let fechaInicio;
-let fechaFin;
-
 let option = {
   tooltip: {
     show: true,
@@ -15,7 +12,6 @@ let option = {
   },
   title: {
     text: "Solicitudes",
-    // subtext: `Desde el ${desde} hasta el ${hasta}`
   },
   toolbox: {
     feature: {
@@ -46,7 +42,7 @@ const dataTableOptions = {
   columnDefs: [{ orderable: false, targets: [1] }],
   searching: false,
   dom: "Bfrtip",
-  buttons: ["copy", "csv", "excel", "pdf", "print"],
+  buttons: ["copy", "csv", "excel", "pdf", "print"]
 };
 
 // Función para inicializar la DataTable

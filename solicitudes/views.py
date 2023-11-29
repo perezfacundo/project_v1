@@ -8,7 +8,7 @@ from .models import Usuario, EstadosCliente, Cliente, EstadosEmpleado, Empleado,
 from django.contrib.auth.decorators import login_required
 import re
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.core import serializers
 from django.forms.models import model_to_dict
 import json
@@ -78,7 +78,7 @@ def signup(request):
                 cliente.save()
                 login(request, cliente)
 
-                return redirect('solicitudes')
+                return redirect('solicitudes_semana')
             except Exception as e:
                 print("Error en signup:", e)
                 return render(request, 'auth/signup.html', {
@@ -111,8 +111,10 @@ def signin(request):
             })
         else:
             login(request, user)
+            print(user)
+            print(user.username)
             request.session['username'] = user.username
-            return redirect('solicitudes')
+            return redirect('solicitudes_semana')
 
 
 @login_required
@@ -125,13 +127,15 @@ def signout(request):
 
 @login_required
 def solicitudes(request):
+
     return render(request, 'solicitudes/solicitudes.html')
 
-
+@login_required
 def solicitudes_listado(request):
 
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario = objUsuario.to_dict()
+    print(usuario)
 
     if objUsuario.id_tipo_usuario.descripcion == "Cliente":
         solicitudes = Solicitud.objects.filter(cliente_id=objUsuario.id)
@@ -140,15 +144,34 @@ def solicitudes_listado(request):
 
     solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
 
-    objEstados = EstadosSolicitud.objects.values()
-    estados = list(objEstados)
-
     data = {
         'solicitudes': solicitudes_data,
-        'estados': estados,
         'usuario': usuario
     }
     return JsonResponse(data, safe=False)
+
+@login_required
+def solicitudes_semana(request): #Solicitudes a realizar dentro de los proximos 7 dias
+    objUsuario = Usuario.objects.get(username=request.session["username"])
+    usuario = objUsuario.to_dict()
+    print(usuario)
+
+    fechaHoy = datetime.now().date()
+    sieteDiasDespues = fechaHoy + timedelta(days=7)
+
+    print(fechaHoy, sieteDiasDespues)
+
+    if objUsuario.id_tipo_usuario.descripcion == "cliente":
+        solicitudes = Solicitud.objects.filter(fecha_trabajo__range=[fechaHoy, sieteDiasDespues])
+    elif objUsuario.id_tipo_usuario.descripcion == "empleado":
+        solicitudes = Solicitud.objects.filter(fecha_trabajo__range=[fechaHoy, sieteDiasDespues])
+    elif objUsuario.id_tipo_usuario.descripcion == "administrador":
+        solicitudes = Solicitud.objects.filter(fecha_trabajo__range=[fechaHoy, sieteDiasDespues])
+
+
+@login_required
+def solicitudes_pendientes(request): #Solicitudes que tengan estado pendiente
+    print("solicitudes pendientes")
 
 
 @login_required
@@ -286,6 +309,9 @@ def actualizar_solicitud(solicitud, form_data):
                 solicitud.calificacion = nuevo_valor
             elif campo == "devolucion":
                 solicitud.devolucion = nuevo_valor
+            elif campo == "presupuesto":
+                solicitud.presupuesto = nuevo_valor
+            
 
         solicitud.save()
         return True

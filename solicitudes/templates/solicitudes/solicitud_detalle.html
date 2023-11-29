@@ -6,7 +6,9 @@
     <div class="row vh-100 d-flex justify-content-center align-items-center">
         <section class="col-md-7">
             <form action="{% url 'solicitud_detalle' solicitud.id %}" method="POST" class="card-body">
-                <h4>Detalles de la solicitud</h4>
+                <div class="mt-4">
+                    <h4>Detalles de la solicitud</h4>
+                </div>
 
                 {{error}}
                 {% csrf_token %}
@@ -66,7 +68,7 @@
 
                 {% if user.is_staff %}
                 <div class="col-sm-6 mb-3">
-                    <label for="id_estado_solicitud">Modifique si lo requiere</label>
+                    <label for="id_estado_solicitud">Estado</label>
                     <select name="id_estado_solicitud" id="id_estado_solicitud" class="form-select">
                         {% for estado in estados %}
                         {% if estado.id == solicitud.id_estado_solicitud.id %}
@@ -115,9 +117,20 @@
                         {% endfor %}
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-sm-6 mx-auto mb-3">
+                    <label for="presupuesto">Presupuesto recomendado</label>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text">$</span>
+                        <input type="text" name="presupuesto" id="presupuesto" class="form-control"  value="{{solicitud.presupuesto}}" aria-label="Amount (to the nearest dollar)">
+                        <span class="input-group-text">.00</span>
+                    </div>
+                    </div>
+                </div>
                 {% endif %}
 
-                <button type="submit" class="w-100 btn btn-primary btn-lg">
+                <button type="submit" class="w-100 btn btn-primary btn-lg mb-3">
                     Actualizar
                 </button>
             </form>
