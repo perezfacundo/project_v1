@@ -28,7 +28,8 @@ urlpatterns = [
     # rutas solicitudes
     path('solicitudes/', views.solicitudes, name='solicitudes'),
     path('solicitudes_listado/', views.solicitudes_listado, name='solicitudes_listado'),
-    path('solicitudes_semana/', views.solicitudes_semana, name='solicitudes_semana'),
+    path('solicitudes_prox7dias/', views.solicitudes_prox7dias, name='solicitudes_prox7dias'),
+    path('solicitudes_pendientes/', views.solicitudes_pendientes, name='solicitudes_pendientes'),
     path('solicitudes/crear/', views.solicitudes_crear, name='solicitudes_crear'),
     path('solicitudes/<int:solicitud_id>/', views.solicitud_detalle, name='solicitud_detalle'),
     path('solicitudes/eliminar/<int:solicitud_id>/', views.solicitud_eliminar, name='solicitud_eliminar'),

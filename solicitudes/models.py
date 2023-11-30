@@ -96,12 +96,6 @@ class Cliente(Usuario):
 
     def to_dict(self):
 
-        fUltLogin = None
-        if self.last_login:
-            fUltLogin = self.last_login.strftime("%d/%m/%Y %H:%M:%S")
-        else:
-            fUltLogin = "no inició"
-
         return {
             'id': self.id,
             'dni': self.dni,

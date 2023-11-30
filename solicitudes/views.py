@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError, transaction
@@ -13,6 +13,8 @@ from django.core import serializers
 from django.forms.models import model_to_dict
 import json
 from django.db.models import Q, Count
+from django.views.decorators.csrf import csrf_protect
+
 
 # VISTAS AUTENTICACION
 
@@ -78,7 +80,7 @@ def signup(request):
                 cliente.save()
                 login(request, cliente)
 
-                return redirect('solicitudes_semana')
+                return redirect('solicitudes_prox7dias')
             except Exception as e:
                 print("Error en signup:", e)
                 return render(request, 'auth/signup.html', {
@@ -114,7 +116,7 @@ def signin(request):
             print(user)
             print(user.username)
             request.session['username'] = user.username
-            return redirect('solicitudes_semana')
+            return redirect('solicitudes_prox7dias')
 
 
 @login_required
@@ -151,7 +153,8 @@ def solicitudes_listado(request):
     return JsonResponse(data, safe=False)
 
 @login_required
-def solicitudes_semana(request): #Solicitudes a realizar dentro de los proximos 7 dias
+@csrf_protect
+def solicitudes_prox7dias(request): #Solicitudes a realizar dentro de los proximos 7 dias
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario = objUsuario.to_dict()
     print(usuario)
@@ -161,19 +164,36 @@ def solicitudes_semana(request): #Solicitudes a realizar dentro de los proximos 
 
     print(fechaHoy, sieteDiasDespues)
 
-    if objUsuario.id_tipo_usuario.descripcion == "cliente":
-        solicitudes = Solicitud.objects.filter(fecha_trabajo__range=[fechaHoy, sieteDiasDespues])
-    elif objUsuario.id_tipo_usuario.descripcion == "empleado":
-        solicitudes = Solicitud.objects.filter(fecha_trabajo__range=[fechaHoy, sieteDiasDespues])
-    elif objUsuario.id_tipo_usuario.descripcion == "administrador":
-        solicitudes = Solicitud.objects.filter(fecha_trabajo__range=[fechaHoy, sieteDiasDespues])
+    if objUsuario.id_tipo_usuario.descripcion == "Cliente":
+        solicitudes = Solicitud.objects.filter(
+            cliente_id = objUsuario.id,
+            fecha_trabajo__range = [fechaHoy, sieteDiasDespues]
+        )
+
+    elif objUsuario.id_tipo_usuario.descripcion == "Empleado":
+        solicitudes = Solicitud.objects.filter(
+            solicitudesempleados__id_empleado = objUsuario.id,
+            fecha_trabajo__range = [fechaHoy, sieteDiasDespues]
+        )
+
+    elif objUsuario.id_tipo_usuario.descripcion == "Administrador":
+        solicitudes = Solicitud.objects.filter(
+            fecha_trabajo__range = [fechaHoy, sieteDiasDespues]
+        )
+
+    solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
+
+    data = {
+        'solicitudes': solicitudes_data
+    }
+
+    return JsonResponse(data, safe=False)
 
 
 @login_required
 def solicitudes_pendientes(request): #Solicitudes que tengan estado pendiente
     print("solicitudes pendientes")
-
-
+    
 @login_required
 def solicitudes_crear(request):
     if request.method == 'GET':
