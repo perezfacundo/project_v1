@@ -6,9 +6,18 @@
 
 <div class="container mt-4">
     <div class="mb-4">
-        {% if not user.is_staff %}
         <a class="btn btn-primary" href="/solicitudes/crear/">Nueva solicitud</a>
-        {% endif %}
+        Listar: 
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check" name="btnRadio" id="btnRadioTodas" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="btnRadioTodas">Todas</label>
+          
+            <input type="radio" class="btn-check" name="btnRadio" id="btnRadioPendientes" autocomplete="off">
+            <label class="btn btn-outline-primary" for="btnRadioPendientes">Pendientes</label>
+          
+            <input type="radio" class="btn-check" name="btnRadio" id="btnRadioProx7dias" autocomplete="off">
+            <label class="btn btn-outline-primary" for="btnRadioProx7dias">Proximos 7 dias</label>
+          </div>
     </div>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
@@ -36,5 +45,259 @@
     </div>
 </div>
 
-<script src='{% static "js/solicitudes/solicitudes_listado.js" %}'></script>
+<!-- <script src='{% static "js/solicitudes/solicitudes_listado.js" %}'></script> -->
+
+<script>
+    let dataTable;
+    let dataTableIsInitialized = false;
+    let tableBody = document.getElementById("tableBody");
+
+    let botonTodas = document.getElementById("btnRadioTodas");
+    let botonPendientes = document.getElementById("btnRadioPendientes");
+    let botonProx7dias = document.getElementById("btnRadioProx7dias");
+
+    let bodyContent = "";
+    let btnCalificar = "";
+    let btnDetalles = "";
+    let btnEliminar = "";
+
+    // Configuracion de la datatable
+    const dataTableOptions = {
+        columnDefs: [
+            { className: "centered", targets: [0, 1, 2, 3, 4, 5, 6, 7] },
+            { orderable: false, targets: [5, 6, 7] },
+            { searchable: false, targets: [5, 6, 7] },
+        ],
+        destroy: true,
+        dom: "Bfrtip",
+        buttons: ["copy", "csv", "excel", "pdf", "print"],
+    };
+
+    // Inicializacion de la datatable
+    const initDataTable = async (listFunction) => {
+        if (dataTableIsInitialized) {
+            if (dataTable) {
+                dataTable.clear().destroy();
+            }
+        }
+
+        await listFunction();
+
+        try {
+            dataTable = $("#tableSolicitudes").DataTable(dataTableOptions);
+        } catch (ex) {
+            console.error(ex);
+        }
+
+        dataTableIsInitialized = true;
+    };
+
+    botonTodas.addEventListener("click", async () => {
+        await initDataTable(listTodasSolicitudes);
+    });
+
+    botonPendientes.addEventListener("click", async () => {
+        await initDataTable(listSolicitudesPendientes);
+    });
+
+    botonProx7dias.addEventListener("click", async () => {
+        await initDataTable(listSolicitudesProx7dias);
+    });
+
+    // Proceso de informacion
+    const listTodasSolicitudes = async () => {
+        bodyContent = "";
+        btnCalificar = "";
+        btnDetalles = "";
+        btnEliminar = "";
+
+        try {
+            const response = await fetch("/solicitudes_listado/");
+            const data = await response.json();
+            const usuario = data.usuario;
+            const solicitudes = data.solicitudes;
+
+            console.log(data)
+
+            solicitudes.forEach((solicitud) => {
+            btnCalificar = `<a class="btn btn-sm " style="background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;
+            btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/solicitudes/${solicitud.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
+            btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/solicitudes/eliminar/${solicitud.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
+
+            bodyContent += `
+                        <tr>
+                            <td>${solicitud.id}</td>
+                            <td>${solicitud.cliente}</td>
+                            <td>${solicitud.direccion_desde}</td>
+                            <td>${solicitud.direccion_hasta}</td>
+                            <td>${solicitud.fecha_trabajo}</td>
+                            <td>${solicitud.estado}</td>
+                            <td>${btnDetalles}
+            `;
+
+            if (usuario.tipo_usuario == "Administrador") {
+                bodyContent += `${btnEliminar}`;
+            }
+
+            if (solicitud.estado == "Entregado") {
+                if (usuario.tipo_usuario == "Cliente") {
+                bodyContent += `${btnCalificar}`;
+                }
+            }
+
+            bodyContent += `</td><td>`;
+            if (solicitud.calificacion != null) {
+                for (var i = 1; i <= solicitud.calificacion; i++) {
+                bodyContent += `<i class="bi bi-star-fill" style="color:#F8DA62;"></i>`;
+                }
+            } else {
+                bodyContent += `sin calificar`;
+            }
+            bodyContent += `</td></tr>`;
+            });
+
+            tableBody.innerHTML = bodyContent;
+        } catch (error) {
+            alert(error);
+        }
+        tableBody.innerHTML = bodyContent;
+        updateDataTable();
+    };
+
+    const listSolicitudesPendientes = async () => {
+        bodyContent = "";
+        btnCalificar = "";
+        btnDetalles = "";
+        btnEliminar = "";
+
+        try {
+            const response = await fetch("/solicitudes_pendientes/");
+            const data = await response.json();
+            const usuario = data.usuario;
+            const solicitudes = data.solicitudes;
+
+            console.log(data)
+            
+            solicitudes.forEach((solicitud) => {
+            btnCalificar = `<a class="btn btn-sm " style="background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;
+            btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/solicitudes/${solicitud.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
+            btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/solicitudes/eliminar/${solicitud.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
+
+            bodyContent += `
+                        <tr>
+                            <td>${solicitud.id}</td>
+                            <td>${solicitud.cliente}</td>
+                            <td>${solicitud.direccion_desde}</td>
+                            <td>${solicitud.direccion_hasta}</td>
+                            <td>${solicitud.fecha_trabajo}</td>
+                            <td>${solicitud.estado}</td>
+                            <td>${btnDetalles}
+            `;
+
+            if (usuario.tipo_usuario == "Administrador") {
+                bodyContent += `${btnEliminar}`;
+            }
+
+            if (solicitud.estado == "Entregado") {
+                if (usuario.tipo_usuario == "Cliente") {
+                bodyContent += `${btnCalificar}`;
+                }
+            }
+
+            bodyContent += `</td><td>`;
+            if (solicitud.calificacion != null) {
+                for (var i = 1; i <= solicitud.calificacion; i++) {
+                bodyContent += `<i class="bi bi-star-fill" style="color:#F8DA62;"></i>`;
+                }
+            } else {
+                bodyContent += `sin calificar`;
+            }
+            bodyContent += `</td></tr>`;
+            });
+
+            tableBody.innerHTML = bodyContent;
+        } catch (error) {
+            alert(error);
+        }
+        tableBody.innerHTML = bodyContent;
+        updateDataTable();
+    };
+
+    const listSolicitudesProx7dias = async () => {
+        bodyContent = "";
+        btnCalificar = "";
+        btnDetalles = "";
+        btnEliminar = "";
+
+        try {
+            const response = await fetch("/solicitudes_prox7dias/");
+            const data = await response.json();
+            const usuario = data.usuario;
+            const solicitudes = data.solicitudes;
+
+            console.log(data);
+
+            solicitudes.forEach((solicitud) => {
+            btnCalificar = `<a class="btn btn-sm " style="background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;
+            btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/solicitudes/${solicitud.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
+            btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/solicitudes/eliminar/${solicitud.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
+
+            bodyContent += `
+                        <tr>
+                            <td>${solicitud.id}</td>
+                            <td>${solicitud.cliente}</td>
+                            <td>${solicitud.direccion_desde}</td>
+                            <td>${solicitud.direccion_hasta}</td>
+                            <td>${solicitud.fecha_trabajo}</td>
+                            <td>${solicitud.estado}</td>
+                            <td>${btnDetalles}
+            `;
+
+            if (usuario.tipo_usuario == "Administrador") {
+                bodyContent += `${btnEliminar}`;
+            }
+
+            if (solicitud.estado == "Entregado") {
+                if (usuario.tipo_usuario == "Cliente") {
+                bodyContent += `${btnCalificar}`;
+                }
+            }
+
+            bodyContent += `</td><td>`;
+            if (solicitud.calificacion != null) {
+                for (var i = 1; i <= solicitud.calificacion; i++) {
+                bodyContent += `<i class="bi bi-star-fill" style="color:#F8DA62;"></i>`;
+                }
+            } else {
+                bodyContent += `sin calificar`;
+            }
+            bodyContent += `</td></tr>`;
+            });
+
+            tableBody.innerHTML = bodyContent;
+            updateDataTable();
+        } catch (error) {
+            alert(error);
+        }
+        
+    };
+
+    // Función para actualizar DataTable después de cambiar el contenido
+    const updateDataTable = () => {
+        try {
+            if (dataTableIsInitialized) {
+                dataTable.clear().destroy();
+            }
+            dataTable = $("#tableSolicitudes").DataTable(dataTableOptions);
+            dataTableIsInitialized = true;
+        } catch (ex) {
+            console.error(ex);
+        }
+    };
+
+    // Escucha del evento load
+    window.addEventListener("load", async () => {
+        await initDataTable(listTodasSolicitudes);
+    });
+</script>
 {% endblock %}

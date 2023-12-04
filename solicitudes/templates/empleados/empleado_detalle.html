@@ -1,72 +1,146 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 
 <main class="container">
   <div class="row vh-100 d-flex justify-content-center align-items-center">
     <div class="col-md-7">
-      <form action="{% url 'empleado_detalle' empleado.id %}" method="post" class="card-body">
+      <form
+        action="{% url 'empleado_detalle' empleado.id %}"
+        method="post"
+        class="card-body"
+      >
         <h4 class="mb-3">Modificar los datos de un empleado</h4>
-        {{error}}
+        {{error}} 
         {% csrf_token %}
 
         <div class="row g-3">
           <div class="col-sm-6">
             <label for="first_name">Nombre</label>
-            <input type="text" name="first_name" class="form-control" value="{{empleado.first_name}}">
+            <input
+              type="text"
+              name="first_name"
+              class="form-control"
+              value="{{empleado.first_name}}"
+            />
           </div>
 
           <div class="col-sm-6">
             <label for="last_name">Apellido</label>
-            <input type="text" name="last_name" class="form-control" value="{{empleado.last_name}}">
+            <input
+              type="text"
+              name="last_name"
+              class="form-control"
+              value="{{empleado.last_name}}"
+            />
           </div>
 
           <div class="input-group">
             <span class="input-group-text" id="basic-addon1">@</span>
-            <input type="text" name="username" class="form-control" value="{{empleado.username}}">
+            <input
+              type="text"
+              name="username"
+              class="form-control"
+              value="{{empleado.username}}"
+            />
           </div>
 
           <div class="col-12">
             <label for="email">Correo electrónico</label>
-            <input type="email" name="email" class="form-control" value="{{empleado.email}}">
+            <input
+              type="email"
+              name="email"
+              class="form-control"
+              value="{{empleado.email}}"
+            />
           </div>
 
           <div class="col-sm-6">
             <label for="dni">DNI</label>
-            <input type="text" name="dni" class="form-control" value="{{empleado.dni}}">
+            <input
+              type="text"
+              name="dni"
+              class="form-control"
+              value="{{empleado.dni}}"
+            />
           </div>
 
           <div class="col-sm-6">
             <label for="telefono">Telefono</label>
-            <input type="text" name="telefono" class="form-control" value="{{empleado.telefono}}">
+            <input
+              type="text"
+              name="telefono"
+              class="form-control"
+              value="{{empleado.telefono}}"
+            />
           </div>
 
           <div class="col-sm-6">
             <label for="fecha_nac">Fecha de nacimiento</label>
-            <input type="date" name="fecha_nac" class="form-control" value="{{empleado.fecha_nac | date:'Y-m-d'}}">
+            <input
+              type="date"
+              name="fecha_nac"
+              class="form-control"
+              value="{{empleado.fecha_nac | date:'Y-m-d'}}"
+            />
           </div>
 
           <div class="col-sm-6">
             <label for="tipo_carnet">Tipo de carnet</label>
-            <input type="text" name="tipo_carnet" class="form-control" value="{{empleado.tipo_carnet}}">
+            <input
+              type="text"
+              name="tipo_carnet"
+              class="form-control"
+              value="{{empleado.tipo_carnet}}"
+            />
           </div>
 
           <div class="col-sm-6">
             <label for="id_estado_empleado">Modifique si lo requiere</label>
-            <select name="id_estado_empleado" id="id_estado_empleado" class="form-select">
-                {% for estado in estados %}
-                {% if estado.id == empleado.id_estado_empleado.id %}
-                <option value="{{ estado.id }}" selected>{{ estado.descripcion }}</option>
-                {% else %}
-                <option value="{{ estado.id }}">{{ estado.descripcion }}</option>
-                {% endif %}
-                {% endfor %}
+            <select
+              name="id_estado_empleado"
+              id="id_estado_empleado"
+              class="form-select"
+            >
+              {% for estado in estados %} 
+              {% if estado.id == empleado.id_estado_empleado.id %}
+              <option value="{{ estado.id }}" selected>
+                {{ estado.descripcion }}
+              </option>
+              {% else %}
+              <option value="{{ estado.id }}">{{ estado.descripcion }}</option>
+              {% endif %} 
+              {% endfor %}
             </select>
-        </div>
+          </div>
 
-        </div>
+          <!-- <div class="col-sm-6">
+            {% if empleado.administrativo == 1 %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="1" name="administrativo" id="administrativo" checked>
+              <label class="form-check-label" for="administrativo">
+                Administrador
+              </label>
+            </div>
+            {% else %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="0" name="administrativo" id="administrativo">
+              <label class="form-check-label" for="administrativo">
+                Administrador
+              </label>
+            </div>
+            {% endif %}
+          </div>
+        </div> -->
 
-        <hr>
+        <div class="col-sm-6">
+          {% if empleado.administrativo == 1 %}
+             <input class="form-check-input" type="checkbox" value="1" name="administrativo" id="administrativo" checked>
+          {% else %}
+             <input class="form-check-input" type="checkbox" value="0" name="administrativo" id="administrativo">
+          {% endif %}
+          <label class="form-check-label" for="administrativo">Administrador</label>
+       </div>       
+
+        <hr />
 
         <button class="w-100 btn btn-primary btn-lg">
           Modificar datos del empleado

@@ -142,7 +142,7 @@ class Empleado(Usuario):
         Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
-        return f"{self.id} - "
+        return f""
 
     def to_dict(self):
 

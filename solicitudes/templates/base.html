@@ -27,8 +27,7 @@
 <body>
   <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark text-white">
     <div class="container">
-      <a class="navbar-brand" href="#">Inicio</a>
-      <p id="hora"></p>
+      {% if user.is_authenticated %} <a class="navbar-brand" href="#">Bienvenido {{ request.session.username }} !</a> {% endif %}
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -38,14 +37,17 @@
         <ul class="navbar-nav ms-auto">
 
           {% if user.is_authenticated %}
+          <!-- Dashboard -->
+          <li class="nav-item">
+            <a class="nav-link" href="" role="button">Dashboard</a>
+          </li>
+
           <!-- Solicitudes -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Solicitudes
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/solicitudes_prox7dias/">Próximos 7 días</a></li>
-              <li><a class="dropdown-item" href="/solicitudes_pendientes/">Pendientes</a></li>
               <li><a class="dropdown-item" href="/solicitudes/">Listado</a></li>
               {% if not user.is_staff %}
               <li><a class="dropdown-item" href="/solicitudes/crear/">Nueva solicitud</a></li>

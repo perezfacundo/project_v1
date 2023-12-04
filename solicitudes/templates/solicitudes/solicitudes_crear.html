@@ -15,6 +15,18 @@
         {% csrf_token %}
 
         <div class="row g-3">
+
+          {% if usuario.is_staff %}
+          <div class="col-12">
+            <label for="selectCliente" class="form-label">Seleccione un cliente</label>
+            <select class="form-select" aria-label="Default select example" name="selectCliente" id="selectCliente">
+              {% for cliente in clientes %}
+              <option value="{{cliente.username}}">{{cliente.first_name}} {{cliente.last_name}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+
           <div class="col-12">
             <label for="txt_detalles">¿ Qué necesita transportar ?</label>
             <textarea name="objetos_a_transportar" id="txt_detalles" class="form-control"></textarea>
@@ -50,7 +62,8 @@
           <hr>
 
           <!-- Button trigger modal -->
-          <button type="button" class="w-100 btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#confirmSave">
+          <button type="button" class="w-100 btn btn-primary btn-lg" data-bs-toggle="modal"
+            data-bs-target="#confirmSave">
             Enviar solicitud
           </button>
 
@@ -79,5 +92,7 @@
 
 <script src='{% static "js/autocomplete.js" %}'></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBT2JD48DifkZB6hadzvJLtC1u7O5MQEkw&libraries=places"></script></script>
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBT2JD48DifkZB6hadzvJLtC1u7O5MQEkw&libraries=places"></script>
+</script>
 {% endblock %}

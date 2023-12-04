@@ -113,10 +113,8 @@ def signin(request):
             })
         else:
             login(request, user)
-            print(user)
-            print(user.username)
             request.session['username'] = user.username
-            return redirect('solicitudes_prox7dias')
+            return redirect('solicitudes')
 
 
 @login_required
@@ -124,6 +122,10 @@ def signout(request):
     logout(request)
     return redirect('home')
 
+
+@login_required
+def dashboard():
+    print("hola")
 
 # VISTAS SOLICITUDES
 
@@ -134,10 +136,9 @@ def solicitudes(request):
 
 @login_required
 def solicitudes_listado(request):
-
+    print(request)
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario = objUsuario.to_dict()
-    print(usuario)
 
     if objUsuario.id_tipo_usuario.descripcion == "Cliente":
         solicitudes = Solicitud.objects.filter(cliente_id=objUsuario.id)
@@ -156,8 +157,7 @@ def solicitudes_listado(request):
 @csrf_protect
 def solicitudes_prox7dias(request): #Solicitudes a realizar dentro de los proximos 7 dias
     objUsuario = Usuario.objects.get(username=request.session["username"])
-    usuario = objUsuario.to_dict()
-    print(usuario)
+    usuario_data = objUsuario.to_dict()
 
     fechaHoy = datetime.now().date()
     sieteDiasDespues = fechaHoy + timedelta(days=7)
@@ -183,8 +183,11 @@ def solicitudes_prox7dias(request): #Solicitudes a realizar dentro de los proxim
 
     solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
 
+    print(solicitudes)
+    
     data = {
-        'solicitudes': solicitudes_data
+        'solicitudes': solicitudes_data,
+        'usuario': usuario_data
     }
 
     return JsonResponse(data, safe=False)
@@ -192,14 +195,43 @@ def solicitudes_prox7dias(request): #Solicitudes a realizar dentro de los proxim
 
 @login_required
 def solicitudes_pendientes(request): #Solicitudes que tengan estado pendiente
-    print("solicitudes pendientes")
+    objUsuario = Usuario.objects.get(username=request.session["username"])
+    usuario_data = objUsuario.to_dict()
+
+    solicitudes = Solicitud.objects.filter(id_estado_solicitud=1)
     
+    solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
+
+    data = {
+        'solicitudes': solicitudes_data,
+        'usuario': usuario_data
+    }
+
+    return JsonResponse(data, safe=False)
+
 @login_required
 def solicitudes_crear(request):
+
+    usuario = Usuario.objects.get(username=request.session["username"])
+
     if request.method == 'GET':
-        return render(request, 'solicitudes/solicitudes_crear.html')
+        try:
+            clientes = Cliente.objects.filter(id_estado_cliente = 1)
+
+            return render(request, 'solicitudes/solicitudes_crear.html', {
+                'clientes': clientes,
+                'usuario': usuario
+            })
+        except Exception as e:
+            print("el error es: ", e)
     else:
         try:
+            if usuario.is_staff:
+
+                cliente = Cliente.objects.get(username=request.POST.get('selectCliente'))
+            else:
+                cliente = Cliente.objects.get(username=request.user.username)
+            
             id_estado_solicitud = request.POST.get('id_estado_solicitud', None)
 
             solicitud = Solicitud.objects.create(
@@ -219,8 +251,7 @@ def solicitudes_crear(request):
                 id_estado_solicitud=EstadosSolicitud.objects.get(
                     id=id_estado_solicitud),
                 fecha_trabajo=request.POST['fecha_trabajo'],
-                cliente_id=Cliente.objects.get(
-                    username=request.user.username)
+                cliente_id=cliente
             )
 
             solicitud.save()
@@ -249,10 +280,13 @@ def solicitud_detalle(request, solicitud_id):
 
     lista_empleados_disponibles = list(
         Empleado.objects.filter(id_estado_empleado=1))
+    
     lista_empleados_asignados = [
         sel.id_empleado for sel in SolicitudesEmpleados.objects.filter(id_solicitud=solicitud_id)]
+    
     lista_vehiculos_disponibles = list(
         Vehiculo.objects.filter(id_estado_vehiculo=1))
+    
     lista_vehiculos_asignados = [
         sel.id_vehiculo for sel in SolicitudesVehiculos.objects.filter(id_solicitud=solicitud_id)]
 
@@ -486,7 +520,7 @@ def empleados_listado(request):
 def empleados_crear(request):
     if request.method == 'GET':
         return render(request, 'empleados/empleados_crear.html')
-    else:
+    elif request.method == 'POST':
         try:
 
             # VALIDACIONES
@@ -518,8 +552,16 @@ def empleados_crear(request):
 
             id_estado_empleado = request.POST.get(
                 'id_estado_empleado', None)
+
             id_tipo_usuario = request.POST.get(
                 'id_tipo_usuario', None)
+
+            try:
+                isAdmin = 0
+                if request.POST['administrativo'] == "true":
+                    isAdmin = 1
+            except Exception as e:
+                isAdmin = 0
 
             empleado = Empleado.objects.create_user(
                 first_name=request.POST['first_name'],
@@ -529,6 +571,7 @@ def empleados_crear(request):
                 email=request.POST['email'],
                 dni=request.POST['dni'],
                 telefono=request.POST['telefono'],
+                administrativo = isAdmin,
                 fecha_nac=request.POST['fecha_nac'],
                 tipo_carnet=request.POST['tipo_carnet'],
                 ausencias=0,
@@ -551,18 +594,29 @@ def empleados_crear(request):
 def empleado_detalle(request, empleado_id):
     empleado = get_object_or_404(Empleado, pk=empleado_id)
     estados = EstadosEmpleado.objects.all()
-
+    
+    if empleado.administrativo == True:
+        empleado.administrativo = 1
+    else:
+        empleado.administrativo = 0
+        
     if request.method == 'GET':
 
         return render(request, 'empleados/empleado_detalle.html', {
             'empleado': empleado,
             'estados': estados
         })
-    else:  # POST
-
+    
+    elif request.method == 'POST':
         r_post = request.POST.copy()
         r_post.pop('csrfmiddlewaretoken', None)
-
+        
+        administrativo_value = request.POST.get('administrativo')
+        
+        if administrativo_value == None:
+            administrativo_value = 0
+            r_post.update({'administrativo': administrativo_value})
+        
         resultado = actualizar_empleado(r_post, empleado_id)
 
         if resultado:
@@ -578,14 +632,16 @@ def actualizar_empleado(r_post, empleado_id):
         return False
 
     for campo, nuevo_valor in r_post.items():
-
+        print(campo, nuevo_valor)
         try:
             if campo == "id_estado_empleado":
                 nuevo_estado = EstadosEmpleado.objects.get(id=nuevo_valor)
                 if empleado.id_estado_empleado != nuevo_estado:
+                    
                     empleado.id_estado_empleado = nuevo_estado
 
             elif getattr(empleado, campo) != nuevo_valor:
+                
                 setattr(empleado, campo, nuevo_valor)
         except Exception as e:
             print("Error en empleado_detalle:", e)
@@ -598,8 +654,10 @@ def actualizar_empleado(r_post, empleado_id):
 @login_required
 def empleado_eliminar(request, empleado_id):
     empleado = get_object_or_404(Empleado, pk=empleado_id)
-    if request.method == 'POST':
-        empleado.delete()
+    print(empleado_id)
+    print(empleado)
+    empleado.delete()
+
     return redirect('empleados')
 
 

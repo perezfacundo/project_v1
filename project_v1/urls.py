@@ -24,6 +24,7 @@ handler500 = 'solicitudes.views.error_view_500'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
+    path('dashboard', views.dashboard, name="dashboard"),
 
     # rutas solicitudes
     path('solicitudes/', views.solicitudes, name='solicitudes'),

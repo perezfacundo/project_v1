@@ -41,12 +41,9 @@ const listEmpleados = async () => {
         const empleados = data.empleados
         const usuario = data.usuario
 
-        console.log(empleados)
-        console.log(usuario)
-
         let content = '';
 
-        data.empleados.forEach((empleado, index) => {
+        empleados.forEach((empleado, index) => {
             btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/empleados/${empleado.id}/"><i class="bi bi-pencil-fill" style="color:#FFFFFF"></i></a>`;
             btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/empleados/${empleado.id}/eliminar"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
 
@@ -59,10 +56,19 @@ const listEmpleados = async () => {
                     <td>${empleado.telefono}</td>
                     <td>${empleado.ausencias}</td>
                     <td>${empleado.estado}</td>
-                    <td>${btnDetalles}
+                    <td>${btnDetalles} 
             `
 
-            // if(usuario.)
+            if(usuario.tipo_usuario == 'Administrador'){
+                content += `
+                    ${btnEliminar}
+                `
+            }
+
+            content += `
+            </td></tr>
+            `
+
         });
 
         tableBody_Empleados.innerHTML = content;
