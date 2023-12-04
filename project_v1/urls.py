@@ -24,7 +24,8 @@ handler500 = 'solicitudes.views.error_view_500'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    path('dashboard', views.dashboard, name="dashboard"),
+    path('dashboard/', views.dashboard, name="dashboard"),
+    path('historial_tasas_cambio/', views.historial_tasas_cambio, name="historial_tasas_cambio"),
 
     # rutas solicitudes
     path('solicitudes/', views.solicitudes, name='solicitudes'),
@@ -64,4 +65,5 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('logout/', views.signout, name='logout'),
     path('signin/', views.signin, name='signin'),
+    path('recuperarCuenta/', views.recuperarCuenta, name='recuperarCuenta')
 ]

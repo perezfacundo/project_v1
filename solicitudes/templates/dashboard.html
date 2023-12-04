@@ -1,7 +1,43 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
 {% block content %}
 
+<div class="container">
+    <div class="row my-4">
+        <div class="col-md-6">
+            <div id="chart1" style="width: 100%; min-height: 400px"></div>
+        </div>
 
+        <div class="col-md-6">
+            <div id="chart2" style="width: 100%; min-height: 400px"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Historial de tasas de cambio</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Valor del dolar en ARS</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in historial_json %}
+            <tr>
+                <td>{{ registro.timestamp }}</td>
+                <td>{{ registro.rate }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<script src='{% static "js/dashboard.js" %}'></script>
 
 {% endblock %}

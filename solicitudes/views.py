@@ -8,6 +8,7 @@ from .models import Usuario, EstadosCliente, Cliente, EstadosEmpleado, Empleado,
 from django.contrib.auth.decorators import login_required
 import re
 import requests
+import pandas as pd
 from datetime import datetime, timedelta
 from django.core import serializers
 from django.forms.models import model_to_dict
@@ -114,8 +115,14 @@ def signin(request):
         else:
             login(request, user)
             request.session['username'] = user.username
-            return redirect('solicitudes')
+            return redirect('dashboard')
 
+
+def recuperarCuenta(request):
+    if request.method == 'GET':
+        return render(request, 'auth/recuperarCuenta.html')
+    elif request.method == 'POST':
+        print("hola")
 
 @login_required
 def signout(request):
@@ -124,8 +131,48 @@ def signout(request):
 
 
 @login_required
-def dashboard():
-    print("hola")
+def dashboard(request):
+    
+    return render(request, "dashboard.html")
+
+
+def historial_tasas_cambio(request):
+    api_key = '373b418d614aa100475b0018'
+    base_url = 'https://open.er-api.com/v6/exrates/history'
+
+    fecha_actual = datetime.now().date()
+    fecha_hace_doce_meses = fecha_actual - timedelta(days=365)
+
+    params = {
+        'base_code': 'USD',
+        'target_code': 'ARS',
+        'apikey': api_key,
+        'start_date': fecha_hace_doce_meses,
+        'end_date': fecha_actual
+    }
+
+    print(params)
+
+    try:
+        response = requests.get(base_url, params=params)
+        print(response.status_code)
+        print(response.text)
+
+        data = response.json()
+
+        #Se crea un DataFrame de pandas para facilitar el manejo de datos
+        df = pd.DataFrame(data['rates'])
+        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s') #Se convierte el timestamp a formato de fecha
+
+        #Convertir el DataFrame a un formato que se pueda seriealizar a JSON
+        historial_json = df.to_json(orient='records', date_format='iso')
+
+        print(historial_json)
+        return render(request, 'dashboard.html', {'historial_json': historial_json})
+    except Exception as e:
+        print("El error es: ", e)
+        return render(request, 'dashboard.html', {'error': str(e)})
+
 
 # VISTAS SOLICITUDES
 

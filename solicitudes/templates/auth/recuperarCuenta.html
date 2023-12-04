@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+      <section class="col-md-4 offset-md-4 mt-5">
+        <form action="/recuperarCuenta/" method="post" class="card card-body">
+  
+          <h1 class="text-center">Tienes problemas para iniciar sesion ?</h1>
+  
+          {{error}}
+          {% csrf_token %}
+  
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo electronico</label>
+            <input type="email" name="email" class="form-control" autofocus>
+          </div>
+  
+          <button type="submit" class="btn btn-primary">
+            Enviar enlace
+          </button>
+  
+        </form>
+      </section>
+    </div>
+  </div>
+
+{% endblock %}
