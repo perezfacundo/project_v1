@@ -5,25 +5,25 @@
 <div class="container">
     <div class="row">
       <section class="col-md-4 offset-md-4 mt-5">
-        <form action="/recuperarCuenta/" method="post" class="card card-body">
+        <form action="/ingresarCodigoRecuperacion/" method="post" class="card card-body">
   
-          <h1 class="text-center">Tienes problemas para iniciar sesion ?</h1>
+          <h2 class="text-center">Revisa en tu correo e ingresa el codigo</h2>
   
           {{error}}
           {% csrf_token %}
   
           <div class="mb-3">
-            <label for="email" class="form-label">Correo electronico</label>
-            <input type="text" name="email"  id="email" class="form-control" autofocus>
+            <label for="codigoRecuperacion" class="form-label">Codigo</label>
+            <input type="text" name="codigoRecuperacion"  id="codigoRecuperacion" class="form-control" autofocus>
           </div>
   
           <button type="submit" class="btn btn-primary">
-            Enviar enlace
+            Validar
           </button>
   
         </form>
       </section>
     </div>
   </div>
-
+  
 {% endblock %}

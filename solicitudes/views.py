@@ -15,7 +15,11 @@ from django.forms.models import model_to_dict
 import json
 from django.db.models import Q, Count
 from django.views.decorators.csrf import csrf_protect
-
+from django.urls import reverse
+import random
+from django.core.mail import send_mail
+import ssl
+from django.conf import settings
 
 # VISTAS AUTENTICACION
 
@@ -122,7 +126,35 @@ def recuperarCuenta(request):
     if request.method == 'GET':
         return render(request, 'auth/recuperarCuenta.html')
     elif request.method == 'POST':
-        print("hola")
+
+        # Generar codigo
+        codigo = str(random.randint(100000, 999999))
+        request.session['codigoRecuperacion'] = codigo
+        
+        # Enviar correo
+        subject = 'Acá está tu código temporal '
+        message = 'El código es ' + codigo + '. Te avisamos que sólo será válido por 15 minutos. Pero no te preocupes que pasado ese tiempo podrás solicitar otro, las veces que quieras. Si no tienes una cuenta de HBO Max o crees que este correo electrónico se envió por error, simplemente ignora este correo.'
+        from_email = settings.EMAIL_HOST_USER
+        recipient_list = [request.POST['email']]
+        send_mail(subject, message, from_email, recipient_list)
+
+        return redirect('ingresarCodigoRecuperacion')
+
+
+def ingresarCodigoRecuperacion(request):
+    if request.method == 'GET':
+        return render(request, 'auth/ingresarCodigoRecuperacion.html')
+    elif request.method == 'POST':
+        
+        if request.POST['codigoRecuperacion'] == request.session['codigoRecuperacion']:
+            print("coincidencia")
+            return redirect('cambiarClave')
+        else:
+            print("no hubo coincidencia")
+            return render(request, 'auth/ingresarCodigoRecuperacion', {
+                'error': 'No hay coincidencia'
+            })
+
 
 @login_required
 def signout(request):

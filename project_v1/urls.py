@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path
 from solicitudes import views
 
-from django.views import defaults
+# from django.views import defaults
+
 handler500 = 'solicitudes.views.error_view_500'
 
 urlpatterns = [
@@ -65,5 +66,6 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('logout/', views.signout, name='logout'),
     path('signin/', views.signin, name='signin'),
-    path('recuperarCuenta/', views.recuperarCuenta, name='recuperarCuenta')
+    path('recuperarCuenta/', views.recuperarCuenta, name='recuperarCuenta'),
+    path('ingresarCodigoRecuperacion/', views.ingresarCodigoRecuperacion, name='ingresarCodigoRecuperacion')
 ]

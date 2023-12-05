@@ -140,7 +140,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'project_v1/static'),)
 
-# Configuracion para produccion
+# Configuraciones para produccion
 # STATIC_URL = '/static/'
 # # Following settings only make sense on production and may break development environments.
 # if not DEBUG:    # Tell Django to copy statics to the `staticfiles` directory
@@ -157,4 +157,18 @@ LOGIN_URL = '/auth/signin'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-APPEND_SLASH = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'fletter.startup@gmail.com'
+EMAIL_HOST_PASSWORD = 'lbro exfe virc eicl'
+# EMAIL_HOST_PASSWORD = 'dolchesternegro'
+
+# EMAIL_USE_SSL = True # Para GMAIL
+# EMAIL_SSL_KEYFILE = None
+# EMAIL_SSL_CERTFILE = None
+# EMAIL_TIMEOUT = 60
+
+
+
