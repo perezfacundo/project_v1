@@ -17,7 +17,7 @@ from django.db.models import Q, Count
 from django.views.decorators.csrf import csrf_protect
 from django.urls import reverse
 import random
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 import ssl
 from django.conf import settings
 
@@ -129,14 +129,30 @@ def recuperarCuenta(request):
 
         # Generar codigo
         codigo = str(random.randint(100000, 999999))
+        print(codigo)
         request.session['codigoRecuperacion'] = codigo
+        request.session['momentoGeneracionCodigo'] = datetime.now().isoformat()
         
-        # Enviar correo
-        subject = 'Acá está tu código temporal '
-        message = 'El código es ' + codigo + '. Te avisamos que sólo será válido por 15 minutos. Pero no te preocupes que pasado ese tiempo podrás solicitar otro, las veces que quieras. Si no tienes una cuenta de HBO Max o crees que este correo electrónico se envió por error, simplemente ignora este correo.'
+        # Enviar correo con formato normal
+        subject = 'Acá está tu código'
+        message = 'El código es ' + codigo + '. Te avisamos que será válido por sólo 15 minutos.'
         from_email = settings.EMAIL_HOST_USER
         recipient_list = [request.POST['email']]
         send_mail(subject, message, from_email, recipient_list)
+
+
+        # Para enviar correos con formato HTML
+        # email = EmailMessage(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+        # email.content_subtype = 'html'
+
+        # # Agrega el contenido HTML directamente al cuerpo del correo
+        # html_content = '<div style="background-color: black"><h1 style="font-size: 100%;"> FLETTER </h1></div>'
+
+        # html_content += f'<p style="font-size: 20px;"> {message} </p>'
+        # html_content += '<p> Si no tienes una cuenta de fletter o crees que este correo fue enviado por error, solo ignóralo. Saludos !</p>'
+        # email.body = html_content
+
+        # email.send()
 
         return redirect('ingresarCodigoRecuperacion')
 
@@ -146,14 +162,35 @@ def ingresarCodigoRecuperacion(request):
         return render(request, 'auth/ingresarCodigoRecuperacion.html')
     elif request.method == 'POST':
         
-        if request.POST['codigoRecuperacion'] == request.session['codigoRecuperacion']:
-            print("coincidencia")
-            return redirect('cambiarClave')
+        #REVISAR LOGICA
+        
+        limite_de_tiempo = timedelta(minutes=15)
+        print(limite_de_tiempo)
+        fecha_y_hora_actual = datetime.now() + timedelta(minutes=15)
+        print(fecha_y_hora_actual)
+        momentoGeneracionCodigo = datetime.fromisoformat(request.session['momentoGeneracionCodigo'])
+        print(momentoGeneracionCodigo)
+
+        diferencia = fecha_y_hora_actual - momentoGeneracionCodigo
+        print(f'diferencia: {diferencia} limite de tiempo: {limite_de_tiempo}')
+
+        if diferencia < limite_de_tiempo:
+            print('dif menor')
+            if request.POST['codigoRecuperacion'] == request.session['codigoRecuperacion']:
+                print("coincidencia")
+                return redirect('cambiarClave')
+            else:
+                print("no hubo coincidencia")
+                return render(request, 'auth/ingresarCodigoRecuperacion', {
+                    'error': 'No hay coincidencia'
+                })
         else:
-            print("no hubo coincidencia")
+            print('dif mayor')
             return render(request, 'auth/ingresarCodigoRecuperacion', {
-                'error': 'No hay coincidencia'
+                    'error': 'Se cumplieron los 15 minutos de validez del código'
             })
+
+        
 
 
 @login_required
