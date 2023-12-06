@@ -31,8 +31,6 @@ urlpatterns = [
     # rutas solicitudes
     path('solicitudes/', views.solicitudes, name='solicitudes'),
     path('solicitudes_listado/', views.solicitudes_listado, name='solicitudes_listado'),
-    path('solicitudes_prox7dias/', views.solicitudes_prox7dias, name='solicitudes_prox7dias'),
-    path('solicitudes_pendientes/', views.solicitudes_pendientes, name='solicitudes_pendientes'),
     path('solicitudes/crear/', views.solicitudes_crear, name='solicitudes_crear'),
     path('solicitudes/<int:solicitud_id>/', views.solicitud_detalle, name='solicitud_detalle'),
     path('solicitudes/eliminar/<int:solicitud_id>/', views.solicitud_eliminar, name='solicitud_eliminar'),
@@ -67,5 +65,6 @@ urlpatterns = [
     path('logout/', views.signout, name='logout'),
     path('signin/', views.signin, name='signin'),
     path('recuperarCuenta/', views.recuperarCuenta, name='recuperarCuenta'),
-    path('ingresarCodigoRecuperacion/', views.ingresarCodigoRecuperacion, name='ingresarCodigoRecuperacion')
+    path('ingresarCodigoRecuperacion/', views.ingresarCodigoRecuperacion, name='ingresarCodigoRecuperacion'),
+    path('cambiarClave/', views.cambiarClave, name='cambiarClave'),
 ]

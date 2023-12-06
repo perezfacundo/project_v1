@@ -108,8 +108,7 @@ def signin(request):
         })
     else:
 
-        user = authenticate(
-            request, username=request.POST['username'], password=request.POST['password'])
+        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
 
         if user is None:
             return render(request, 'auth/signin.html', {
@@ -132,6 +131,7 @@ def recuperarCuenta(request):
         print(codigo)
         request.session['codigoRecuperacion'] = codigo
         request.session['momentoGeneracionCodigo'] = datetime.now().isoformat()
+        request.session['correo'] = request.POST['email']
         
         # Enviar correo con formato normal
         subject = 'Acá está tu código'
@@ -160,37 +160,57 @@ def recuperarCuenta(request):
 def ingresarCodigoRecuperacion(request):
     if request.method == 'GET':
         return render(request, 'auth/ingresarCodigoRecuperacion.html')
+    
     elif request.method == 'POST':
-        
-        #REVISAR LOGICA
-        
         limite_de_tiempo = timedelta(minutes=15)
-        print(limite_de_tiempo)
-        fecha_y_hora_actual = datetime.now() + timedelta(minutes=15)
-        print(fecha_y_hora_actual)
+        fecha_y_hora_actual = datetime.now()
         momentoGeneracionCodigo = datetime.fromisoformat(request.session['momentoGeneracionCodigo'])
-        print(momentoGeneracionCodigo)
 
         diferencia = fecha_y_hora_actual - momentoGeneracionCodigo
-        print(f'diferencia: {diferencia} limite de tiempo: {limite_de_tiempo}')
 
         if diferencia < limite_de_tiempo:
-            print('dif menor')
             if request.POST['codigoRecuperacion'] == request.session['codigoRecuperacion']:
-                print("coincidencia")
                 return redirect('cambiarClave')
             else:
-                print("no hubo coincidencia")
                 return render(request, 'auth/ingresarCodigoRecuperacion', {
-                    'error': 'No hay coincidencia'
+                    'error': 'No hay coincidencia. Intente de nuevo'
                 })
         else:
-            print('dif mayor')
             return render(request, 'auth/ingresarCodigoRecuperacion', {
-                    'error': 'Se cumplieron los 15 minutos de validez del código'
-            })
+                    'error': 'Se cumplieron los 15 minutos de validez del código. Intente de nuevo.'
+            })  
 
+
+def cambiarClave(request):
+    if request.method == 'GET':
+        return render(request, 'auth/cambiarClave.html')
+    elif request.method == 'POST':
         
+        if request.POST['password1'] == request.POST['password2']:              
+
+            try:
+                objUsuario = Usuario.objects.get(email = request.session['correo'])
+            except:
+                objUsuario = Usuario.objects.get(username = request.session['username'])
+            
+            objUsuario.set_password(request.POST['password1'])
+            objUsuario.save()
+
+            user = authenticate(request, username=objUsuario.username, password=request.POST['password1'])
+
+            if user is None:
+                return render(request, 'auth/signin.html', {
+                    'error': "Ocurrió un error al intentar autenticar la sesión. Intente con la clave nueva."
+                })
+            else:
+                login(request, user)
+                request.session['username'] = objUsuario.username
+                return redirect('dashboard')
+
+        else:   
+            return render(request, 'auth/cambiarClave.html', {
+                    'error': 'La nueva contraseña y la confirmación no coinciden. Intente de nuevo.'
+            })
 
 
 @login_required

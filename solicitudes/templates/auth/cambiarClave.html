@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <section class="col-md-4 offset-md-4 mt-5">
+      <form action="/cambiarClave/" method="post" class="card card-body">
+
+        <h2 class="text-center">Crea una nueva contraseña</h2>
+
+        {{error}}
+        {% csrf_token %}
+
+        <p>Elija una contraseña que no haya usado antes (5-15 dígitos, minúsculas, mayúsculas, números y símbolos).</p>
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Nueva contraseña: </label>
+            <input type="password" name="password1" id="password1" class="form-control">
+          </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Confirmación: </label>
+          <input type="password" name="password2" id="password2" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Cambiar clave
+        </button>
+
+      </form>
+    </section>
+  </div>
+</div>
+
+{% endblock %}
