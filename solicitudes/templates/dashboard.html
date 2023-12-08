@@ -4,37 +4,90 @@
 
 {% block content %}
 
-<div class="container">
-    <div class="row my-4">
-        <div class="col-md-6">
-            <div id="chart1" style="width: 100%; min-height: 400px"></div>
+<div class="container mt-3">
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="card text-bg-primary h-100">
+                <div class="card-body">
+                    <h2 style="font-weight:bold">12</h2>
+                    <p class="card-text">Nuevos clientes registrados en este mes</p>
+                </div>
+                <div class="card-footer centered d-inline-block">
+                    <a href="" style="color: inherit; text-decoration: none;">
+                        <p class="d-inline">Más información</p>
+                        <i class="bi bi-arrow-right-circle"></i>
+                    </a>
+                </div>
+            </div>
         </div>
 
-        <div class="col-md-6">
-            <div id="chart2" style="width: 100%; min-height: 400px"></div>
+        <div class="col-md-3">
+            <div class="card text-bg-success card-container h-100">
+                <div class="card-body">
+                    <h2 style="font-weight:bold">20</h2>
+                    <p class="card-text">Nuevas solicitudes recibidas sin presupuestar</p>
+                </div>
+                <div class="card-footer centered d-inline-block">
+                    <a href="" style="color: inherit; text-decoration: none;">
+                        <p class="d-inline">Más información</p>
+                        <i class="bi bi-arrow-right-circle"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-bg-info h-100">
+                <div class="card-body">
+                    <h2 style="font-weight:bold">23%</h2>
+                    <p class="card-text">Más solicitudes que el mes pasado</p>
+                </div>
+                <div class="card-footer centered d-inline-block">
+                    <a href="" style="color: inherit; text-decoration: none;">
+                        <p class="d-inline">Más información</p>
+                        <i class="bi bi-arrow-right-circle"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-bg-danger h-100">
+                <div class="card-body">
+                    <h2 style="font-weight:bold">97km</h2>
+                    <p class="card-text">Próximo service de Amarok <strong>AD497AF</strong></p>
+                </div>
+                <div class="card-footer centered d-inline-block">
+                    <a href="" style="color: inherit; text-decoration: none;">
+                        <p class="d-inline">Más información</p>
+                        <i class="bi bi-arrow-right-circle"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="container">
-    <h2>Historial de tasas de cambio</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Contenido del gráfico 1 -->
+                    <h5 class="card-title">2023</h5>
+                    <div id="chart1" style="height: 300px"></div>
+                </div>
+            </div>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Valor del dolar en ARS</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for registro in historial_json %}
-            <tr>
-                <td>{{ registro.timestamp }}</td>
-                <td>{{ registro.rate }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Contenido del gráfico 2 -->
+                    <h5 class="card-title">Gráfico 2</h5>
+                    <div id="chart2" style="height: 300px"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://fastly.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>

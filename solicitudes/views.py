@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 import re
 import requests
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from django.core import serializers
 from django.forms.models import model_to_dict
 import json
@@ -128,18 +128,19 @@ def recuperarCuenta(request):
 
         # Generar codigo
         codigo = str(random.randint(100000, 999999))
-        print(codigo)
+        print("El codigo es " + codigo)
         request.session['codigoRecuperacion'] = codigo
         request.session['momentoGeneracionCodigo'] = datetime.now().isoformat()
         request.session['correo'] = request.POST['email']
         
+        objUsuario = Usuario.objects.get(email=request.POST['email'])
+        request.session['username'] = objUsuario.username
         # Enviar correo con formato normal
         subject = 'Acá está tu código'
         message = 'El código es ' + codigo + '. Te avisamos que será válido por sólo 15 minutos.'
         from_email = settings.EMAIL_HOST_USER
         recipient_list = [request.POST['email']]
         send_mail(subject, message, from_email, recipient_list)
-
 
         # Para enviar correos con formato HTML
         # email = EmailMessage(subject, message, settings.EMAIL_HOST_USER, recipient_list)
@@ -221,10 +222,38 @@ def signout(request):
 
 @login_required
 def dashboard(request):
-    
-    return render(request, "dashboard.html")
+    nuevos_clientes = ""
+    nuevas_solicitudes = ""
+    crecimiento = ""
+    prox_service = ""
 
+    return render(request, "dashboard.html", {
+        'nuevos_clientes': nuevos_clientes,
+        'nuevas_solicitudes': nuevas_solicitudes,
+        'porcentaje_crecimiento': crecimiento,
+        'prox_service': prox_service
+    })
 
+def nuevos_clientes_este_mes():
+    cantidad = ""
+
+    fecha_final = date.today()
+    fecha
+    return cantidad
+
+def funcion():
+    hola = ""
+    return hola
+
+def funcion():
+    hola = ""
+    return hola
+
+def funcion():
+    hola = ""
+    return hola
+
+@login_required
 def historial_tasas_cambio(request):
     api_key = '373b418d614aa100475b0018'
     base_url = 'https://open.er-api.com/v6/exrates/history'
