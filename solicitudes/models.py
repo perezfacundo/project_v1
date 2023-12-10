@@ -35,6 +35,7 @@ class Usuario(AbstractUser):
     # date_joined datetime
     dni = models.CharField(max_length=8, unique=True)
     telefono = models.CharField(max_length=10)
+    fecha_creacion = models.DateField(null=True)
     id_tipo_usuario = models.ForeignKey(TiposUsuario, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -82,7 +83,7 @@ class Cliente(Usuario):
     # telefono = charField
     # id_tipo_usuario
     fecha_nac = models.DateField(null=True)
-    puntos = models.IntegerField()
+    puntos = models.IntegerField(null=True)
     id_estado_cliente = models.ForeignKey(EstadosCliente, on_delete=models.CASCADE)
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
 
@@ -232,8 +233,8 @@ class Vehiculo(models.Model):
     marca = models.CharField(max_length=20)
     nombre = models.CharField(max_length=30)
     modelo = models.CharField(max_length=4)
-    capacidad = models.IntegerField()
-    kilometraje = models.IntegerField()  # agregar a tabla
+    capacidad = models.IntegerField(null=True)
+    kilometraje = models.IntegerField(null=True, default='0')  # agregar a tabla
     fecha_ult_service = DateField()  # agregar a tabla
     id_estado_vehiculo = models.ForeignKey(EstadosVehiculo, on_delete=models.CASCADE)
 

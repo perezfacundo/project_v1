@@ -9,7 +9,7 @@
         <div class="col-md-3">
             <div class="card text-bg-primary h-100">
                 <div class="card-body">
-                    <h2 style="font-weight:bold">12</h2>
+                    <h2 style="font-weight:bold">{{nuevos_clientes}}</h2>
                     <p class="card-text">Nuevos clientes registrados en este mes</p>
                 </div>
                 <div class="card-footer centered d-inline-block">
@@ -24,8 +24,8 @@
         <div class="col-md-3">
             <div class="card text-bg-success card-container h-100">
                 <div class="card-body">
-                    <h2 style="font-weight:bold">20</h2>
-                    <p class="card-text">Nuevas solicitudes recibidas sin presupuestar</p>
+                    <h2 style="font-weight:bold">{{nuevas_solicitudes}}</h2>
+                    <p class="card-text">Nuevas solicitudes recibidas este mes</p>
                 </div>
                 <div class="card-footer centered d-inline-block">
                     <a href="" style="color: inherit; text-decoration: none;">
@@ -39,7 +39,7 @@
         <div class="col-md-3">
             <div class="card text-bg-info h-100">
                 <div class="card-body">
-                    <h2 style="font-weight:bold">23%</h2>
+                    <h2 style="font-weight:bold">{{porcentaje_crecimiento}}%</h2>
                     <p class="card-text">Más solicitudes que el mes pasado</p>
                 </div>
                 <div class="card-footer centered d-inline-block">
@@ -72,7 +72,7 @@
             <div class="card">
                 <div class="card-body">
                     <!-- Contenido del gráfico 1 -->
-                    <h5 class="card-title">2023</h5>
+                    <h5 class="card-title">Solicitudes año 2023</h5>
                     <div id="chart1" style="height: 300px"></div>
                 </div>
             </div>
