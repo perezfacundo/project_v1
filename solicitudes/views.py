@@ -33,6 +33,7 @@ import random
 from django.core.mail import send_mail, EmailMessage
 import ssl
 from django.conf import settings
+from dateutil.relativedelta import relativedelta
 
 # VISTAS AUTENTICACION
 
@@ -359,45 +360,25 @@ def funcion():
 
 
 def grafico_solicitudes(request):
-
-    datos_eje_y = [] #cantidades
-    datos_eje_x = [] #meses
-
-    fecha_actual = date.today()
-    primer_dia_año = date(fecha_actual.year, 1, 1)
-    ultimo_dia_año = date(fecha_actual.year, 12, 31)
+    fecha_hoy = date.today() 
+    inicio = date(fecha_hoy.year, 1, 1)
+    fin = date(fecha_hoy.year, 12, 31)
 
     solicitudes = Solicitud.objects.filter(
-        fecha_solicitud__gte = primer_dia_año,
-        fecha_solicitud__lte=ultimo_dia_año
+        fecha_solicitud__gte = inicio, 
+        fecha_solicitud__lte = fin
     )
 
-    solicitudes_por_mes = solicitudes.values("fecha_solicitud__month").annotate(cantidad = Count("id"))
+    meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    cantidades = [0] * 12
+    mes = 1
 
-    for solicitud in solicitudes_por_mes:
-        datos_eje_y.append(solicitud["cantidad"])
+    while mes <= 12: #REVISAR LOGICA
+        solicitudes_por_mes = Solicitud.objects.filter(fecha_solicitud__month = mes).count()
+        cantidades.append(solicitudes_por_mes)
 
-    for mes in range(1,13):
-        nombre_mes = date(2023, mes, 1).strftime("%B")
-
-        if mes <= fecha_actual.month:
-            datos_eje_x.append(nombre_mes)
-
-    chart = {
-        "xAxis": {
-            "type": "Meses",
-            "data": datos_eje_x,
-        },
-        "yAxis": {"type": "value"},
-        "series": [
-            {
-                "data": datos_eje_y, 
-                "type": "line"
-            }
-        ],
-    }
-    return JsonResponse(chart)
-
+    print(meses, cantidades)
+    
 
 @login_required
 def historial_tasas_cambio(request):
@@ -467,9 +448,8 @@ def solicitudes_listado(request):
 
 @login_required
 @csrf_protect
-def solicitudes_prox7dias(
-    request,
-):  # Solicitudes a realizar dentro de los proximos 7 dias
+def solicitudes_prox7dias(request,):  # Solicitudes a realizar dentro de los proximos 7 dias
+
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario_data = objUsuario.to_dict()
 
