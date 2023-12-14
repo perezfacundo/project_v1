@@ -351,15 +351,18 @@ def vehiculos_prox_service():
 
     vehiculos = Vehiculo.objects.all()
 
-    print(vehiculos)
-
     fecha_actual = datetime.now().date()
 
     for vehiculo in vehiculos:
         tiempo_transcurrido = fecha_actual - vehiculo.fecha_ult_service
-        print(vehiculo.fecha_ult_service)
+        print(" ")
+        print(vehiculo.to_dict(), vehiculo.fecha_ult_service)
+
         if vehiculo.kilometraje_desde_ult_service >= 15000 or tiempo_transcurrido.days >= 365:
+            print("necesita service")
             necesitan_service.append(vehiculo)
+        else:
+            print("no necesita service")
             
 
     return necesitan_service

@@ -259,6 +259,7 @@ class Vehiculo(models.Model):
             "dominio": self.dominio,
             "fecha_ult_service": ult_service,
             "kilometraje": self.kilometraje,
+            "kilometraje_desde_ult_service": self.kilometraje_desde_ult_service,
             "estado": self.id_estado_vehiculo.descripcion
         }
 
