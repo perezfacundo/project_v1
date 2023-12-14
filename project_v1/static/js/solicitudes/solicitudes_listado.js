@@ -1,9 +1,15 @@
 let dataTable;
 let dataTableIsInitialized = false;
+let tableBody = document.getElementById("tableBody");
 
-var botonTodas = document.getElementById("btnRadioTodas");
-var botonPendientes = document.getElementById("btnRadioPendientes");
-var botonProx7dias = document.getElementById("btnRadioProx7dias");
+let botonTodas = document.getElementById("btnRadioTodas");
+let botonPendientes = document.getElementById("btnRadioPendientes");
+let botonProx7dias = document.getElementById("btnRadioProx7dias");
+
+let bodyContent = "";
+let btnCalificar = "";
+let btnDetalles = "";
+let btnEliminar = "";
 
 // Configuracion de la datatable
 const dataTableOptions = {
@@ -18,70 +24,51 @@ const dataTableOptions = {
 };
 
 // Inicializacion de la datatable
-// const initDataTable = async (buttonType) => {
-//   if (dataTableIsInitialized) {
-//     if (dataTable) {
-//       dataTable.destroy();
-//     }
-//   }
-
-//   if (buttonType === "btnRadioTodas") {
-//     await listTodasSolicitudes();
-//   } else if (buttonType === "btnRadioPendientes") {
-//     await listSolicitudesPendientes();
-//   } else if (buttonType === "btnRadioProx7dias") {
-//     await listSolicitudesProx7dias();
-//   }
-
-//   try {
-//     dataTable = $("#tableSolicitudes").DataTable(dataTableOptions);
-//   } catch (ex) {
-//     alert(ex);
-//   }
-
-//   dataTableIsInitialized = true;
-// };
-
-const updateDataTable = () => {
-  try {
+const initDataTable = async (listFunction) => {
+  if (dataTableIsInitialized) {
     if (dataTable) {
-      dataTable.clear().destroy();
+      dataTable.clear();
     }
+  }
+
+  await listFunction();
+
+  try {
     dataTable = $("#tableSolicitudes").DataTable(dataTableOptions);
   } catch (ex) {
     console.error(ex);
   }
+
+  dataTableIsInitialized = true;
 };
 
 botonTodas.addEventListener("click", async () => {
-  console.log("listar todas las solicitudes")
-  await initDataTable(botonTodas);
+  await initDataTable(listTodasSolicitudes);
 });
 
 botonPendientes.addEventListener("click", async () => {
-  console.log("listar las solicitudes pendientes")
-  await initDataTable(botonPendientes);
+  await initDataTable(listSolicitudesPendientes);
 });
 
 botonProx7dias.addEventListener("click", async () => {
-  console.log("listar las solicitudes de los proximos 7")
-  await initDataTable(botonProx7dias);
+  await initDataTable(listSolicitudesProx7dias);
 });
 
 // Proceso de informacion
 const listTodasSolicitudes = async () => {
+  bodyContent = "";
+  btnCalificar = "";
+  btnDetalles = "";
+  btnEliminar = "";
+
   try {
     const response = await fetch("http://127.0.0.1:8000/solicitudes_listado/");
     const data = await response.json();
     const usuario = data.usuario;
     const solicitudes = data.solicitudes;
 
+    console.log("Listado de todas las solicitudes");
     console.log(data);
-
-    let bodyContent = "";
-    let btnCalificar = "";
-    let btnDetalles = "";
-    let btnEliminar = "";
 
     solicitudes.forEach((solicitud) => {
       btnCalificar = `<a class="btn btn-sm " style="background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;
@@ -89,15 +76,15 @@ const listTodasSolicitudes = async () => {
       btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/solicitudes/eliminar/${solicitud.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
 
       bodyContent += `
-                <tr>
-                    <td>${solicitud.id}</td>
-                    <td>${solicitud.cliente}</td>
-                    <td>${solicitud.direccion_desde}</td>
-                    <td>${solicitud.direccion_hasta}</td>
-                    <td>${solicitud.fecha_trabajo}</td>
-                    <td>${solicitud.estado}</td>
-                    <td>${btnDetalles}
-      `;
+                    <tr>
+                        <td>${solicitud.id}</td>
+                        <td>${solicitud.cliente}</td>
+                        <td>${solicitud.direccion_desde}</td>
+                        <td>${solicitud.direccion_hasta}</td>
+                        <td>${solicitud.fecha_trabajo}</td>
+                        <td>${solicitud.estado}</td>
+                        <td>${btnDetalles}
+        `;
 
       if (usuario.tipo_usuario == "Administrador") {
         bodyContent += `${btnEliminar}`;
@@ -121,12 +108,19 @@ const listTodasSolicitudes = async () => {
     });
 
     tableBody.innerHTML = bodyContent;
-  } catch (ex) {
-    alert(ex);
+  } catch (error) {
+    alert(error);
   }
+  tableBody.innerHTML = bodyContent;
+  updateDataTable();
 };
 
 const listSolicitudesPendientes = async () => {
+  bodyContent = "";
+  btnCalificar = "";
+  btnDetalles = "";
+  btnEliminar = "";
+
   try {
     const response = await fetch(
       "http://127.0.0.1:8000/solicitudes_pendientes/"
@@ -135,12 +129,8 @@ const listSolicitudesPendientes = async () => {
     const usuario = data.usuario;
     const solicitudes = data.solicitudes;
 
+    console.log("Listado de solicitudes pendientes");
     console.log(data);
-
-    let bodyContent = "";
-    let btnCalificar = "";
-    let btnDetalles = "";
-    let btnEliminar = "";
 
     solicitudes.forEach((solicitud) => {
       btnCalificar = `<a class="btn btn-sm " style="background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;
@@ -148,15 +138,15 @@ const listSolicitudesPendientes = async () => {
       btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/solicitudes/eliminar/${solicitud.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
 
       bodyContent += `
-                <tr>
-                    <td>${solicitud.id}</td>
-                    <td>${solicitud.cliente}</td>
-                    <td>${solicitud.direccion_desde}</td>
-                    <td>${solicitud.direccion_hasta}</td>
-                    <td>${solicitud.fecha_trabajo}</td>
-                    <td>${solicitud.estado}</td>
-                    <td>${btnDetalles}
-            `;
+                    <tr>
+                        <td>${solicitud.id}</td>
+                        <td>${solicitud.cliente}</td>
+                        <td>${solicitud.direccion_desde}</td>
+                        <td>${solicitud.direccion_hasta}</td>
+                        <td>${solicitud.fecha_trabajo}</td>
+                        <td>${solicitud.estado}</td>
+                        <td>${btnDetalles}
+        `;
 
       if (usuario.tipo_usuario == "Administrador") {
         bodyContent += `${btnEliminar}`;
@@ -178,14 +168,19 @@ const listSolicitudesPendientes = async () => {
       }
       bodyContent += `</td></tr>`;
     });
-
-    tableBody.innerHTML = bodyContent;
-  } catch (ex) {
-    alert(ex);
+  } catch (error) {
+    alert(error);
   }
+  tableBody.innerHTML = bodyContent;
+  updateDataTable();
 };
 
 const listSolicitudesProx7dias = async () => {
+  bodyContent = "";
+  btnCalificar = "";
+  btnDetalles = "";
+  btnEliminar = "";
+
   try {
     const response = await fetch(
       "http://127.0.0.1:8000/solicitudes_prox7dias/"
@@ -194,12 +189,8 @@ const listSolicitudesProx7dias = async () => {
     const usuario = data.usuario;
     const solicitudes = data.solicitudes;
 
+    console.log("Listado de solicitudes en los proximos 7 dias");
     console.log(data);
-
-    let bodyContent = "";
-    let btnCalificar = "";
-    let btnDetalles = "";
-    let btnEliminar = "";
 
     solicitudes.forEach((solicitud) => {
       btnCalificar = `<a class="btn btn-sm " style="background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;
@@ -207,15 +198,15 @@ const listSolicitudesProx7dias = async () => {
       btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/solicitudes/eliminar/${solicitud.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
 
       bodyContent += `
-                <tr>
-                    <td>${solicitud.id}</td>
-                    <td>${solicitud.cliente}</td>
-                    <td>${solicitud.direccion_desde}</td>
-                    <td>${solicitud.direccion_hasta}</td>
-                    <td>${solicitud.fecha_trabajo}</td>
-                    <td>${solicitud.estado}</td>
-                    <td>${btnDetalles}
-            `;
+                    <tr>
+                        <td>${solicitud.id}</td>
+                        <td>${solicitud.cliente}</td>
+                        <td>${solicitud.direccion_desde}</td>
+                        <td>${solicitud.direccion_hasta}</td>
+                        <td>${solicitud.fecha_trabajo}</td>
+                        <td>${solicitud.estado}</td>
+                        <td>${btnDetalles}
+        `;
 
       if (usuario.tipo_usuario == "Administrador") {
         bodyContent += `${btnEliminar}`;
@@ -237,14 +228,32 @@ const listSolicitudesProx7dias = async () => {
       }
       bodyContent += `</td></tr>`;
     });
-
-    tableBody.innerHTML = bodyContent;
-  } catch (ex) {
-    alert(ex);
+  } catch (error) {
+    alert("ERROR EN listar solicitudes de los proximos 7 dias:" + error);
   }
+
+  tableBody.innerHTML = bodyContent;
+  updateDataTable();
+};
+
+// Función para actualizar DataTable después de cambiar el contenido
+const updateDataTable = () => {
+  if (dataTableIsInitialized) {
+    // Comparamos los nuevos datos con los datos existentes
+    const newBodyContent = document.getElementById("bodyContent").innerHTML;
+    const oldBodyContent = dataTable.rows().data();
+    if (newBodyContent !== oldBodyContent) {
+      // Los datos son diferentes, por lo que destruimos la tabla
+      dataTable.clear().destroy();
+    }
+  }
+
+  // Inicializamos la tabla con los nuevos datos
+  dataTable = $("#tableSolicitudes").DataTable(dataTableOptions);
+  dataTableIsInitialized = true;
 };
 
 // Escucha del evento load
 window.addEventListener("load", async () => {
-  await initDataTable("btnRadioTodas");
+  await initDataTable(listTodasSolicitudes);
 });

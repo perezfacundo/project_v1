@@ -355,15 +355,9 @@ def vehiculos_prox_service():
 
     for vehiculo in vehiculos:
         tiempo_transcurrido = fecha_actual - vehiculo.fecha_ult_service
-        print(" ")
-        print(vehiculo.to_dict(), vehiculo.fecha_ult_service)
 
         if vehiculo.kilometraje_desde_ult_service >= 15000 or tiempo_transcurrido.days >= 365:
-            print("necesita service")
             necesitan_service.append(vehiculo)
-        else:
-            print("no necesita service")
-            
 
     return necesitan_service
 
@@ -499,7 +493,9 @@ def solicitudes(request):
 
 @login_required
 def solicitudes_listado(request):
-    print(request)
+    print("Listado de solicitudes")
+    print(" ")
+
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario = objUsuario.to_dict()
 
@@ -517,6 +513,9 @@ def solicitudes_listado(request):
 @login_required
 @csrf_protect
 def solicitudes_prox7dias(request):  # Solicitudes a realizar dentro de los proximos 7 dias
+    print("Listado de solicitudes en los proximos 7 dias")
+    print(" ")
+
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario_data = objUsuario.to_dict()
 
@@ -543,8 +542,6 @@ def solicitudes_prox7dias(request):  # Solicitudes a realizar dentro de los prox
 
     solicitudes_data = [solicitud.to_dict() for solicitud in solicitudes]
 
-    print(solicitudes)
-
     data = {"solicitudes": solicitudes_data, "usuario": usuario_data}
 
     return JsonResponse(data, safe=False)
@@ -552,6 +549,10 @@ def solicitudes_prox7dias(request):  # Solicitudes a realizar dentro de los prox
 
 @login_required
 def solicitudes_pendientes(request):  # Solicitudes que tengan estado pendiente
+
+    print("Listado de solicitudes pendientes")
+    print(" ")
+
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario_data = objUsuario.to_dict()
 
