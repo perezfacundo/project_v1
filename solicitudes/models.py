@@ -235,21 +235,31 @@ class Vehiculo(models.Model):
     modelo = models.CharField(max_length=4)
     capacidad = models.IntegerField(null=True)
     kilometraje = models.IntegerField(null=True, default='0')  # agregar a tabla
-    fecha_ult_service = DateField()  # agregar a tabla
+    fecha_ult_service = models.DateField(null=True)  # agregar a tabla
+    kilometraje_desde_ult_service = models.IntegerField(null=True, default='0')  # agregar a tabla
     id_estado_vehiculo = models.ForeignKey(EstadosVehiculo, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"ID:{self.id}"
 
     def to_dict(self):
+        
+        ult_service = ""
+
+        if self.fecha_ult_service == None:
+            ult_service = "No se hizo"
+        else:
+            ult_service = self.fecha_ult_service.strftime("%d/%m/%Y")
+
         return {
             "id": self.id,
-            "dominio": self.dominio,
-            "marca": self.marca,
             "nombre": self.nombre,
             "modelo": self.modelo,
-            "capacidad": self.capacidad,
-            "estado": self.id_estado_vehiculo.descripcion,
+            "marca": self.marca,
+            "dominio": self.dominio,
+            "fecha_ult_service": ult_service,
+            "kilometraje": self.kilometraje,
+            "estado": self.id_estado_vehiculo.descripcion
         }
 
     class Meta:

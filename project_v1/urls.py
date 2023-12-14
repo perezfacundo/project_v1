@@ -27,8 +27,8 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('dashboard/', views.dashboard, name="dashboard"),
     path('historial_tasas_cambio/', views.historial_tasas_cambio, name="historial_tasas_cambio"),
-    path('grafico_solicitudes/', views.grafico_solicitudes, name='grafico_solicitudes'),
-    
+    path('grafico_anual_solicitudes/', views.grafico_anual_solicitudes, name='grafico_anual_solicitudes'),
+    path('grafico_anual_clientes/', views.grafico_anual_clientes, name='grafico_anual_clientes'),
     # rutas solicitudes
     path('solicitudes/', views.solicitudes, name='solicitudes'),
     path('solicitudes_listado/', views.solicitudes_listado, name='solicitudes_listado'),

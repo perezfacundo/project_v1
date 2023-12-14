@@ -284,7 +284,7 @@ def dashboard(request):
     nuevos_clientes = nuevos_clientes_este_mes()
     nuevas_solicitudes = nuevas_solicitudes_este_mes()
     porcentaje = porc_aumento_solicitudes()
-    prox_service = "prueba"
+    prox_service = vehiculos_prox_service()
 
     return render(
         request,
@@ -293,7 +293,7 @@ def dashboard(request):
             "nuevos_clientes": nuevos_clientes,
             "nuevas_solicitudes": nuevas_solicitudes,
             "porcentaje_crecimiento": porcentaje,
-            "prox_service": prox_service,
+            "vehiculos_service": prox_service,
         },
     )
 
@@ -321,16 +321,10 @@ def nuevas_solicitudes_este_mes():
 
 
 def porc_aumento_solicitudes():
-    # Obtener la fecha actual
+
     fecha_actual = date.today()
-
-    # Calcular el primer día del mes actual
     primer_dia_mes_actual = date(fecha_actual.year, fecha_actual.month, 1)
-
-    # Calcular el último día del mes anterior
     ultimo_dia_mes_anterior = date.fromordinal(primer_dia_mes_actual.toordinal() - 1)
-
-    # Calcular el primer día del mes anterior
     primer_dia_mes_anterior = date(
         ultimo_dia_mes_anterior.year, ultimo_dia_mes_anterior.month, 1
     )
@@ -350,35 +344,106 @@ def porc_aumento_solicitudes():
         * 100,
         2,
     )
-
     return porcentaje
 
+def vehiculos_prox_service():
+    necesitan_service = []
 
-def funcion():
-    hola = ""
-    return hola
+    vehiculos = Vehiculo.objects.all()
 
+    print(vehiculos)
 
-def grafico_solicitudes(request):
-    fecha_hoy = date.today() 
-    inicio = date(fecha_hoy.year, 1, 1)
-    fin = date(fecha_hoy.year, 12, 31)
+    fecha_actual = datetime.now().date()
 
-    solicitudes = Solicitud.objects.filter(
-        fecha_solicitud__gte = inicio, 
-        fecha_solicitud__lte = fin
-    )
+    for vehiculo in vehiculos:
+        tiempo_transcurrido = fecha_actual - vehiculo.fecha_ult_service
+        print(vehiculo.fecha_ult_service)
+        if vehiculo.kilometraje_desde_ult_service >= 15000 or tiempo_transcurrido.days >= 365:
+            necesitan_service.append(vehiculo)
+            
 
-    meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-    cantidades = [0] * 12
+    return necesitan_service
+
+def grafico_anual_solicitudes(request):
+    meses = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre",
+    ]
+    cantidades = []
     mes = 1
 
-    while mes <= 12: #REVISAR LOGICA
-        solicitudes_por_mes = Solicitud.objects.filter(fecha_solicitud__month = mes).count()
+    while mes <= 12:
+        solicitudes_por_mes = Solicitud.objects.filter(
+            fecha_solicitud__month=mes
+        ).count()
+
         cantidades.append(solicitudes_por_mes)
 
-    print(meses, cantidades)
-    
+        mes += 1
+
+    option = {
+        "tooltip": {"show": True, "trigger": "axis", "triggerOn": "mousemove|click"},
+        "xAxis": {"type": "category", "data": meses, "axisLabel": {"rotate": 30}},
+        "yAxis": {"type": "value"},
+        "series": {"data": cantidades, "type": "line", "smooth": True},
+    }
+
+    return JsonResponse(option, safe=False)
+
+
+def grafico_anual_clientes(request):
+
+    data = []
+
+    solicitudes = Solicitud.objects.all()
+
+    clientes_con_solicitudes = (
+        solicitudes.values("cliente_id")
+        .annotate(num_solicitudes=Count("id"))
+        .order_by("-num_solicitudes")[:5]
+    )
+
+    for cliente in clientes_con_solicitudes:
+        cliente_obj = Cliente.objects.get(pk=cliente["cliente_id"])
+
+        data.append({"value": cliente['num_solicitudes'], "name": cliente_obj.last_name + " " +cliente_obj.first_name},)
+
+    option = {
+        "tooltip": {"trigger": "item"},
+        "legend": {"top": "5%", "left": "center"},
+        "series": [
+            {
+                "name": "Access From",
+                "type": "pie",
+                "radius": ["40%", "70%"],
+                "avoidLabelOverlap": False,
+                "itemStyle": {
+                    "borderRadius": 10,
+                    "borderColor": "#fff",
+                    "borderWidth": 2,
+                },
+                "label": {"show": False, "position": "center"},
+                "emphasis": {
+                    "label": {"show": True, "fontSize": 40, "fontWeight": "bold"}
+                },
+                "labelLine": {"show": False},
+                "data": data
+            }
+        ],
+    }
+
+    return JsonResponse(option, safe=False)
+
 
 @login_required
 def historial_tasas_cambio(request):
@@ -448,8 +513,7 @@ def solicitudes_listado(request):
 
 @login_required
 @csrf_protect
-def solicitudes_prox7dias(request,):  # Solicitudes a realizar dentro de los proximos 7 dias
-
+def solicitudes_prox7dias(request):  # Solicitudes a realizar dentro de los proximos 7 dias
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario_data = objUsuario.to_dict()
 
@@ -1097,7 +1161,9 @@ def vehiculos_crear(request):
                 nombre=request.POST["nombre"],
                 modelo=request.POST["modelo"],
                 capacidad=request.POST["capacidad"],
-                id_estado_vehiculo=EstadosVehiculo.objects.get(id=id_estado_vehiculo),
+                kilometraje = request.POST["kilometraje"],
+                fecha_ult_service = request.POST["fecha_ult_service"],
+                id_estado_vehiculo=EstadosVehiculo.objects.get(id=id_estado_vehiculo)
             )
 
             vehiculo.save()
@@ -1135,9 +1201,19 @@ def vehiculo_detalle(request, vehiculo_id):
             {"vehiculo": vehiculo, "estados": estados},
         )
     else:  # POST
-        r_post = request.POST.copy()
-        r_post.pop("csrfmiddlewaretoken", None)
+        if request.POST['fecha_ult_service'] == '':
+            r_post = request.POST.copy()
+            r_post.pop("csrfmiddlewaretoken", None)
+            r_post.pop("fecha_ult_service", None)
+        else:
+            r_post = request.POST.copy()
+            r_post.pop("csrfmiddlewaretoken", None)
+        
         resultado = actualizar_vehiculo(r_post, vehiculo_id)
+
+        vehiculo = Vehiculo.objects.get(id=vehiculo_id)
+        if request.POST['fecha_ult_service'] != vehiculo.fecha_ult_service:
+            vehiculo.fecha_ult_service = request.POST['fecha_ult_service']
 
         if resultado:
             return redirect("vehiculos")

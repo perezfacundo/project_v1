@@ -1,6 +1,8 @@
 let dataTable;
 let dataTableIsInitialized = false;
 
+// import moment from "moment";
+
 // Configuracion de la datatable
 const dataTableOptions = {
     columnDefs: [
@@ -50,13 +52,22 @@ const listSolicitudes = async () => {
             btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/vehiculos/${vehiculo.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
             btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/vehiculos/eliminar/${vehiculo.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
 
+            // fecha_ult_service = ""
+            // if(vehiculo.fecha_ult_service == null){
+            //     fecha_ult_service = "no se hizo"
+            // }else{
+            //     const fecha = vehiculo.fecha_ult_service;
+            //     fecha_ult_service = moment(fecha).format("dd/mm/yyyy");
+            // }
+
             content += `
                 <tr>
                     <td>${vehiculo.id}</td>
                     <td>${vehiculo.nombre} ${vehiculo.modelo}</td>
                     <td>${vehiculo.marca}</td>
                     <td>${vehiculo.dominio}</td>
-                    <td>${vehiculo.cantidadViajes}</td>
+                    <td>${vehiculo.fecha_ult_service}</td>
+                    <td>${vehiculo.kilometraje}</td>
                     <td>${vehiculo.estado}</td>
                     <td>${btnDetalles} ${btnEliminar}</td>
                 </tr>    

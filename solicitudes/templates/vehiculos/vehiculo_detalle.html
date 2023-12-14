@@ -26,9 +26,24 @@
                         <input type="text" name="nombre" class="form-control" value="{{vehiculo.nombre}}">
                     </div>
 
-                    <div class="col-12">
+                    <div class="col-sm-6">
                         <label for="modelo">Modelo</label>
                         <input type="text" name="modelo" class="form-control" value="{{vehiculo.modelo}}">
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="kilometraje" class="form-label">Kilometraje</label>
+                        <input type="text" class="form-control" id="kilometraje" name="kilometraje" value="{{vehiculo.kilometraje}}" required>
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        <div class="valid-feedback">Bien!</div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <label for="fecha_ult_service" class="form-label">Fecha del último service</label>
+                        <input type="date" name="fecha_ult_service" id="fecha_ult_service" class="form-control"
+                        value="{{vehiculo.fecha_ult_service | date:'Y-m-d'}}">
+                        <div class="invalid-feedback">Este campo es obligatorio</div>
+                        <div class="valid-feedback">Bien!</div>
                     </div>
 
                     <div class="col-sm-6">
