@@ -48,53 +48,10 @@ def signup(request):
     if request.method == "GET":
         return render(request, "auth/signup.html")
     else:
-        print(request.POST)
+
         if request.POST["password1"] == request.POST["password2"]:
+
             try:
-                # VALIDACIONES
-
-                if validarUsername(request.POST["username"]):
-                    if Usuario.objects.filter(username=request.POST["username"]):
-                        return render(
-                            request,
-                            "auth/signup.html",
-                            {
-                                "error": "El nombre de usuario ya pertenece a una cuenta existente"
-                            },
-                        )
-                else:
-                    return render(
-                        request,
-                        "auth/signup.html",
-                        {
-                            "error": "El nombre de usuario puede contener solo numeros o letras"
-                        },
-                    )
-
-                if Usuario.objects.filter(email=request.POST["email"]):
-                    return render(
-                        request,
-                        "auth/signup.html",
-                        {
-                            "error": "El correo electrónico ya pertenece a una cuenta existente"
-                        },
-                    )
-
-                longitud = len(request.POST["dni"])
-                if longitud <= 8:
-                    if Usuario.objects.filter(dni=request.POST["dni"]):
-                        return render(
-                            request,
-                            "auth/signup.html",
-                            {"error": "El dni ya pertenece a una cuenta existente"},
-                        )
-                else:
-                    return render(
-                        request,
-                        "auth/signup.html",
-                        {"error": "El dni debe tener hasta 8 cifras"},
-                    )
-
                 id_estado_cliente = request.POST.get("id_estado_cliente", None)
                 id_tipo_usuario = request.POST.get("id_tipo_usuario", None)
 
@@ -124,12 +81,7 @@ def signup(request):
                     {"error": "Ocurrio un error al registrar el usuario."},
                 )
         return render(request, "auth/signup.html", {"error": "Las claves no coinciden"})
-
-
-def validarUsername(cadena):
-    regex = r"^[a-zA-Z0-9]+$"
-    return bool(re.match(regex, cadena))
-
+    
 
 def signin(request):
     if request.method == "GET":
@@ -167,33 +119,41 @@ def recuperarCuenta(request):
         request.session["momentoGeneracionCodigo"] = datetime.now().isoformat()
         request.session["correo"] = request.POST["email"]
 
-        objUsuario = Usuario.objects.get(email=request.POST["email"])
-        request.session["username"] = objUsuario.username
-        # Enviar correo con formato normal
-        subject = "Acá está tu código"
-        message = (
-            "El código es "
-            + codigo
-            + ". Te avisamos que será válido por sólo 15 minutos."
-        )
-        from_email = settings.EMAIL_HOST_USER
-        recipient_list = [request.POST["email"]]
-        send_mail(subject, message, from_email, recipient_list)
+        try:
+            objUsuario = Usuario.objects.get(email=request.POST["email"])
+            print(objUsuario)
 
-        # Para enviar correos con formato HTML
-        # email = EmailMessage(subject, message, settings.EMAIL_HOST_USER, recipient_list)
-        # email.content_subtype = 'html'
+            request.session["username"] = objUsuario.username
+            print(request.session["username"])
 
-        # # Agrega el contenido HTML directamente al cuerpo del correo
-        # html_content = '<div style="background-color: black"><h1 style="font-size: 100%;"> FLETTER </h1></div>'
+            # Enviar correo con formato normal
+            subject = "Acá está tu código"
+            message = (
+                "El código es "
+                + codigo
+                + ". Te avisamos que será válido por sólo 15 minutos."
+            )
+            from_email = settings.EMAIL_HOST_USER
+            recipient_list = [request.POST["email"]]
+            send_mail(subject, message, from_email, recipient_list)
 
-        # html_content += f'<p style="font-size: 20px;"> {message} </p>'
-        # html_content += '<p> Si no tienes una cuenta de fletter o crees que este correo fue enviado por error, solo ignóralo. Saludos !</p>'
-        # email.body = html_content
+            # Para enviar correos con formato HTML
+            # email = EmailMessage(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+            # email.content_subtype = 'html'
 
-        # email.send()
+            # # Agrega el contenido HTML directamente al cuerpo del correo
+            # html_content = '<div style="background-color: black"><h1 style="font-size: 100%;"> FLETTER </h1></div>'
 
-        return redirect("ingresarCodigoRecuperacion")
+            # html_content += f'<p style="font-size: 20px;"> {message} </p>'
+            # html_content += '<p> Si no tienes una cuenta de fletter o crees que este correo fue enviado por error, solo ignóralo. Saludos !</p>'
+            # email.body = html_content
+
+            # email.send()
+
+            return redirect("ingresarCodigoRecuperacion")
+        except Exception as e:
+            return render(request, "auth/recuperarCuenta.html", {"error": "El correo no pertenece a ningun usuario registrado."})
+        
 
 
 def ingresarCodigoRecuperacion(request):
@@ -1463,6 +1423,42 @@ def clientes_reportes(request):
             return JsonResponse(data, safe=False)
         except Exception as e:
             return JsonResponse({"error": e}, status=400)
+        
+
+@login_required
+def clientes_crear(request):
+
+    if request.method == 'GET':
+        return render(request, 'clientes/cliente_crear.html')
+    elif request.method == 'POST':
+
+        try:
+            id_estado_cliente = request.POST.get("id_estado_cliente", None)
+            id_tipo_usuario = request.POST.get("id_tipo_usuario", None)
+
+            cliente = Cliente.objects.create_user(
+                first_name = request.POST['first_name'],
+                last_name = request.POST['last_name'],
+                username = request.POST['username'],
+                password = request.POST['password1'],
+                email = request.POST['email'],
+                dni = request.POST['dni'],
+                telefono = request.POST['telefono'],
+                id_estado_cliente = EstadosCliente.objects.get(id=id_estado_cliente),
+                id_tipo_usuario = TiposUsuario.objects.get(id=id_tipo_usuario),
+                fecha_nac = request.POST['fecha_nac'],
+                fecha_creacion = date.today(),
+                puntos = 0
+            )
+            cliente.save()
+
+            return redirect('clientes')
+        except Exception as e:
+            print("Error en signup:", e)
+            return render(
+                request, "auth/signup.html",
+                {"error": "Ocurrio un error al registrar el usuario."}
+            )
 
 
 # VISTAS DE ERROR

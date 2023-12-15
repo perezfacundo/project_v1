@@ -3,26 +3,55 @@
 {% block content %}
 
 <div class="container">
-    <div class="row">
-      <section class="col-md-4 offset-md-4 mt-5">
-        <form action="/ingresarCodigoRecuperacion/" method="post" class="card card-body">
-  
-          <h2 class="text-center">Revisa en tu correo e ingresa el codigo</h2>
-  
-          {{error}}
-          {% csrf_token %}
-  
-          <div class="mb-3">
-            <input type="text" name="codigoRecuperacion"  id="codigoRecuperacion" class="form-control" autocomplete="off" autofocus>
-          </div>
-  
-          <button type="submit" class="btn btn-primary">
-            Validar
-          </button>
-  
-        </form>
-      </section>
-    </div>
+  <div class="row">
+    <section class="col-md-4 offset-md-4 mt-5">
+      <form action="/ingresarCodigoRecuperacion/" method="post" class="card card-body needs-validation" novalidate>
+
+        <h2 class="text-center">Revisa en tu correo e ingresa el codigo</h2>
+
+        {{error}}
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <input type="email" name="email" id="email" class="form-control" autocomplete="off" autofocus required>
+          <div class="invalid-feedback">Este campo es obligatorio</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          Validar
+        </button>
+
+      </form>
+    </section>
   </div>
-  
+</div>
+
+<script>
+
+  window.onload = function () {
+    console.log(document.getElementById("email"))
+    document.getElementById("email").value = ""
+    console.log(document.getElementById("email"))
+  };
+
+  (function () {
+    'use strict'
+
+    // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+    var forms = document.querySelectorAll('.needs-validation')
+
+    // Bucle sobre ellos y evitar el envío
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+</script>
 {% endblock %}

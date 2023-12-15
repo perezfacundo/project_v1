@@ -5,8 +5,8 @@
 <main class="container mt-3">
   <div class="row vh-100 d-flex justify-content-center align-items-center">
     <div class="col-md-7">
-      <form action="/signup/" method="post" class="card-body needs-validation" novalidate>
-        <h2 class="mb-3">Registrarse</h2>
+      <form action="/clientes/crear/" method="post" class="card-body needs-validation" novalidate>
+        <h2 class="mb-3">Registrar un nuevo cliente</h2>
         {{error}}
         {% csrf_token %}
 
@@ -86,7 +86,7 @@
         <hr>
 
         <button class="w-100 btn btn-primary btn-lg" type="submit">
-          Registrarse
+          Registrar nuevo cliente
         </button>
       </form>
     </div>

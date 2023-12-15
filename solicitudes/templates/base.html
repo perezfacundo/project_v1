@@ -49,9 +49,7 @@
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="/solicitudes/">Listado</a></li>
-              {% if not user.is_staff %}
               <li><a class="dropdown-item" href="/solicitudes/crear/">Nueva solicitud</a></li>
-              {% endif %}
 
               {% if user.is_staff %}
               <li>
@@ -84,9 +82,7 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="/vehiculos/">Listado</a></li>
               <li><a class="dropdown-item" href="/vehiculos/crear/">Nuevo vehiculo</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
+              <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="/vehiculos/reportes/">Reportes</a></li>
             </ul>
           </li>

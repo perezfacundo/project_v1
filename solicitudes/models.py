@@ -88,7 +88,7 @@ class Cliente(Usuario):
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, parent_link=True)
 
     def __str__(self):
-        return f"{self.last_name} {self.first_name} "
+        return f"{self.last_name} {self.first_name}"
 
     def to_dict(self):
         return {

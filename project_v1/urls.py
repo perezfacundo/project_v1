@@ -63,7 +63,8 @@ urlpatterns = [
     path('clientes/<int:cliente_id>/', views.cliente_detalle, name='cliente_detalle'),
     path('clientes/<int:cliente_id>/eliminar/', views.cliente_eliminar, name='cliente_eliminar'),
     path('clientes/reportes/', views.clientes_reportes, name='clientes_reportes'),
-
+    path('clientes/crear/', views.clientes_crear, name='clientes_crear'),
+    
     # rutas authenticate
     path('signup/', views.signup, name='signup'),
     path('logout/', views.signout, name='logout'),
