@@ -5,16 +5,18 @@
 <div class="container">
   <div class="row">
     <section class="col-md-4 offset-md-4 mt-5">
-      <form action="/recuperarCuenta/" method="post" class="card card-body">
+      <form action="/recuperarCuenta/" method="post" class="card card-body needs-validation" novalidate>
 
         <h2 class="text-center">Olvidaste tu clave ?</h2>
-        <p>Ingresa tu correo en la siguiente caja de texto. Te enviaremos un codigo un codigo para que puedas crear una nueva clave. <strong>No lo compartas con nadie.</strong></p>
+        <p>Ingresa tu correo en la siguiente caja de texto. Te enviaremos un codigo un codigo para que puedas crear una
+          nueva clave. <strong>No lo compartas con nadie.</strong></p>
         {{error}}
         {% csrf_token %}
 
         <div class="mb-3">
           <label for="email" class="form-label">Correo electronico</label>
-          <input type="text" name="email" id="email" class="form-control" autocomplete="off" autofocus>
+          <input type="email" name="email" id="email" class="form-control" autocomplete="off" autofocus required>
+          <div class="invalid-feedback">Por favor, ingresa tu correo electronico</div>
         </div>
 
         <button type="submit" class="btn btn-primary">
@@ -27,8 +29,26 @@
 </div>
 
 <script>
-  $(document).ready(function () {
-    $('email').attr('autocomplete', 'off');
-  });
-</script>
+
+  (function () {
+    'use strict'
+  
+    // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+    var forms = document.querySelectorAll('.needs-validation')
+  
+    // Bucle sobre ellos y evitar el envío
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+  
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
+  
+  </script>
 {% endblock %}

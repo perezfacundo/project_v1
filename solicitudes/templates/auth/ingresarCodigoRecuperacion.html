@@ -13,7 +13,7 @@
         {% csrf_token %}
 
         <div class="mb-3">
-          <input type="email" name="email" id="email" class="form-control" autocomplete="off" autofocus required>
+          <input type="text" name="codigoRecuperacion" id="codigoRecuperacion" class="form-control" autocomplete="off" autofocus required>
           <div class="invalid-feedback">Este campo es obligatorio</div>
         </div>
 
@@ -26,32 +26,4 @@
   </div>
 </div>
 
-<script>
-
-  window.onload = function () {
-    console.log(document.getElementById("email"))
-    document.getElementById("email").value = ""
-    console.log(document.getElementById("email"))
-  };
-
-  (function () {
-    'use strict'
-
-    // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
-    var forms = document.querySelectorAll('.needs-validation')
-
-    // Bucle sobre ellos y evitar el envío
-    Array.prototype.slice.call(forms)
-      .forEach(function (form) {
-        form.addEventListener('submit', function (event) {
-          if (!form.checkValidity()) {
-            event.preventDefault()
-            event.stopPropagation()
-          }
-
-          form.classList.add('was-validated')
-        }, false)
-      })
-  })()
-</script>
 {% endblock %}

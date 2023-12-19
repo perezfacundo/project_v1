@@ -48,9 +48,7 @@ def signup(request):
     if request.method == "GET":
         return render(request, "auth/signup.html")
     else:
-
         if request.POST["password1"] == request.POST["password2"]:
-
             try:
                 id_estado_cliente = request.POST.get("id_estado_cliente", None)
                 id_tipo_usuario = request.POST.get("id_tipo_usuario", None)
@@ -81,7 +79,7 @@ def signup(request):
                     {"error": "Ocurrio un error al registrar el usuario."},
                 )
         return render(request, "auth/signup.html", {"error": "Las claves no coinciden"})
-    
+
 
 def signin(request):
     if request.method == "GET":
@@ -152,8 +150,11 @@ def recuperarCuenta(request):
 
             return redirect("ingresarCodigoRecuperacion")
         except Exception as e:
-            return render(request, "auth/recuperarCuenta.html", {"error": "El correo no pertenece a ningun usuario registrado."})
-        
+            return render(
+                request,
+                "auth/recuperarCuenta.html",
+                {"error": "El correo no pertenece a ningun usuario registrado."},
+            )
 
 
 def ingresarCodigoRecuperacion(request):
@@ -281,7 +282,6 @@ def nuevas_solicitudes_este_mes():
 
 
 def porc_aumento_solicitudes():
-
     fecha_actual = date.today()
     primer_dia_mes_actual = date(fecha_actual.year, fecha_actual.month, 1)
     ultimo_dia_mes_anterior = date.fromordinal(primer_dia_mes_actual.toordinal() - 1)
@@ -306,6 +306,7 @@ def porc_aumento_solicitudes():
     )
     return porcentaje
 
+
 def vehiculos_prox_service():
     necesitan_service = []
 
@@ -316,10 +317,14 @@ def vehiculos_prox_service():
     for vehiculo in vehiculos:
         tiempo_transcurrido = fecha_actual - vehiculo.fecha_ult_service
 
-        if vehiculo.kilometraje_desde_ult_service >= 15000 or tiempo_transcurrido.days >= 365:
+        if (
+            vehiculo.kilometraje_desde_ult_service >= 15000
+            or tiempo_transcurrido.days >= 365
+        ):
             necesitan_service.append(vehiculo)
 
     return necesitan_service
+
 
 def grafico_anual_solicitudes(request):
     meses = [
@@ -359,7 +364,6 @@ def grafico_anual_solicitudes(request):
 
 
 def grafico_anual_clientes(request):
-
     data = []
 
     solicitudes = Solicitud.objects.all()
@@ -373,7 +377,12 @@ def grafico_anual_clientes(request):
     for cliente in clientes_con_solicitudes:
         cliente_obj = Cliente.objects.get(pk=cliente["cliente_id"])
 
-        data.append({"value": cliente['num_solicitudes'], "name": cliente_obj.last_name + " " +cliente_obj.first_name},)
+        data.append(
+            {
+                "value": cliente["num_solicitudes"],
+                "name": cliente_obj.last_name + " " + cliente_obj.first_name,
+            },
+        )
 
     option = {
         "tooltip": {"trigger": "item"},
@@ -394,7 +403,7 @@ def grafico_anual_clientes(request):
                     "label": {"show": True, "fontSize": 40, "fontWeight": "bold"}
                 },
                 "labelLine": {"show": False},
-                "data": data
+                "data": data,
             }
         ],
     }
@@ -472,7 +481,9 @@ def solicitudes_listado(request):
 
 @login_required
 @csrf_protect
-def solicitudes_prox7dias(request):  # Solicitudes a realizar dentro de los proximos 7 dias
+def solicitudes_prox7dias(
+    request,
+):  # Solicitudes a realizar dentro de los proximos 7 dias
     print("Listado de solicitudes en los proximos 7 dias")
     print(" ")
 
@@ -509,7 +520,6 @@ def solicitudes_prox7dias(request):  # Solicitudes a realizar dentro de los prox
 
 @login_required
 def solicitudes_pendientes(request):  # Solicitudes que tengan estado pendiente
-
     print("Listado de solicitudes pendientes")
     print(" ")
 
@@ -800,6 +810,8 @@ def solicitud_calificar(request, solicitud_id):
 
 @login_required
 def solicitudes_reportes(request):
+    resultado = ""
+
     if request.method == "GET":
         return render(request, "solicitudes/solicitudes_reportes.html")
 
@@ -809,24 +821,36 @@ def solicitudes_reportes(request):
             fecha_inicio = data.get("fechaInicio", None)
             fecha_fin = data.get("fechaFin", None)
 
-            estados = EstadosSolicitud.objects.all()
+            if fecha_fin > fecha_inicio:
+                resultado = "Las fechas estan bien"
+                estados = EstadosSolicitud.objects.all()
 
-            reporte = []
-            for estado in estados:
-                cantidad_solicitudes = Solicitud.objects.filter(
-                    fecha_trabajo__gte=fecha_inicio,
-                    fecha_trabajo__lte=fecha_fin,
-                    id_estado_solicitud=estado,
-                ).count()
-                reporte.append(
-                    {
-                        "descripcion": estado.descripcion,
-                        "cantidad": cantidad_solicitudes,
-                    }
-                )
+                reporte = []
+                for estado in estados:
+                    cantidad_solicitudes = Solicitud.objects.filter(
+                        fecha_trabajo__gte=fecha_inicio,
+                        fecha_trabajo__lte=fecha_fin,
+                        id_estado_solicitud=estado,
+                    ).count()
+                    reporte.append(
+                        {
+                            "descripcion": estado.descripcion,
+                            "cantidad": cantidad_solicitudes,
+                        }
+                    )
 
-            data = {"estados": reporte}
-            return JsonResponse(data, safe=False)
+                data = {"estados": reporte}
+                
+            else:
+                # return render(
+                #     request,
+                #     "solicitudes/solicitudes_reportes.html",
+                #     {"resultado": "error_fechas"},
+                # )
+                data = {"error": "Error: La fecha inicial debe ser menor o igual a la fecha final."}
+                
+            return JsonResponse(data, safe=False)    
+
         except json.JSONDecodeError as e:
             return JsonResponse({"error": "Error en los datos JSON"}, status=400)
 
@@ -1125,9 +1149,9 @@ def vehiculos_crear(request):
                 nombre=request.POST["nombre"],
                 modelo=request.POST["modelo"],
                 capacidad=request.POST["capacidad"],
-                kilometraje = request.POST["kilometraje"],
-                fecha_ult_service = request.POST["fecha_ult_service"],
-                id_estado_vehiculo=EstadosVehiculo.objects.get(id=id_estado_vehiculo)
+                kilometraje=request.POST["kilometraje"],
+                fecha_ult_service=request.POST["fecha_ult_service"],
+                id_estado_vehiculo=EstadosVehiculo.objects.get(id=id_estado_vehiculo),
             )
 
             vehiculo.save()
@@ -1165,19 +1189,19 @@ def vehiculo_detalle(request, vehiculo_id):
             {"vehiculo": vehiculo, "estados": estados},
         )
     else:  # POST
-        if request.POST['fecha_ult_service'] == '':
+        if request.POST["fecha_ult_service"] == "":
             r_post = request.POST.copy()
             r_post.pop("csrfmiddlewaretoken", None)
             r_post.pop("fecha_ult_service", None)
         else:
             r_post = request.POST.copy()
             r_post.pop("csrfmiddlewaretoken", None)
-        
+
         resultado = actualizar_vehiculo(r_post, vehiculo_id)
 
         vehiculo = Vehiculo.objects.get(id=vehiculo_id)
-        if request.POST['fecha_ult_service'] != vehiculo.fecha_ult_service:
-            vehiculo.fecha_ult_service = request.POST['fecha_ult_service']
+        if request.POST["fecha_ult_service"] != vehiculo.fecha_ult_service:
+            vehiculo.fecha_ult_service = request.POST["fecha_ult_service"]
 
         if resultado:
             return redirect("vehiculos")
@@ -1423,41 +1447,40 @@ def clientes_reportes(request):
             return JsonResponse(data, safe=False)
         except Exception as e:
             return JsonResponse({"error": e}, status=400)
-        
+
 
 @login_required
 def clientes_crear(request):
-
-    if request.method == 'GET':
-        return render(request, 'clientes/cliente_crear.html')
-    elif request.method == 'POST':
-
+    if request.method == "GET":
+        return render(request, "clientes/cliente_crear.html")
+    elif request.method == "POST":
         try:
             id_estado_cliente = request.POST.get("id_estado_cliente", None)
             id_tipo_usuario = request.POST.get("id_tipo_usuario", None)
 
             cliente = Cliente.objects.create_user(
-                first_name = request.POST['first_name'],
-                last_name = request.POST['last_name'],
-                username = request.POST['username'],
-                password = request.POST['password1'],
-                email = request.POST['email'],
-                dni = request.POST['dni'],
-                telefono = request.POST['telefono'],
-                id_estado_cliente = EstadosCliente.objects.get(id=id_estado_cliente),
-                id_tipo_usuario = TiposUsuario.objects.get(id=id_tipo_usuario),
-                fecha_nac = request.POST['fecha_nac'],
-                fecha_creacion = date.today(),
-                puntos = 0
+                first_name=request.POST["first_name"],
+                last_name=request.POST["last_name"],
+                username=request.POST["username"],
+                password=request.POST["password1"],
+                email=request.POST["email"],
+                dni=request.POST["dni"],
+                telefono=request.POST["telefono"],
+                id_estado_cliente=EstadosCliente.objects.get(id=id_estado_cliente),
+                id_tipo_usuario=TiposUsuario.objects.get(id=id_tipo_usuario),
+                fecha_nac=request.POST["fecha_nac"],
+                fecha_creacion=date.today(),
+                puntos=0,
             )
             cliente.save()
 
-            return redirect('clientes')
+            return redirect("clientes")
         except Exception as e:
             print("Error en signup:", e)
             return render(
-                request, "auth/signup.html",
-                {"error": "Ocurrio un error al registrar el usuario."}
+                request,
+                "auth/signup.html",
+                {"error": "Ocurrio un error al registrar el usuario."},
             )
 
 

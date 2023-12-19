@@ -70,6 +70,8 @@ const listReportes = async () => {
       fechaInicio = $("#fechaInicio").val();
       fechaFin = $("#fechaFin").val();
 
+      
+
       const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
 
       const url = "http://127.0.0.1:8000/solicitudes/reportes/";
@@ -123,7 +125,7 @@ const listReportes = async () => {
 
           reiniciarOption();
         })
-        .catch((error) => console.error("Error:", error));
+        .catch((error) => alert(resultado.error));
     });
   } catch (ex) {
     alert(ex);

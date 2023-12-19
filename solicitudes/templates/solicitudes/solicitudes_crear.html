@@ -11,7 +11,8 @@
   </div>
   <div class="row vh-100 d-flex justify-content-center">
     <div class="col-md-7">
-      <form action="{% url 'solicitudes_crear' %}" method="post" class="card-body" id="form">
+      <form action="{% url 'solicitudes_crear' %}" method="post" class="card-body needs-validation" id="form"
+        novalidate>
         {% csrf_token %}
 
         <div class="row g-3">
@@ -29,31 +30,41 @@
 
           <div class="col-12">
             <label for="txt_detalles">¿ Qué necesita transportar ?</label>
-            <textarea name="objetos_a_transportar" id="txt_detalles" class="form-control"></textarea>
+            <textarea name="objetos_a_transportar" id="txt_detalles" class="form-control" required></textarea>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <div class="valid-feedback">Bien!</div>
           </div>
 
           <div class="col-12">
             <label for="direccion_desde">¿ Desde qué lugar ?</label>
-            <input type="text" name="direccion_desde" id="direccion1" class="form-control">
+            <input type="text" name="direccion_desde" id="direccion1" class="form-control" required>
             <input type="hidden" name="latitud_desde" id="latitud1">
             <input type="hidden" name="longitud_desde" id="longitud1">
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <div class="valid-feedback">Bien!</div>
           </div>
 
           <div class="col-12">
             <label for="direccion_hasta">¿ Hasta qué lugar ?</label>
-            <input type="text" name="direccion_hasta" id="direccion2" class="form-control">
+            <input type="text" name="direccion_hasta" id="direccion2" class="form-control" required>
             <input type="hidden" name="latitud_hasta" id="latitud2">
             <input type="hidden" name="longitud_hasta" id="longitud2">
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <div class="valid-feedback">Bien!</div>
           </div>
 
           <div class="col-12">
             <label for="fecha_trabajo">¿ En qué fecha necesita recibirlo ?</label>
-            <input type="date" name="fecha_trabajo" class="form-control">
+            <input type="date" name="fecha_trabajo" class="form-control" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <div class="valid-feedback">Bien!</div>
           </div>
 
           <div class="col-12">
             <label for="detalles">Detalles</label>
-            <input type="text" name="detalles" class="form-control">
+            <input type="text" name="detalles" class="form-control" required>
+            <div class="invalid-feedback">Este campo es obligatorio</div>
+            <div class="valid-feedback">Bien!</div>
           </div>
 
           <input type="hidden" name="id_estado_solicitud" value="1">
@@ -62,12 +73,10 @@
           <hr>
 
           <!-- Button trigger modal -->
-          <button type="button" class="w-100 btn btn-primary btn-lg" data-bs-toggle="modal"
-            data-bs-target="#confirmSave">
-            Enviar solicitud
+          <button type="submit" class="w-100 btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#confirmSave">Enviar solicitud
           </button>
 
-          <!-- Modal -->
+          <!-- Modal
           <div class="modal fade" id="confirmSave" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
@@ -84,7 +93,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
       </form>
     </div>
   </div>
@@ -94,5 +103,27 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBT2JD48DifkZB6hadzvJLtC1u7O5MQEkw&libraries=places"></script>
+</script>
+
+<script>
+  (function () {
+    'use strict'
+
+    // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+    var forms = document.querySelectorAll('.needs-validation')
+
+    // Bucle sobre ellos y evitar el envío
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+
+          form.classList.add('was-validated')
+        }, false)
+      })
+  })()
 </script>
 {% endblock %}

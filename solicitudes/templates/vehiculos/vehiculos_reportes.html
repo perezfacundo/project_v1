@@ -17,6 +17,7 @@
           <input class="form-control" type="date" name="fechaFin" id="fechaFin">
         </div>
 
+        <!-- 
         <div class="col-auto">
           <div class="form-floating">
             <select class="form-select form-select-sm" name="listarPor" id="listarPor" style="width: auto;">
@@ -25,10 +26,17 @@
             </select>
             <label for="listarPor">Listar por</label>
           </div>
+        </div> -->
+
+        <div class="col">
+          <select class="form-select" name="listarPor" id="listarPor" aria-label="Default" style="width:auto">
+            <option selected value="vehiculos">Vehiculos</option>
+            <option value="estados">Estados</option>
+          </select>
         </div>
 
         <div class="col-auto">
-          <button class="btn btn-primary" type="button" id="enviarButton">Enviar</button>
+          <button class="btn btn-primary" type="button" id="enviarButton">Consultar</button>
         </div>
       </div>
     </form>
