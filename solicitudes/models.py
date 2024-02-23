@@ -287,7 +287,6 @@ class SolicitudesVehiculos(models.Model):
 
     def __str__(self):
         # Acceder a las propiedades de la solicitud relacionada
-        solicitud = self.id_solicitud
         return f"{self.id}"
 
     class Meta:

@@ -69,7 +69,7 @@ def signup(request):
                 )
                 cliente.save()
                 login(request, cliente)
-
+                request.session["username"] = cliente.username
                 return redirect("solicitudes")
             except Exception as e:
                 print("Error en signup:", e)
@@ -103,7 +103,12 @@ def signin(request):
         else:
             login(request, user)
             request.session["username"] = user.username
-            return redirect("dashboard")
+
+            objUsuario = Usuario.objects.get(username=request.session["username"])
+            if objUsuario.id_tipo_usuario.descripcion == "Cliente":
+                return redirect("solicitudes")
+            else:
+                return redirect("dashboard")
 
 
 def recuperarCuenta(request):
@@ -298,12 +303,15 @@ def porc_aumento_solicitudes():
         fecha_solicitud__gte=primer_dia_mes_actual, fecha_solicitud__lte=fecha_actual
     ).count()
 
-    porcentaje = round(
-        (cantidad_solicitudes_mes_actual - cantidad_solicitudes_mes_anterior)
-        / cantidad_solicitudes_mes_anterior
-        * 100,
-        2,
-    )
+    try:
+        porcentaje = round(
+            (cantidad_solicitudes_mes_actual - cantidad_solicitudes_mes_anterior)
+            / cantidad_solicitudes_mes_anterior
+            * 100,
+            2,
+        )
+    except:
+        porcentaje = 0
     return porcentaje
 
 
@@ -462,8 +470,6 @@ def solicitudes(request):
 
 @login_required
 def solicitudes_listado(request):
-    print("Listado de solicitudes")
-    print(" ")
 
     objUsuario = Usuario.objects.get(username=request.session["username"])
     usuario = objUsuario.to_dict()
@@ -848,7 +854,7 @@ def solicitudes_reportes(request):
                 #     {"resultado": "error_fechas"},
                 # )
                 data = {"error": "Error: La fecha inicial debe ser menor o igual a la fecha final."}
-                
+
             return JsonResponse(data, safe=False)    
 
         except json.JSONDecodeError as e:

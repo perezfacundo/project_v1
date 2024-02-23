@@ -44,8 +44,6 @@ function initAutocomplete() {
     });
 }
 
-
-
 window.onload = function () {
     initAutocomplete();
 };

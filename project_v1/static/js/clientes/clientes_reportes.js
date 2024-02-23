@@ -32,7 +32,7 @@ let option = {
 
 const dataTableOptions = {
     columnDefs: [
-        { orderable: false, targets: [2] },
+        { orderable: true, targets: [2] },
     ],
     "searching": false,
     dom: 'Bfrtip',
@@ -95,7 +95,7 @@ const listReportes = async () => {
                                 <th class="centered">Cantidad de clientes</th>
                             </tr>
                         `;
-                        tableHead.innerHTML = headContent;
+                        //tableHead.innerHTML = headContent;
 
                         data.estados.forEach((estado) => {
                             total += estado.cantidadClientes
