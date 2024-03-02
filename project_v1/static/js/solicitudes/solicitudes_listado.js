@@ -2,6 +2,17 @@ let botonTodas = document.getElementById("btnRadioTodas");
 let botonPendientes = document.getElementById("btnRadioPendientes");
 let botonProx7dias = document.getElementById("btnRadioProx7dias");
 
+const dataTableOptions = {
+  columnDefs: [
+    { className: "centered", targets: [4] },
+    { orderable: false, targets: [4, 6, 7] },
+    { searchable: false, targets: [4, 5, 6, 7] },
+  ],
+  destroy: true,
+  dom: "Bfrtip",
+  buttons: ["copy", "csv", "excel", "pdf", "print"],
+};
+
 window.addEventListener("load", async () => {
   await listTodasSolicitudes();
 });
@@ -19,7 +30,6 @@ botonProx7dias.addEventListener("click", async () => {
 });
 
 const listTodasSolicitudes = async () => {
-
   fetch("http://127.0.0.1:8000/solicitudes_listado/", {
     method: "GET",
     headers: {
@@ -36,13 +46,16 @@ const listTodasSolicitudes = async () => {
     .then(function (respuestaJSON) {
       let solicitudes = respuestaJSON.solicitudes;
       let usuario = respuestaJSON.usuario;
-      let estrellas = "";
-      let botonesAccion = "";
-      let table = $("#tableSolicitudes").DataTable();
+
+      let table = $("#tableSolicitudes").DataTable(dataTableOptions);
       table.clear().draw();
 
       solicitudes.forEach((solicitud) => {
+        let estrellas = "";
+
         //botones de accion
+        let botonesAccion = "";
+
         btnCalificar = `<a class="btn btn-sm " style="margin:0 3px; background-color:#3B4C7D;" href="http://127.0.0.1:8000/solicitudes/calificar/${solicitud.id}/"><i class="bi bi-star-fill" style="color:#FFFFFF"></i></a>`;
         btnDetalles = `<a class="btn btn-sm " style="margin:0 3px; background-color:#357266;" href="http://127.0.0.1:8000/solicitudes/${solicitud.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
         btnEliminar = `<a class="btn btn-sm " style="margin:0 3px; background-color:#C44558;" href="http://127.0.0.1:8000/solicitudes/eliminar/${solicitud.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
@@ -88,7 +101,6 @@ const listTodasSolicitudes = async () => {
 };
 
 const listSolicitudesPendientes = async () => {
-
   fetch("http://127.0.0.1:8000/solicitudes_pendientes/", {
     method: "GET",
     headers: {
@@ -157,7 +169,6 @@ const listSolicitudesPendientes = async () => {
 };
 
 const listSolicitudesProx7dias = async () => {
-
   fetch("http://127.0.0.1:8000/solicitudes_prox7dias/", {
     method: "GET",
     headers: {
