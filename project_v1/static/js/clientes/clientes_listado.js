@@ -1,80 +1,63 @@
-let dataTable;
-let dataTableIsInitialized = false;
-
-// Configuracion de la datatable
 const dataTableOptions = {
-    columnDefs: [
-        { className: 'centered', targets: [0, 1, 2, 3, 4, 5, 6] },
-        { orderable: false, targets: [4, 5, 6] },
-        { searchable: false, targets: [4, 5, 6] }
-    ],
-    destroy: true,
-    dom: 'Bfrtip',
-    buttons: [
-        'copy', 'csv', 'excel', 'pdf', 'print'
-    ]
-}
-
-// Inicializacion de la datatable
-const initDataTable = async () => {
-    if (dataTableIsInitialized) {
-        if (dataTable) {
-            dataTable.destroy();
-        }
-    }
-    await listSolicitudes();
-
-    try {
-        dataTable = $('#tableClientes').DataTable(dataTableOptions);
-    } catch (ex) {
-        alert(ex)
-    }
-
-    dataTableIsInitialized = true;
-}
-
-// Proceso de informacion 
-const listSolicitudes = async () => {
-    try {
-        const response = await fetch('http://127.0.0.1:8000/clientes_listado/');
-        const data = await response.json();
-        console.log(data)
-
-        let bodyContent = '';
-        let btnDetalles = '';
-        let btnEliminar = '';
-
-        data.clientes.forEach((cliente, index) => {
-
-            btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/clientes/${cliente.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
-
-            btnEliminar = `
-            <a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/clientes/${cliente.id}/eliminar/"/>
-                <i class="bi bi-trash-fill" style="color:#FFFFFF"></i>
-            </a>`;
-
-            bodyContent += `
-                <tr>
-                    <td>${cliente.dni}</td>
-                    <td>${cliente.last_name}</td>
-                    <td>${cliente.first_name}</td>
-                    <td>${cliente.telefono}</td>
-                    <td>${cliente.email}</td>
-                    <td>${cliente.estado}</td>
-                    <td>${btnDetalles} ${btnEliminar}</td>
-                </tr>
-            `
-
-        });
-
-        tableBody.innerHTML = bodyContent;
-    } catch (ex) {
-        alert(ex);
-    }
+  columnDefs: [
+    { className: "centered", targets: [4] },
+    { orderable: false, targets: [4, 6, 7] },
+    { searchable: false, targets: [4, 5, 6, 7] },
+  ],
+  destroy: true,
+  dom: "Bfrtip",
+  buttons: ["copy", "csv", "excel", "pdf", "print"],
 };
 
+const listClientes = async () => {
+  fetch("http://127.0.0.1:8000/clientes_listado/", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  .then(function (response) {
+    if (response.status === 200) {
+      return response.json();
+    } else {
+      throw new Error("Error al obtener una respuesta del servidor");
+    }
+  })
+  .then(function (respuestaJSON) {
+    let clientes = respuestaJSON.clientes;
+    let usuario = respuestaJSON.usuario;
+    console.log(respuestaJSON)
+    let table = $("#tableClientes").DataTable(dataTableOptions);
+    table.clear().draw();
 
-// Escucha del evento load
-window.addEventListener('load', async () => {
-    await initDataTable();
+    clientes.forEach((cliente) => {
+      //botones de accion
+      let botonesAccion= "";
+
+      btnDetalles = `<a class="btn btn-sm" style="margin-right:2px; background-color:#357266;" href="http://127.0.0.1:8000/clientes/${cliente.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
+      btnEliminar = `<a class="btn btn-sm" style="margin-right:2px; background-color:#C44558;" href="http://127.0.0.1:8000/clientes/${cliente.id}/eliminar/"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
+
+      botonesAccion += btnDetalles;
+      if (usuario.tipo_usuario === "Administrador") {
+        botonesAccion += btnEliminar;
+      }
+
+      table.row.add([
+        cliente.dni,
+        cliente.last_name,
+        cliente.first_name,
+        cliente.telefono,
+        cliente.email,
+        cliente.estado,
+        botonesAccion
+      ]).draw()
+    });
+  })
+  .catch(function (error) {
+    console.log("error:", error);
+  })
+};
+
+window.addEventListener("load", async () => {
+  await listClientes();
 })

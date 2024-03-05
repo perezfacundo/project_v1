@@ -1126,10 +1126,13 @@ def vehiculos(request):
 
 def vehiculos_listado(request):
     try:
+        objUsuario = Usuario.objects.get(username=request.session["username"])
+        usuario_data = objUsuario.to_dict()
+
         vehiculos = Vehiculo.objects.all()
         vehiculos_data = [vehiculo.to_dict() for vehiculo in vehiculos]
 
-        data = {"vehiculos": vehiculos_data}
+        data = {"vehiculos": vehiculos_data, "usuario": usuario_data}
 
         return JsonResponse(data, safe=False)
     except Exception as e:
@@ -1325,10 +1328,13 @@ def clientes(request):
 
 def clientes_listado(request):
     try:
+        objUsuario = Usuario.objects.get(username=request.session["username"])
+        usuario_data = objUsuario.to_dict()
+        
         clientes = Cliente.objects.all()
         clientes_data = [cliente.to_dict() for cliente in clientes]
 
-        data = {"clientes": clientes_data}
+        data = {"clientes": clientes_data, "usuario": usuario_data}
         return JsonResponse(data, safe=False)
     except Exception as e:
         print("Error en empleados:", e)

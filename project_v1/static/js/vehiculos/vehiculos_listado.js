@@ -1,86 +1,65 @@
-let dataTable;
-let dataTableIsInitialized = false;
-
-// import moment from "moment";
-
-// Configuracion de la datatable
 const dataTableOptions = {
-    columnDefs: [
-        { className: 'centered', targets: [0, 1, 2, 3, 4, 5, 6] },
-        { orderable: false, targets: [4, 5, 6] },
-        { searchable: false, targets: [4, 5, 6] }
-    ],
-    destroy: true,
-    dom: 'Bfrtip',
-    buttons: [
-        'copy', 'csv', 'excel', 'pdf', 'print'
-    ]
-}
-
-// Inicializacion de la datatable
-const initDataTable = async () => {
-    if (dataTableIsInitialized) {
-        if (dataTable) {
-            dataTable.destroy();
-        }
-    }
-    await listSolicitudes();
-
-    try {
-        dataTable = $('#datatable_Vehiculos').DataTable(dataTableOptions);
-    } catch (ex) {
-        alert(ex)
-    }
-
-    dataTableIsInitialized = true;
-}
-
-// Proceso de informacion 
-const listSolicitudes = async () => {
-    try {
-        const response = await fetch('http://127.0.0.1:8000/vehiculos_listado/');
-        const data = await response.json();
-
-        console.log(data.vehiculos)
-
-        let content = '';
-        let btnDetalles = '';
-        let btnEliminar = '';
-
-        data.vehiculos.forEach((vehiculo) => {
-
-            btnDetalles = `<a class="btn btn-sm " style="background-color:#357266;" href="http://127.0.0.1:8000/vehiculos/${vehiculo.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
-            btnEliminar = `<a class="btn btn-sm " style="background-color:#C44558;" href="http://127.0.0.1:8000/vehiculos/eliminar/${vehiculo.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
-
-            // fecha_ult_service = ""
-            // if(vehiculo.fecha_ult_service == null){
-            //     fecha_ult_service = "no se hizo"
-            // }else{
-            //     const fecha = vehiculo.fecha_ult_service;
-            //     fecha_ult_service = moment(fecha).format("dd/mm/yyyy");
-            // }
-
-            content += `
-                <tr>
-                    <td>${vehiculo.id}</td>
-                    <td>${vehiculo.nombre} ${vehiculo.modelo}</td>
-                    <td>${vehiculo.marca}</td>
-                    <td>${vehiculo.dominio}</td>
-                    <td>${vehiculo.fecha_ult_service}</td>
-                    <td>${vehiculo.kilometraje}</td>
-                    <td>${vehiculo.estado}</td>
-                    <td>${btnDetalles} ${btnEliminar}</td>
-                </tr>    
-            `
-        });
-
-        tableBody_Vehiculos.innerHTML = content;
-    } catch (ex) {
-        alert(ex);
-    }
+  columnDefs: [
+    // { className: "centered", targets: [4] },
+    // { orderable: false, targets: [4, 6, 7] },
+    // { searchable: false, targets: [4, 5, 6, 7] },
+  ],
+  destroy: true,
+  dom: "Bfrtip",
+  buttons: ["copy", "csv", "excel", "pdf", "print"],
 };
 
-// Escucha del evento load
-window.addEventListener('load', async () => {
-    await initDataTable();
-})
+const listVehiculos = async () => {
+  fetch("http://127.0.0.1:8000/vehiculos_listado/", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then(function (response) {
+      if (response.status === 200) {
+        return response.json();
+      } else {
+        throw new Error("Error al obtener una respuesta del servidor");
+      }
+    })
+    .then(function (respuestaJSON) {
+      let vehiculos = respuestaJSON.vehiculos;
+      let usuario = respuestaJSON.usuario;
+
+      let table = $("#tableVehiculos").DataTable(dataTableOptions);
+      table.clear().draw();
+
+      vehiculos.forEach((vehiculo) => {
+        let botonesAccion = "";
+        let nombre_y_modelo = vehiculo.nombre + " " + vehiculo.modelo
+
+        btnDetalles = `<a class="btn btn-sm" style="margin-right:2px; background-color:#357266;" href="http://127.0.0.1:8000/vehiculos/${vehiculo.id}/"><i class="bi bi-info-circle-fill" style="color:#FFFFFF"></i></a>`;
+        btnEliminar = `<a class="btn btn-sm" style="margin-right:2px; background-color:#C44558;" href="http://127.0.0.1:8000/vehiculos/eliminar/${vehiculo.id}"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
+
+        botonesAccion += btnDetalles;
+        if (usuario.tipo_usuario === "Administrador") {
+          botonesAccion += btnEliminar;
+        }
+        
+        table.row.add([
+            vehiculo.id,
+            nombre_y_modelo,
+            vehiculo.marca,
+            vehiculo.dominio,
+            vehiculo.fecha_ult_service,
+            vehiculo.kilometraje,
+            vehiculo.estado,
+            botonesAccion
+        ]).draw();
+      });
+    })
+    .catch(function (error) {
+        console.log("error:", error);
+    })
+};
+
+window.addEventListener("load", async () => {
+  await listVehiculos();
+});
+

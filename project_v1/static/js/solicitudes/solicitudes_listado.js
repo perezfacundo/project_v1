@@ -4,8 +4,8 @@ let botonProx7dias = document.getElementById("btnRadioProx7dias");
 
 const dataTableOptions = {
   columnDefs: [
-    { className: "centered", targets: [4] },
-    { orderable: false, targets: [4, 6, 7] },
+    { className: "centered", targets: [0, 4, 6, 7] },
+    { orderable: false, targets: [4, 5, 6, 7] },
     { searchable: false, targets: [4, 5, 6, 7] },
   ],
   destroy: true,
