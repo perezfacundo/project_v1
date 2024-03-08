@@ -1,9 +1,6 @@
 const dataTableOptions = {
-  columnDefs: [
-    { className: "centered", targets: [4] },
-    { orderable: false, targets: [4, 6, 7] },
-    { searchable: false, targets: [4, 5, 6, 7] },
-  ],
+  ordering: true,
+  searching: true,
   destroy: true,
   dom: "Bfrtip",
   buttons: ["copy", "csv", "excel", "pdf", "print"],
