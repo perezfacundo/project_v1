@@ -1,8 +1,4 @@
-{% extends 'base.html' %}
-
-{% load static %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block content %}
 
 <div class="container mt-4">
   <div class="input-group">
@@ -10,37 +6,67 @@
       {% csrf_token %}
       <div class="row">
         <div class="col">
-          <input class="form-control" type="date" name="fechaInicio" id="fechaInicio">
+          <input
+            class="form-control"
+            type="date"
+            name="fechaInicio"
+            id="fechaInicio"
+          />
         </div>
         <div class="col">
-          <input class="form-control" type="date" name="fechaFin" id="fechaFin">
+          <input
+            class="form-control"
+            type="date"
+            name="fechaFin"
+            id="fechaFin"
+          />
         </div>
         <div class="col">
-          <select class="form-select" name="listarPor" id="listarPor" aria-label="Default" style="width:auto">
+          <select
+            class="form-select"
+            name="listarPor"
+            id="listarPor"
+            aria-label="Default"
+            style="width: auto"
+          >
             <option selected value="estados">Estados</option>
             <option value="nombres">Nombres</option>
           </select>
         </div>
         <div class="col">
-          <button class="btn btn-primary" type="button" id="enviarButton">Consultar</button>
+          <button class="btn btn-primary" type="button" id="btnConsultar">
+            Consultar
+          </button>
         </div>
       </div>
     </form>
   </div>
 
   <div class="row mt-5">
-    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6"> <!--TABLA -->
+    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+      <!--TABLA -->
       <div class="table-responsive">
         <table id="tableEmpleados" class="table table-hover">
-          <caption>Reporte de empleados</caption>
-          <thead id="tableHead"></thead>
+          <caption>
+            Reporte de empleados
+          </caption>
+          <thead id="tableHead">
+            <th class="centered">Estado</th>
+            <th class="centered">Cantidad de viajes</th>
+          </thead>
           <tbody id="tableBody"></tbody>
+          <tfoot id="tableFoot">
+            <tr>
+              <th>Total:</th>
+              <th class="text-center"></th>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
 
     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-      <div id="chart" style="width: 600px; height: 400px;"></div>
+      <div id="chart" style="width: 600px; height: 400px"></div>
     </div>
   </div>
 </div>

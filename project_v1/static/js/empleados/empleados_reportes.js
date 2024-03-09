@@ -1,180 +1,155 @@
-let dataTable;
-let dataTableIsInitialized = false;
+const btnConsultar = document.getElementById("btnConsultar");
 
-let arrayEjeX = []
-let arrayEjeY = []
+let arrayEjeX = [];
+let arrayEjeY = [];
 
 let option = {
-    'tooltip': {
-        'show': true,
-        'trigger': "axis",
-        'triggerOn': "mousemove|click"
+  title: {
+    text: "",
+  },
+  tooltip: {
+    show: true,
+    trigger: "axis",
+    triggerOn: "mousemove|click",
+  },
+  toolbox: {
+    feature: {
+      saveAsImage: {},
     },
-    'xAxis': [
-        {
-            'type': "category",
-            'data': arrayEjeX,
-            'axisLabel': { rotate: 30 }
-        }
-    ],
-    'yAxis': [
-        {
-            'type': "value"
-        }
-    ],
-    'series': [
-        {
-            'data': arrayEjeY,
-            'type': "bar"
-        }
-    ]
-}
+  },
+  xAxis: [
+    {
+      type: "category",
+      data: arrayEjeX,
+      axisLabel: { rotate: 30 },
+    },
+  ],
+  yAxis: [
+    {
+      type: "value",
+    },
+  ],
+  series: [
+    {
+      data: arrayEjeY,
+      type: "bar",
+    },
+  ],
+};
 
 const dataTableOptions = {
-    columnDefs: [
-        { orderable: false, targets: [2] },
-    ],
-    "searching": false,
-    dom: 'Bfrtip',
-    buttons: [
-        'copy', 'csv', 'excel', 'pdf', 'print'
-    ]
+  columnDefs: [{ className: "centered", targets: [1] }],
+  searching: false,
+  ordering: false,
+  destroy: true,
+  dom: "Bfrtip",
+  buttons: ["copy", "csv", "excel", "pdf", "print"],
 };
 
-// Función para inicializar la DataTable
-const initDataTable = async () => {
-    if (dataTableIsInitialized) {
-        dataTable.destroy();
-    };
+const listReporte = async () => {
+  let table = $("#tableEmpleados").DataTable(dataTableOptions);
+  table.clear().draw();
 
-    await listReportes();
+  const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+  const pathConsulta = "http://127.0.0.1:8000/empleados/reportes/";
 
-    dataTable = $('#tableEmpleados').DataTable(dataTableOptions);
+  const datos = {
+    fechaInicio: $("#fechaInicio").val(),
+    fechaFin: $("#fechaFin").val(),
+    listarPor: $("#listarPor").val(),
+  };
 
-    dataTableIsInitialized = true;
-};
+  console.log(datos)
 
-const listReportes = async () => {
-    try {
-        $('#enviarButton').click(function () {
-            const fechaInicio = $('#fechaInicio').val();
-            const fechaFin = $('#fechaFin').val();
-            const listarPor = $('#listarPor').val();
-            const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+  const config = {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": csrfToken,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(datos),
+  };
 
-            const url = 'http://127.0.0.1:8000/empleados/reportes/'
+  fetch(pathConsulta, config)
+    .then(function (response) {
+      if (response.status === 200) {
+        return response.json();
+      } else {
+        throw new Error("Error al obtener una respuesta del servidor");
+      }
+    })
+    .then((data) => {
+      let total = 0;
+      console.log(data);
 
-            const datos = {
-                fechaInicio: fechaInicio,
-                fechaFin: fechaFin,
-                listarPor: listarPor,
-            };
+      if (datos.listarPor === "nombres") {
+        //listar por nombres
+        option.title.text = `Reporte de empleados por viajes`;
 
-            const config = {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrfToken,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datos)
-            }
+        total = 0;
 
-            fetch(url, config)
-                .then(response => response.json())
-                .then(data => {
+        //cambiar titulos de las columnas
+        $("#tableEmpleados thead tr th:eq(0)").text("Nombres");
+        $("#tableEmpleados thead tr th:eq(1)").text("Viajes");
 
-                    console.log(data)
+        console.log(table)
 
-                    //Proceso de la informacion
-                    let total = 0;
-                    let headContent = '';
-                    let bodyContent = '';
+        //recorrer data
+        data.empleados.forEach((empleado) => {
+          console.log(total)
+          total += empleado.cantidadSolicitudes;
+          table.row.add([empleado.nombre, empleado.cantidadSolicitudes]).draw();
 
-                    if (listarPor === 'nombres') {
-
-                        headContent = `
-                            <tr>
-                                <th class="centered">Nombres</th>
-                                <th class="centered">Viajes</th>
-                            </tr>
-                        `;
-                        tableHead.innerHTML = headContent;
-
-                        data.empleados.forEach((empleado) => {
-                            total += empleado.cantidadSolicitudes
-
-                            bodyContent += `
-                                <tr>
-                                    <td>${empleado.nombre}</td>
-                                    <td class="centered">${empleado.cantidadSolicitudes}</td>
-                                </tr>
-                            `;
-                            arrayEjeX.push(empleado.nombre);
-                            arrayEjeY.push(empleado.cantidadSolicitudes);
-                        });
-
-                        bodyContent += `
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                <td class="centered">${total}</td>
-                            </tr>
-                        `;
-
-                    } else { //listar por estados
-
-                        headContent = `
-                            <tr>
-                                <th class="centered">Estado</th>
-                                <th class="centered">Cantidad de empleados</th>
-                            </tr>
-                        `;
-                        tableHead.innerHTML = headContent;
-
-                        data.estados.forEach((estado) => {
-                            total += estado.cantidadEmpleados
-
-                            bodyContent += `
-                                <tr>
-                                    <td>${estado.descripcion}</td>
-                                    <td class="centered">${estado.cantidadEmpleados}</td>
-                                </tr>
-                            `;
-                            arrayEjeX.push(estado.descripcion);
-                            arrayEjeY.push(estado.cantidadEmpleados);
-                        });
-
-                        bodyContent += `
-                            <tr>
-                                <td><strong>Total</strong></td>
-                                <td class="centered">${total}</td>
-                            </tr>
-                        `;
-                    }
-
-                    tableBody.innerHTML = bodyContent;
-
-                    initChart();
-
-                    reiniciarOption();
-                })
-
+          arrayEjeX.push(empleado.nombre);
+          arrayEjeY.push(empleado.cantidadSolicitudes);
         });
-    } catch (ex) {
-        alert(ex);
-        console.log("Error: ", ex)
-    };
+
+        //agregar total a la salida
+        console.log(total);
+        var celdaTotal = document
+          .getElementById("tableFoot")
+          .getElementsByTagName("th")[1];
+        celdaTotal.textContent = total;
+      } else {
+        //listar por estados
+        option.title.text = `Reporte de empleados por estados`;
+
+        total = 0;
+
+        //cambiar titulos de las columnas
+        $("#tableEmpleados thead tr th:eq(0)").text("Estado");
+        $("#tableEmpleados thead tr th:eq(1)").text("Cantidad de empleados");
+
+        data.estados.forEach((estado) => {
+          total += estado.cantidadEmpleados;
+          table.row.add([estado.descripcion, estado.cantidadEmpleados]).draw();
+
+          arrayEjeX.push(estado.descripcion);
+          arrayEjeY.push(estado.cantidadEmpleados);
+        });
+
+        console.log(total);
+        var celdaTotal = document
+          .getElementById("tableFoot")
+          .getElementsByTagName("th")[1];
+        celdaTotal.textContent = total;
+      }
+
+      initChart();
+      reiniciarOption();
+    });
 };
 
-window.addEventListener("load", async () => {
-    await initDataTable();
+btnConsultar.addEventListener("click", async () => {
+  await listReporte();
 });
 
 const initChart = () => {
-    let myChart = echarts.init(document.getElementById("chart"));
-    myChart.setOption(option);
-}
+  let myChart = echarts.init(document.getElementById("chart"));
+  myChart.setOption(option);
+};
 
 function reiniciarOption() {
-    arrayEjeX.splice(0, arrayEjeX.length);
-    arrayEjeY.splice(0, arrayEjeY.length);
+  arrayEjeX.splice(0, arrayEjeX.length);
+  arrayEjeY.splice(0, arrayEjeY.length);
 }

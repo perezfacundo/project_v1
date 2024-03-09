@@ -55,7 +55,6 @@ const listReporte = async () => {
   table.clear().draw();
 
   const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-  //const csrfToken = document.getElementById("csrfmiddlewaretoken");
   const pathConsulta = "http://127.0.0.1:8000/clientes/reportes/";
 
   const datos = {
@@ -89,7 +88,7 @@ const listReporte = async () => {
       console.log(data);
 
       if (datos.listarPor === "estados") {
-        option.title.text = `Reporte de clientes por estados ${datos.fechaInicio} al ${datos.fechaFin}`;
+        option.title.text = `Reporte de clientes por estados`;
 
         total = 0;
         //cambiar titulos de las columnas
@@ -114,8 +113,9 @@ const listReporte = async () => {
           .getElementById("tableFoot")
           .getElementsByTagName("th")[1];
         celdaTotal.textContent = total;
+
       } else {
-        option.title.text = "Reporte de clientes por cantidad de viajes";
+        option.title.text = `Reporte de clientes por cantidad de viajes`;
         total = 0;
         //cambiar titulos de las columnas
         $("#tableClientes thead tr th:eq(0)").text("Clientes");
@@ -149,9 +149,6 @@ const listReporte = async () => {
 btnConsultar.addEventListener("click", async () => {
   await listReporte();
   console.log("hola");
-
-  arrayEjeX.splice(0, arrayEjeX.length);
-  arrayEjeY.splice(0, arrayEjeY.length);
 });
 
 const initChart = () => {
