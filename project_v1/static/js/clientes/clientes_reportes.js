@@ -82,10 +82,10 @@ const listReporte = async () => {
         throw new Error("Error al obtener una respuesta del servidor");
       }
     })
-    .then((data) => {
+    .then((respuesta) => {
       let total = 0;
 
-      console.log(data);
+      console.log(respuesta);
 
       if (datos.listarPor === "estados") {
         option.title.text = `Reporte de clientes por estados`;
@@ -95,8 +95,8 @@ const listReporte = async () => {
         $("#tableClientes thead tr th:eq(0)").text("Estado");
         $("#tableClientes thead tr th:eq(1)").text("Cantidad de clientes");
 
-        //recorrer data
-        data.estados.forEach((estado) => {
+        //recorrer respuesta
+        respuesta.estados.forEach((estado) => {
           total += estado.cantidadClientes;
           console.log(total);
 
@@ -121,8 +121,8 @@ const listReporte = async () => {
         $("#tableClientes thead tr th:eq(0)").text("Clientes");
         $("#tableClientes thead tr th:eq(1)").text("Cantidad de viajes");
 
-        //recorrer data
-        data.clientes.forEach((cliente) => {
+        //recorrer respuesta
+        respuesta.clientes.forEach((cliente) => {
           total += cliente.cantidadViajes;
           console.log(total);
 
@@ -148,7 +148,6 @@ const listReporte = async () => {
 
 btnConsultar.addEventListener("click", async () => {
   await listReporte();
-  console.log("hola");
 });
 
 const initChart = () => {
