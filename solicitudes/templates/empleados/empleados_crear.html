@@ -81,6 +81,10 @@
             </div>
           </div>
           {% endif %}
+
+          <label class="form-check-label">
+            La clave por defecto del empleado será su apellido + "-e". Una vez que haya iniciado podrá cambiar su clave por la que desee
+          </label>
           
           <input type="hidden" name="id_estado_empleado" value="1"> <!-- Disponible -->
           <input type="hidden" name="id_tipo_usuario" value="4"> <!--Empleado-->
@@ -88,7 +92,7 @@
 
         <hr>
 
-        <button class="w-100 btn btn-primary btn-lg">
+        <button class="mb-4 w-100 btn btn-primary btn-lg">
           Registrar empleado
         </button>
       </form>
