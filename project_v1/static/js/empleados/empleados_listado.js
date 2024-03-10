@@ -35,7 +35,7 @@ const listEmpleados = async () => {
         let botonesAccion = "";
 
         btnDetalles = `<a class="btn btn-sm" style="margin-right:2px; background-color:#357266;" href="http://127.0.0.1:8000/empleados/${empleado.id}/"><i class="bi bi-pencil-fill" style="color:#FFFFFF"></i></a>`;
-        btnEliminar = `<a class="btn btn-sm" style="margin-right:2px; background-color:#C44558;" href="http://127.0.0.1:8000/empleados/${empleado.id}/eliminar"/><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
+        btnEliminar = `<a class="btn btn-sm" style="margin-right:2px; background-color:#C44558;" href="http://127.0.0.1:8000/empleados/${empleado.id}/eliminar/"><i class="bi bi-trash-fill" style="color:#FFFFFF"></i></a>`;
 
         botonesAccion += btnDetalles;
         if (usuario.tipo_usuario === "Administrador") {

@@ -105,7 +105,7 @@ def signin(request):
             request.session["username"] = user.username
 
             objUsuario = Usuario.objects.get(username=request.session["username"])
-            if objUsuario.id_tipo_usuario.descripcion == "Cliente":
+            if objUsuario.id_tipo_usuario.descripcion == "Cliente" or objUsuario.id_tipo_usuario.descripcion == "Empleado":
                 return redirect("solicitudes")
             else:
                 return redirect("dashboard")
@@ -781,8 +781,10 @@ def actualizar_vehiculos_asignados(solicitud, lista_vehiculos_asignados):
 
 @login_required
 def solicitud_eliminar(request, solicitud_id):
+    print("eliminando solicitud ...")
     solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
     solicitud.delete()
+    print("solicitud eliminada")
     return redirect("solicitudes")
 
 
@@ -896,48 +898,6 @@ def empleados_crear(request):
         return render(request, "empleados/empleados_crear.html")
     elif request.method == "POST":
         try:
-            # VALIDACIONES
-            if validarUsername(request.POST["username"]):
-                if Usuario.objects.filter(username=request.POST["username"]):
-                    return render(
-                        request,
-                        "auth/signup.html",
-                        {
-                            "error": "El nombre de usuario ya pertenece a una cuenta existente"
-                        },
-                    )
-            else:
-                return render(
-                    request,
-                    "auth/signup.html",
-                    {
-                        "error": "El nombre de usuario puede contener solo numeros o letras"
-                    },
-                )
-
-            if Usuario.objects.filter(email=request.POST["email"]):
-                return render(
-                    request,
-                    "auth/signup.html",
-                    {
-                        "error": "El correo electrónico ya pertenece a una cuenta existente"
-                    },
-                )
-
-            longitud = len(request.POST["dni"])
-            if longitud <= 8:
-                if Usuario.objects.filter(dni=request.POST["dni"]):
-                    return render(
-                        request,
-                        "auth/signup.html",
-                        {"error": "El dni ya pertenece a una cuenta existente"},
-                    )
-            else:
-                return render(
-                    request,
-                    "auth/signup.html",
-                    {"error": "El dni debe tener hasta 8 cifras"},
-                )
 
             id_estado_empleado = request.POST.get("id_estado_empleado", None)
 
@@ -1040,10 +1000,15 @@ def actualizar_empleado(r_post, empleado_id):
 
 @login_required
 def empleado_eliminar(request, empleado_id):
-    empleado = get_object_or_404(Empleado, pk=empleado_id)
-    print(empleado_id)
-    print(empleado)
-    empleado.delete()
+    print("eliminando empleado ...")
+    try:
+        empleado = get_object_or_404(Empleado, pk=empleado_id)
+        print(empleado_id)
+        print(empleado)
+        empleado.delete()
+        print("empleado eliminando !")
+    except Exception as e:
+        print("Error en empleado_eliminar:", e)
 
     return redirect("empleados")
 
@@ -1248,10 +1213,14 @@ def actualizar_vehiculo(r_post, vehiculo_id):
 
 @login_required
 def vehiculo_eliminar(request, vehiculo_id):
-    vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
-    if request.method == "POST":
+    print("eliminando vehiculo ...")
+    
+    try:
+        vehiculo = get_object_or_404(Vehiculo, pk=vehiculo_id)
         vehiculo.delete()
-    return redirect("vehiculos")
+        return redirect("vehiculos")
+    except Exception as e:
+        print("Error en vehiculo_eliminar:", e)
 
 
 @login_required
@@ -1397,9 +1366,15 @@ def actualizar_cliente(r_post, cliente_id):
 
 @login_required
 def cliente_eliminar(request, cliente_id):
-    cliente = get_object_or_404(Cliente, pk=cliente_id)
-    if request.method == "POST":
+
+    print("eliminando cliente ...")
+
+    try:
+        cliente = get_object_or_404(Cliente, pk=cliente_id)
         cliente.delete()
+        print("cliente eliminado !")
+    except Exception as e:
+        print("Error en cliente_eliminar:", e)
     return redirect("clientes")
 
 

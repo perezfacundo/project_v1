@@ -1,3 +1,105 @@
+// const btnConsultar = document.getElementById("btnConsultar")
+
+// let arrayEjeX = []
+// let arrayEjeY = []
+
+// let option = {
+//     title: {
+//         text: ""
+//     },
+//     tooltip: {
+//         show: true,
+//         trigger: "axis",
+//         triggerOn: "mousemove|click"
+//     },
+//     toolbox: {
+//         feature: {
+//             saveAsImage: {}
+//         }
+//     },
+//     xAxis: [
+//         {
+//             type: "category",
+//             data: arrayEjeX,
+//             axisLabel: { rotate: 30 }
+//         }
+//     ],
+//     yAxis: [
+//         {
+//             type: "value"
+//         }
+//     ],
+//     series: [
+//         {
+//             data: arrayEjeY,
+//             type: "bar"
+//         }
+//     ]
+// }
+
+// const dataTableOptions = {
+//     columnDefs: [
+//         { className: "centered", targets: [1] }
+//     ],
+//     searching: false,
+//     ordering: false,
+//     destroy: true,
+//     dom: "Bfrtip",
+//     buttons: ["copy", "csv", "excel", "pdf", "print"]
+// }
+
+// const listReporte = async () => {
+//     let table = $("#tableVehiculos").DataTable(dataTableOptions)
+//     table.clear().draw()
+
+//     const csrfToken = $('input[name="csrfmiddlewaretoken"]').val()
+//     const pathConsulta = "http://127.0.0.1:8000/vehiculos/reportes/"
+
+//     const datos = {
+//         fechaInicio: $("#fechaInicio").val(),
+//         fechaFin: $("#FechaFin").val(),
+//         listarPor: $("#listarPor").val()
+//     }
+
+//     console.log(datos)
+
+//     const config = {
+//         method: "POST",
+//         headers: {
+//             "X-CSRFToken": csrfToken,
+//             "Content-Type": "application/json"
+//         },
+//         body: JSON.stringify(datos)
+//     }
+
+//     fetch(pathConsulta, config)
+//     .then(function (response) {
+//         if (response.status === 200) {
+//             return response.json()
+//         } else {
+//             throw new Error("Error al obtener una respuesta del servidor")
+//         }
+//     })
+//     .then((respuesta) => {
+//         let total = 0;
+
+//         console.log(respusta)
+
+//         if (datos.listarPor === "vehiculos") {
+//             option.title.text = `Reporte por vehiculos por `
+
+//             total = 0;
+
+//             //cambiar titulos de las columnas
+//             $("#tableVehiculos thead tr th:eq(0")
+//         } else {
+            
+//         }
+//     })
+// }
+
+//===================================================================
+
 let dataTable;
 let dataTableIsInitialized = false;
 
