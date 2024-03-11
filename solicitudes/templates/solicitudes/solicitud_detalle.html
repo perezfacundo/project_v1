@@ -123,16 +123,39 @@
                     <label for="presupuesto">Presupuesto recomendado</label>
                     <div class="input-group input-group-lg">
                         <span class="input-group-text">$</span>
-                        <input type="text" name="presupuesto" id="presupuesto" class="form-control"  value="{{solicitud.presupuesto}}" aria-label="Amount (to the nearest dollar)">
-                        <span class="input-group-text">.00</span>
+                        <input style="width:auto" type="text" name="presupuesto" id="presupuesto" class="form-control"  value="{{solicitud.presupuesto}}" aria-label="Amount (to the nearest dollar)">
                     </div>
                     </div>
                 </div>
-                {% endif %}
 
                 <button type="submit" class="w-100 btn btn-primary btn-lg mb-3">
                     Actualizar
                 </button>
+
+                {% else %}
+
+                <div class="row">
+                    <div class="col-sm-6 mx-auto mb-3">
+                    <label for="presupuesto">Presupuesto</label>
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text">$</span>
+                        <input style="width:auto" type="text" name="presupuesto" id="presupuesto" class="form-control"  value="{{solicitud.presupuesto}}" aria-label="Amount (to the nearest dollar)" disabled readonly>
+                    </div>
+                    </div>
+                </div>
+
+                {% if solicitud.id_estado_solicitud == 2 or solicitud.id_estado_solicitud == 9 %}
+                <div class="row mb-3">
+                    <div class="col text-center">
+                        <a class="btn btn-success" href="/solicitudes/aceptar_presupuesto/{{solicitud.id}}/">Aceptar presupuesto</a>
+                    </div>
+                    <div class="col text-center">
+                        <a class="btn btn-danger" href="/solicitudes/denegar_presupuesto/{{solicitud.id}}/">Denegar presupuesto</a>
+                    </div>
+                </div>
+                {% endif %}
+                {% endif %}
+                
             </form>
         </section>
     </div>

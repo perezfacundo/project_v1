@@ -613,6 +613,7 @@ def solicitud_detalle(request, solicitud_id):
     tipo_usuario = Usuario.objects.get(username=request.user.username)
 
     solicitud = get_object_or_404(Solicitud, pk=solicitud_id)
+    print(solicitud.id_estado_solicitud.descripcion)
     estados = EstadosSolicitud.objects.all()
 
     lista_empleados_disponibles = list(Empleado.objects.filter(id_estado_empleado=1))
@@ -785,6 +786,19 @@ def actualizar_vehiculos_asignados(solicitud, lista_vehiculos_asignados):
         print("Error al actualzar asignacion de vehiculos", e)
         return False
 
+@login_required
+def aceptar_presupuesto(request, solicitud_id):
+    objSolicitud = Solicitud.objects.get(id=solicitud_id)
+    objSolicitud.id_estado_solicitud = EstadosSolicitud.objects.get(id=2)
+    objSolicitud.save()
+    return redirect("solicitudes")
+
+@login_required
+def denegar_presupuesto(request, solicitud_id):
+    objSolicitud = Solicitud.objects.get(id=solicitud_id)
+    objSolicitud.id_estado_solicitud = EstadosSolicitud.objects.get(id=9)
+    objSolicitud.save()
+    return redirect("solicitudes")
 
 @login_required
 def solicitud_eliminar(request, solicitud_id):
