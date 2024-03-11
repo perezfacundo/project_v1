@@ -103,8 +103,9 @@ def signin(request):
         else:
             login(request, user)
             request.session["username"] = user.username
-
             objUsuario = Usuario.objects.get(username=request.session["username"])
+            request.session["user_id"] = objUsuario.id
+            
             if objUsuario.id_tipo_usuario.descripcion == "Cliente" or objUsuario.id_tipo_usuario.descripcion == "Empleado":
                 return redirect("solicitudes")
             else:
@@ -115,7 +116,7 @@ def recuperarCuenta(request):
     if request.method == "GET":
         return render(request, "auth/recuperarCuenta.html")
     elif request.method == "POST":
-        # Generar codigo
+        # Generar y mostrar codigo
         codigo = str(random.randint(100000, 999999))
         print("El codigo es " + codigo)
         request.session["codigoRecuperacion"] = codigo
@@ -665,6 +666,12 @@ def solicitud_detalle(request, solicitud_id):
                 solicitud, vehiculos_asignados
             )
 
+        recipient_list = [Cliente.objects.get(dni=solicitud.cliente_id.dni).email]
+        subject = "Ya te presupuestamos el viaje !"
+        message = "El viaje tendrá un costo de " + solicitud.presupuesto + ". Ingresá a la aplicación para aceptarlo o rechazarlo en el siguiente link." + " http://127.0.0.1:8000/"
+        from_email = settings.EMAIL_HOST_USER
+        send_mail(subject, message, from_email, recipient_list)
+        
         if resultado_solicitud and resultado_empleados and resultado_vehiculos:
             return redirect("solicitudes")
         else:

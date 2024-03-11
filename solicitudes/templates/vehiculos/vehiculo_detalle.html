@@ -3,10 +3,10 @@
 {% block content %}
 
 <main class="container">
-    <div class="row vh-100 d-flex justify-content-center align-items-center">
+    <div class="row vh-100 d-flex justify-content-center">
         <div class="col-md-7">
             <form action="{% url 'vehiculo_detalle' vehiculo.id %}" method="post" class="card-body">
-                <h4 class="mb-3">Modificar los datos de un vehiculo</h4>
+                <h4 class="mb-4 mt-4 text-center">Modificar los datos de un vehiculo</h4>
                 {{error}}
                 {% csrf_token %}
 

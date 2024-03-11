@@ -6,7 +6,7 @@ const dataTableOptions = {
   columnDefs: [
     { className: "centered", targets: [0, 4, 6, 7] },
     { orderable: false, targets: [4, 5, 6, 7] },
-    { searchable: false, targets: [4, 5, 6, 7] },
+    { searchable: false, targets: [6, 7] },
   ],
   destroy: true,
   dom: "Bfrtip",

@@ -31,7 +31,7 @@
       <img style="width: 30px; margin-right: 5px" src="{% static 'img/fletter.png' %}"></img>
 
       {% if user.is_authenticated %} 
-        {% comment %} <a class="navbar-brand" href="#">Bienvenido {{ request.session.username }} !</a>  {% endcomment %}
+        <!-- {% comment %} <a class="navbar-brand" href="#">Bienvenido {{ request.session.username }} !</a>  {% endcomment %} -->
         <a class="navbar-brand" href="#"> Bienvenido {{ user.first_name }} !</a> 
       {% endif %}
 
@@ -112,7 +112,15 @@
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                 aria-expanded="false">Mi cuenta</a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/clientes/">Mi cuenta</a></li>
+
+                {% if user.is_staff %}
+                <!-- {% comment %} si es empleado ... {% endcomment %} -->
+                <li><a class="dropdown-item" href="/empleados/{{user.id}}">Mi cuenta</a></li>
+                {% else %}
+                <!-- {% comment %} si es cliente ... {% endcomment %} -->
+                <li><a class="dropdown-item" href="/clientes/{{user.id}}">Mi cuenta</a></li>
+                {% endif %}
+
                 <li><a class="dropdown-item" href="/cambiarClave/">Cambiar contraseña</a></li>
                 <li>
                   <hr class="dropdown-divider">
