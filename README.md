@@ -10,5 +10,7 @@
 
 <h2>Analisis funcional</h2>
 
-[Relevamiento, diagnostico y propuesta](https://drive.google.com/drive/folders/14-RgYTpHyRvuag_OoxzkkjaLNzIJg30p)
-[Modelos y diagramas](https://drive.google.com/drive/folders/14-RgYTpHyRvuag_OoxzkkjaLNzIJg30p)
+<ol>
+  <li>[Relevamiento, diagnostico y propuesta](https://drive.google.com/drive/folders/14-RgYTpHyRvuag_OoxzkkjaLNzIJg30p)</li>
+  <li>[Modelos y diagramas](https://drive.google.com/drive/folders/14-RgYTpHyRvuag_OoxzkkjaLNzIJg30p)</li>
+</ol>
